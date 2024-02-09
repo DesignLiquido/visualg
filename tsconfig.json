@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "module": "CommonJS",
+        "target": "es2017",
+        "rootDir": ".",
+        "allowJs": true,
+        "sourceMap": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true
+    },
+    "exclude": [
+        "babel.config.js", 
+        "coverage",
+        "docs",
+        "dist/**/*",
+        "jest.config.ts",
+        "node_modules",
+        "testes"
+    ]
+}

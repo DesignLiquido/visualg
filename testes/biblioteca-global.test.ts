@@ -188,13 +188,13 @@ describe('Biblioteca Numérica', () => {
     });
 
     describe('Testes com fonte completo', () => {
-        let lexador: Lexador;
-        let avaliadorSintatico: AvaliadorSintatico;
+        let lexador: LexadorVisuAlg;
+        let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
         let interpretador: InterpretadorVisuAlg;
 
         beforeEach(() => {
-            lexador = new Lexador();
-            avaliadorSintatico = new AvaliadorSintatico();
+            lexador = new LexadorVisuAlg();
+            avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
             interpretador = new InterpretadorVisuAlg(process.cwd());
         });
 
@@ -304,13 +304,13 @@ describe('Biblioteca de caracteres', () => {
     });
 
     describe('Testes com fonte completo', () => {
-        let lexador: Lexador;
-        let avaliadorSintatico: AvaliadorSintatico;
+        let lexador: LexadorVisuAlg;
+        let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
         let interpretador: InterpretadorVisuAlg;
 
         beforeEach(() => {
-            lexador = new Lexador();
-            avaliadorSintatico = new AvaliadorSintatico();
+            lexador = new LexadorVisuAlg();
+            avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
             interpretador = new InterpretadorVisuAlg(process.cwd());
         });
         

@@ -1,0 +1,26 @@
+{
+    "name": "@designliquido/visualg",
+    "description": "Dialeto de VisuAlg baseado em Delégua e TypeScript",
+    "scripts": {
+        "empacotar": "rimraf ./dist && tsc && copyfiles -V ./bin/delegua ./bin/delegua.cmd ./dist && copyfiles -V ./package.json ./dist/bin && copyfiles -V ./README.md ./dist",
+        "gerar-documentacao-tecnica": "typedoc --out docs index.ts",
+        "publicar-docs": "yarn gerar-documentacao-tecnica && copyfiles -V ./recursos/**/* ./docs && gh-pages -d docs",
+        "publicar-npm": "npm publish ./dist --access public",
+        "testes-unitarios": "jest --coverage",
+        "testes-unitarios:insignias": "jest-coverage-badges --output ./recursos/imagens",
+        "observar-testes-unitarios": "jest --watchAll",
+        "observar-testes-unitarios-com-coverage": "jest --coverage --watchAll",
+        "lint": "eslint . --ext .ts",
+        "deixar-codigo-bonito": "prettier --config .prettierrc --write fontes/**/*.ts"
+    },
+    "dependencies": {
+        "@designliquido/delegua": "^0.32.2"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.1.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    }
+}

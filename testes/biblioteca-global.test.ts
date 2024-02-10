@@ -1,11 +1,12 @@
-import { AvaliadorSintatico } from '../avaliador-sintatico';
-import { registrarBibliotecaCaracteresVisuAlg, registrarBibliotecaNumericaVisuAlg } from '../../fontes/bibliotecas';
 import { DeleguaFuncao } from '@designliquido/delegua/fontes/estruturas';
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/fontes/interfaces';
 import { EscopoExecucao } from '@designliquido/delegua/fontes/interfaces/escopo-execucao';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/fontes/interfaces/pilha-escopos-execucao-interface';
 import { InterpretadorVisuAlg } from '@designliquido/delegua/fontes/interpretador/dialetos/visualg/interpretador-visualg';
-import { Lexador } from "../lexador";
+
+import { AvaliadorSintaticoVisuAlg } from '../fontes/avaliador-sintatico';
+import { registrarBibliotecaCaracteresVisuAlg, registrarBibliotecaNumericaVisuAlg } from '../fontes/bibliotecas';
+import { LexadorVisuAlg } from "../fontes/lexador";
 
 const funcoes = {};
 const mockPilha: PilhaEscoposExecucaoInterface | any = {

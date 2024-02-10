@@ -1,13 +1,13 @@
 import * as sistemaOperacional from 'os';
 
-import { Formatador as FormatadorVisuAlg } from '../formatador/formatador';
-import { Lexador } from '../../fontes/lexador';
-import { AvaliadorSintatico } from '../../fontes/avaliador-sintatico';
+import { FormatadorVisuAlg } from '../fontes/formatador/formatador';
+import { LexadorVisuAlg } from '../fontes/lexador';
+import { AvaliadorSintaticoVisuAlg } from '../fontes/avaliador-sintatico';
 
 describe('Formatador', () => {
     const formatadorVisuAlg = new FormatadorVisuAlg(sistemaOperacional.EOL);
-    const avaliadorSintatico = new AvaliadorSintatico();
-    const lexador = new Lexador();
+    const avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
+    const lexador = new LexadorVisuAlg();
 
     it('Olá mundo', () => {
         const retornoLexador = lexador.mapear([

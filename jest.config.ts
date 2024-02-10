@@ -6,10 +6,6 @@ export default async (): Promise<Config.InitialOptions> => {
         modulePathIgnorePatterns: ['<rootDir>/dist/'],
         preset: 'ts-jest',
         testEnvironment: 'node',
-        coverageReporters: ['json-summary', 'lcov', 'text', 'text-summary'],
-        coveragePathIgnorePatterns: [
-            "fontes/tradutores/python/*.*",
-            "fontes/interpretador/dialetos/birl/*.*"
-        ]
+        coverageReporters: ['json-summary', 'lcov', 'text', 'text-summary']
     };
 };

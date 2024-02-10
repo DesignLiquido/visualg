@@ -1,14 +1,14 @@
-import { AvaliadorSintatico } from "../avaliador-sintatico";
-import { Lexador } from "../lexador";
+import { AvaliadorSintaticoVisuAlg } from "../fontes/avaliador-sintatico";
+import { LexadorVisuAlg } from "../fontes/lexador";
 
 describe('Avaliador sintático', () => {
     describe('analisar()', () => {
-        let lexador: any = Lexador;
-        let avaliadorSintatico: AvaliadorSintatico;
+        let lexador: LexadorVisuAlg;
+        let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
 
         beforeEach(() => {
-            lexador = new Lexador();
-            avaliadorSintatico = new AvaliadorSintatico();
+            lexador = new LexadorVisuAlg();
+            avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
         });
 
         describe('Cenário de sucesso', () => {

@@ -1,13 +1,13 @@
-import { Lexador } from '../../fontes/lexador';
+import { LexadorVisuAlg } from '../fontes/lexador';
 
-import tiposDeSimbolos from "../../fontes/tipos-de-simbolos/visualg"
+import tiposDeSimbolos from "../fontes/tipos-de-simbolos/lexico-regular";
 
 describe('Lexador', () => {
     describe('mapear()', () => {
-        let lexador: any = Lexador;
+        let lexador: LexadorVisuAlg;
 
         beforeEach(() => {
-            lexador = new Lexador();
+            lexador = new LexadorVisuAlg();
         });
 
         describe('Cenários de sucesso', () => {

@@ -1,16 +1,16 @@
-import { AvaliadorSintatico } from '../../fontes/avaliador-sintatico';
-import { InterpretadorVisuAlg } from "../../fontes/interpretador/interpretador-visualg";
-import { Lexador } from '../../fontes/lexador';
+import { AvaliadorSintaticoVisuAlg } from '../fontes/avaliador-sintatico';
+import { InterpretadorVisuAlg } from "../fontes/interpretador/interpretador-visualg";
+import { LexadorVisuAlg } from '../fontes/lexador';
 
 describe('Interpretador', () => {
     describe('interpretar()', () => {
-        let lexador: Lexador;
-        let avaliadorSintatico: AvaliadorSintatico;
+        let lexador: LexadorVisuAlg;
+        let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
         let interpretador: InterpretadorVisuAlg;
 
         beforeEach(() => {
-            lexador = new Lexador();
-            avaliadorSintatico = new AvaliadorSintatico();
+            lexador = new LexadorVisuAlg();
+            avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
             interpretador = new InterpretadorVisuAlg(process.cwd(), false, console.log, console.log);
         });
 

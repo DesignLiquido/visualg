@@ -54,10 +54,10 @@ import {
 } from '@designliquido/delegua/fontes/declaracoes';
 import { InicioAlgoritmo } from '@designliquido/delegua/fontes/declaracoes/inicio-algoritmo';
 import { SimboloInterface, VisitanteComumInterface } from '@designliquido/delegua/fontes/interfaces';
-import { ContinuarQuebra, RetornoQuebra, SustarQuebra } from '@designliquido/delegua/fontes/quebras';
+import { ContinuarQuebra } from '@designliquido/delegua/fontes/quebras';
 import tiposDeSimbolos from '@designliquido/delegua/fontes/tipos-de-simbolos/visualg';
 
-export class Formatador implements VisitanteComumInterface {
+export class FormatadorVisuAlg implements VisitanteComumInterface {
     indentacaoAtual: number;
     quebraLinha: string;
     tamanhoIndentacao: number;

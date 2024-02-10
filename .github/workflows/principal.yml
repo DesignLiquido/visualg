@@ -28,13 +28,13 @@ jobs:
     # Reabilitar quando conseguirmos descobrir a causa.
     - uses: ArtiomTr/jest-coverage-report-action@v2
       id: coverage
-      if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'DesignLiquido/visualg' }}
+      # if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'DesignLiquido/visualg' }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         test-script: yarn testes-unitarios
         package-manager: yarn
         output: report-markdown
     - uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'DesignLiquido/visualg' }}
+      # if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'DesignLiquido/visualg' }}
       with:
         message: ${{ steps.coverage.outputs.report }}

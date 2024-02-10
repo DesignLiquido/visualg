@@ -23,9 +23,11 @@ jobs:
         sudo npm install
     - name: Testes unitários
       run: |
-        sudo npm run testes-unitarios
+        sudo npm run testes-unitarios:pr
     # Cobertura de código: Trava o GitHub Actions inteiro por algum motivo.
     # Reabilitar quando conseguirmos descobrir a causa.
+    # - name: Cobertura de Código
+    #  uses: MishaKav/jest-coverage-comment@main
     - uses: ArtiomTr/jest-coverage-report-action@v2
       id: coverage
       with:

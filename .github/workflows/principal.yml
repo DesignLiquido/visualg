@@ -1,0 +1,41 @@
+name: Commit e PR - Principal
+
+on:
+  pull_request:
+    branches: [ principal ]
+
+jobs:
+  testes-unitarios:
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2-beta
+      with:
+        node-version: '16'
+    # Maneira tradicional de build, sem cobertura.
+    - name: NPM - Dependências
+      run: |
+        sudo npm install
+    - name: Testes unitários
+      run: |
+        sudo npm run testes-unitarios
+    - name: Cobertura de Código
+      uses: MishaKav/jest-coverage-comment@main
+    # Os pacotes abaixo continuam dando o seguinte problema:
+    # https://github.com/ArtiomTr/jest-coverage-report-action/issues/233
+    # A solução dada pelo autor não resolve o problema.
+    # - uses: ArtiomTr/jest-coverage-report-action@v2
+    #   id: coverage
+    #   with:
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    #     test-script: yarn testes-unitarios
+    #     package-manager: yarn
+    #     output: report-markdown
+    # - uses: marocchino/sticky-pull-request-comment@v2
+    #   with:
+    #     message: ${{ steps.coverage.outputs.report }}

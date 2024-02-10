@@ -1,1 +1,1 @@
-export * from './lexador';
+export * from './lexador-visualg';

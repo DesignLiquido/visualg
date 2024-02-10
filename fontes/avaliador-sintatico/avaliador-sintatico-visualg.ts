@@ -46,7 +46,7 @@ import { ParametroVisuAlg } from './parametro-visualg';
 import { TiposDadosInterface } from '@designliquido/delegua/fontes/interfaces/tipos-dados-interface';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/fontes/avaliador-sintatico/';
 
-export class AvaliadorSintatico extends AvaliadorSintaticoBase {
+export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     blocoPrincipalIniciado: boolean;
     dicionarioTiposPrimitivos = {
         caracter: 'texto',

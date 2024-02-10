@@ -1,4 +1,17 @@
-import { Atribuir, Chamada, ExpressaoRegular, FimPara, FormatacaoEscrita, FuncaoConstruto, Literal, Super, TipoDe, Tupla, Variavel, Vetor } from "@designliquido/delegua/fontes/construtos";
+import {
+    Atribuir,
+    Chamada,
+    ExpressaoRegular,
+    FimPara,
+    FormatacaoEscrita,
+    FuncaoConstruto,
+    Literal,
+    Super,
+    TipoDe,
+    Tupla,
+    Variavel,
+    Vetor,
+} from '@designliquido/delegua/fontes/construtos';
 import {
     Aleatorio,
     Bloco,
@@ -26,22 +39,22 @@ import {
     Sustar,
     Tente,
     Var,
-    VarMultiplo
-} from "@designliquido/delegua/fontes/declaracoes";
-import { SimboloInterface } from "@designliquido/delegua/fontes/interfaces";
-import { AnalisadorSemanticoInterface } from "@designliquido/delegua/fontes/interfaces/analisador-semantico-interface";
-import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from "@designliquido/delegua/fontes/interfaces/erros";
-import { FuncaoHipoteticaInterface } from "@designliquido/delegua/fontes/interfaces/funcao-hipotetica-interface";
-import { RetornoAnalisadorSemantico } from "@designliquido/delegua/fontes/interfaces/retornos/retorno-analisador-semantico";
-import { VariavelHipoteticaInterface } from "@designliquido/delegua/fontes/interfaces/variavel-hipotetica-interface";
-import { ContinuarQuebra, RetornoQuebra, SustarQuebra } from "@designliquido/delegua/fontes/quebras";
-import { PilhaVariaveis } from "./pilha-variaveis";
+    VarMultiplo,
+} from '@designliquido/delegua/fontes/declaracoes';
+import { SimboloInterface } from '@designliquido/delegua/fontes/interfaces';
+import { AnalisadorSemanticoInterface } from '@designliquido/delegua/fontes/interfaces/analisador-semantico-interface';
+import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/fontes/interfaces/erros';
+import { FuncaoHipoteticaInterface } from '@designliquido/delegua/fontes/interfaces/funcao-hipotetica-interface';
+import { RetornoAnalisadorSemantico } from '@designliquido/delegua/fontes/interfaces/retornos/retorno-analisador-semantico';
+import { VariavelHipoteticaInterface } from '@designliquido/delegua/fontes/interfaces/variavel-hipotetica-interface';
+import { ContinuarQuebra, SustarQuebra } from '@designliquido/delegua/fontes/quebras';
 
+import { PilhaVariaveis } from './pilha-variaveis';
 
-export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
+export class AnalisadorSemanticoVisuAlg implements AnalisadorSemanticoInterface {
     pilhaVariaveis: PilhaVariaveis;
     variaveis: { [nomeVariavel: string]: VariavelHipoteticaInterface };
-    funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface }
+    funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface };
     atual: number;
     diagnosticos: DiagnosticoAnalisadorSemantico[];
 
@@ -56,7 +69,7 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
     visitarDeclaracaoInicioAlgoritmo(declaracao: InicioAlgoritmo): Promise<any> {
         return Promise.resolve();
     }
-    
+
     visitarDeclaracaoCabecalhoPrograma(declaracao: CabecalhoPrograma): Promise<any> {
         return Promise.resolve();
     }
@@ -71,7 +84,7 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
             mensagem: mensagem,
             hashArquivo: simbolo.hashArquivo,
             linha: simbolo.linha,
-            severidade: DiagnosticoSeveridade.ERRO
+            severidade: DiagnosticoSeveridade.ERRO,
         });
     }
 
@@ -81,7 +94,7 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
             mensagem: mensagem,
             hashArquivo: simbolo.hashArquivo,
             linha: simbolo.linha,
-            severidade: DiagnosticoSeveridade.AVISO
+            severidade: DiagnosticoSeveridade.AVISO,
         });
     }
 
@@ -89,13 +102,9 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
         const { simbolo, valor } = expressao;
         let variavel = this.variaveis[simbolo.lexema];
         if (!variavel) {
-            this.erro(
-                simbolo,
-                `Variável ${simbolo.lexema} ainda não foi declarada.`
-            );
+            this.erro(simbolo, `Variável ${simbolo.lexema} ainda não foi declarada.`);
             return Promise.resolve();
         }
-
 
         if (variavel.tipo) {
             if (valor instanceof Literal && variavel.tipo.includes('[]')) {
@@ -131,7 +140,6 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
         }
     }
 
-
     private gerarNumeroAleatorio(min: number, max: number) {
         return Math.floor(Math.random() * (max - min) + min);
     }
@@ -139,7 +147,7 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
     private encontrarLeiaNoAleatorio(declaracao: Declaracao, menorNumero: number, maiorNumero: number) {
         if ('declaracoes' in declaracao) {
             // Se a declaração tiver um campo 'declaracoes', ela é um Bloco
-            const declaracoes = declaracao.declaracoes as Declaracao[]
+            const declaracoes = declaracao.declaracoes as Declaracao[];
             for (const subDeclaracao of declaracoes) {
                 this.encontrarLeiaNoAleatorio(subDeclaracao, menorNumero, maiorNumero);
             }
@@ -156,14 +164,13 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
         //     let valor: number | string = 0;
         //     if (this.variaveis[variavel.simbolo.lexema].tipo.toLowerCase() === "inteiro" || this.variaveis[variavel.simbolo.lexema].tipo.toLowerCase() === "real") valor = this.gerarNumeroAleatorio(menorNumero, maiorNumero);
         //     else if (this.variaveis[variavel.simbolo.lexema].tipo.toLowerCase() === "caracter") valor = this.palavraAleatoriaCom5Digitos()
-
         //     this.variaveis[variavel.simbolo.lexema].valor = valor;
         // }
     }
 
     private palavraAleatoriaCom5Digitos(): string {
-        const caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let palavra = "";
+        const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let palavra = '';
 
         for (let i = 0; i < 5; i++) {
             const indiceAleatorio = Math.floor(Math.random() * caracteres.length);
@@ -175,12 +182,11 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
     visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
         //Isso acontece quando não é informado os número máximos e mínimos
         let menorNumero = 0;
-        let maiorNumero = 100
+        let maiorNumero = 100;
 
         if (declaracao.argumentos) {
             menorNumero = Math.min(declaracao.argumentos.min, declaracao.argumentos.max);
             maiorNumero = Math.max(declaracao.argumentos.min, declaracao.argumentos.max);
-
         }
 
         for (let corpoDeclaracao of declaracao.corpo.declaracoes) {
@@ -194,8 +200,13 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
         this.variaveis[declaracao.simbolo.lexema] = {
             imutavel: false,
             tipo: declaracao.tipo,
-            valor: declaracao.inicializador !== null ? declaracao.inicializador.valor !== undefined ? declaracao.inicializador.valor : declaracao.inicializador : undefined
-        }
+            valor:
+                declaracao.inicializador !== null
+                    ? declaracao.inicializador.valor !== undefined
+                        ? declaracao.inicializador.valor
+                        : declaracao.inicializador
+                    : undefined,
+        };
         return Promise.resolve();
     }
 
@@ -243,8 +254,8 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
         }
 
         this.funcoes[declaracao.simbolo.lexema] = {
-            valor: declaracao.funcao
-        }
+            valor: declaracao.funcao,
+        };
 
         return Promise.resolve();
     }
@@ -340,20 +351,19 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
     visitarExpressaoDeChamada(expressao: Chamada) {
         if (expressao.entidadeChamada instanceof Variavel) {
             const variavel = expressao.entidadeChamada as Variavel;
-            const funcaoChamada = this.variaveis[variavel.simbolo.lexema] || this.funcoes[variavel.simbolo.lexema]
+            const funcaoChamada = this.variaveis[variavel.simbolo.lexema] || this.funcoes[variavel.simbolo.lexema];
             if (!funcaoChamada) {
-                this.erro(
-                    variavel.simbolo,
-                    `Função '${variavel.simbolo.lexema}' não foi declarada.`
-                )
+                this.erro(variavel.simbolo, `Função '${variavel.simbolo.lexema}' não foi declarada.`);
                 return Promise.resolve();
             }
             const funcao = funcaoChamada.valor as FuncaoConstruto;
             if (funcao.parametros.length != expressao.argumentos.length) {
                 this.erro(
                     variavel.simbolo,
-                    `Esperava ${funcao.parametros.length} ${funcao.parametros.length > 1 ? "argumentos" : "argumento"}, mas obteve ${expressao.argumentos.length}.`
-                )
+                    `Esperava ${funcao.parametros.length} ${
+                        funcao.parametros.length > 1 ? 'argumentos' : 'argumento'
+                    }, mas obteve ${expressao.argumentos.length}.`
+                );
             }
 
             // for (let [indice, argumentoFuncao] of funcao.parametros.entries()) {
@@ -375,7 +385,7 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
             //     }
             // }
         }
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     visitarExpressaoDeVariavel(expressao: any) {
@@ -405,6 +415,7 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
     visitarExpressaoFimPara(declaracao: FimPara) {
         return Promise.resolve();
     }
+
     visitarExpressaoFormatacaoEscrita(declaracao: FormatacaoEscrita) {
         return Promise.resolve();
     }
@@ -448,12 +459,13 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
     visitarExpressaoUnaria(expressao: any) {
         return Promise.resolve();
     }
+    
     visitarExpressaoAcessoElementoMatriz(expressao: any) {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     visitarExpressaoAtribuicaoPorIndicesMatriz(expressao: any): Promise<any> {
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     analisar(declaracoes: Declaracao[]): RetornoAnalisadorSemantico {
@@ -466,7 +478,7 @@ export class AnalisadorSemantico implements AnalisadorSemanticoInterface {
         }
 
         return {
-            diagnosticos: this.diagnosticos
-        } as RetornoAnalisadorSemantico
+            diagnosticos: this.diagnosticos,
+        } as RetornoAnalisadorSemantico;
     }
 }

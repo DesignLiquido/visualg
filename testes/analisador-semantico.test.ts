@@ -1,17 +1,17 @@
-import { AnalisadorSemantico } from '../analisador-semantico'
-import { AvaliadorSintatico } from "../avaliador-sintatico";
-import { Lexador } from "../lexador";
+import { AnalisadorSemanticoVisuAlg } from '../fontes/analisador-semantico';
+import { AvaliadorSintaticoVisuAlg } from "../fontes/avaliador-sintatico";
+import { LexadorVisuAlg } from "../fontes/lexador";
 
 describe('Analisador sêmantico', () => {
     describe('analisar()', () => {
-        let lexador: any = Lexador;
-        let avaliadorSintatico: AvaliadorSintatico;
-        let analisadorSemantico: AnalisadorSemantico;
+        let lexador: LexadorVisuAlg;
+        let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
+        let analisadorSemantico: AnalisadorSemanticoVisuAlg;
 
         beforeEach(() => {
-            lexador = new Lexador();
-            avaliadorSintatico = new AvaliadorSintatico();
-            analisadorSemantico = new AnalisadorSemantico();
+            lexador = new LexadorVisuAlg();
+            avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
+            analisadorSemantico = new AnalisadorSemanticoVisuAlg();
         });
 
 

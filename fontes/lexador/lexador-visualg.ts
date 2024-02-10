@@ -4,6 +4,7 @@ import { ErroLexador } from '@designliquido/delegua/fontes/lexador/erro-lexador'
 
 import tiposDeSimbolos from '@designliquido/delegua/fontes/tipos-de-simbolos/visualg';
 import { SimboloInterface } from '@designliquido/delegua/fontes/interfaces';
+
 import { palavrasReservadas } from './palavras-reservadas';
 
 const dicionarioBibliotecaGlobal = {
@@ -14,7 +15,7 @@ const dicionarioBibliotecaGlobal = {
  * O Lexador do VisuAlg é de linha única porque não possui comentários
  * multilinha na especificação.
  */
-export class Lexador extends LexadorBaseLinhaUnica {
+export class LexadorVisuAlg extends LexadorBaseLinhaUnica {
     analisarNumero(): void {
         while (this.eDigito(this.simboloAtual())) {
             this.avancar();

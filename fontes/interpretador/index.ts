@@ -1,4 +1,3 @@
-// export * from '../interfaces/erros/erro-interpretador';
-// export * from './interpretador-base';
-// export * from './interpretador-com-depuracao';
-// export * from '../interfaces/retornos/retorno-interpretador';
+export * from './inferenciador';
+export * from './interpretador-visualg';
+export * from './interpretador-visualg-com-depuracao';

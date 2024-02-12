@@ -51,6 +51,7 @@ import {
     Declaracao,
     Falhar,
     CabecalhoPrograma,
+    TendoComo,
 } from '@designliquido/delegua/fontes/declaracoes';
 import { InicioAlgoritmo } from '@designliquido/delegua/fontes/declaracoes/inicio-algoritmo';
 import { SimboloInterface, VisitanteComumInterface } from '@designliquido/delegua/fontes/interfaces';
@@ -65,7 +66,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
     devePularLinha: boolean;
     deveIndentar: boolean;
     contadorDeclaracaoVar: number;
-    retornoFuncaoAtual: SimboloInterface | any;
+    retornoFuncaoAtual: SimboloInterface;
 
     constructor(quebraLinha: string, tamanhoIndentacao: number = 4) {
         this.quebraLinha = quebraLinha;
@@ -79,6 +80,10 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         this.retornoFuncaoAtual = undefined;
     }
 
+    visitarDeclaracaoTendoComo(declaracao: TendoComo): void | Promise<any> {
+        throw new Error('Método não implementado.');
+    }
+
     visitarDeclaracaoInicioAlgoritmo(declaracao: InicioAlgoritmo): any {
         this.codigoFormatado += `inicio${this.quebraLinha}`;
     }
@@ -87,7 +92,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         this.codigoFormatado += `algoritmo "${declaracao.nomeProgramaAlgoritmo}"${this.quebraLinha}`;
     }
 
-    visitarDeclaracaoAleatorio(declaracao: Aleatorio | any): any {
+    visitarDeclaracaoAleatorio(declaracao: Aleatorio): any {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}aleatorio `;
         if (declaracao.argumentos.max > 0 && declaracao.argumentos.min > 0) {
             this.codigoFormatado += `${declaracao.argumentos.min}, ${declaracao.argumentos.max}${this.quebraLinha}`;
@@ -139,7 +144,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         var ultimaOcorrenciaPosicao =
             ultimaOcorrenciaIndex >= 0 ? declaracao.funcao.corpo.length - 1 - ultimaOcorrenciaIndex : -1;
 
-        let indiceParaRemover: any = [];
+        let indiceParaRemover = [];
         if (primeiraOcorrenciaVar > -1 && ultimaOcorrenciaPosicao > -1) {
             this.codigoFormatado += this.quebraLinha;
             for (let i = primeiraOcorrenciaVar; i <= ultimaOcorrenciaPosicao; i++) {
@@ -296,7 +301,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         this.codigoFormatado += `${declaracao.simbolo.lexema}`;
 
         if (declaracao.inicializador) {
-            // this.codigoFormatado += ` : ${declaracao.tipo.toLowerCase()}`;
+            this.codigoFormatado += ` : ${declaracao.tipo.toLowerCase()}`;
         }
 
         if (this.devePularLinha) {
@@ -538,7 +543,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
     visitarExpressaoSustar(declaracao?: Sustar): any {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}interrompa${this.quebraLinha}`;
     }
-    
+
     visitarExpressaoTipoDe(expressao: TipoDe): any {
         throw new Error('Método não implementado.');
     }
@@ -562,12 +567,12 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
 
         switch (expressao.incidenciaOperador) {
             case 'ANTES':
-                // this.codigoFormatado += operador;
+                this.codigoFormatado += operador;
                 this.formatarDeclaracaoOuConstruto(expressao.operando);
                 break;
             case 'DEPOIS':
                 this.formatarDeclaracaoOuConstruto(expressao.operando);
-                // this.codigoFormatado += operador;
+                this.codigoFormatado += operador;
                 break;
         }
 
@@ -740,7 +745,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
 
     formatar(declaracoes: Declaracao[]): string {
         this.indentacaoAtual = 0;
-        this.codigoFormatado = "";
+        this.codigoFormatado = '';
         this.devePularLinha = true;
         this.deveIndentar = true;
         this.indentacaoAtual += this.tamanhoIndentacao;

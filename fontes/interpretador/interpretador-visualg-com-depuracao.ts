@@ -4,10 +4,10 @@ import {
     registrarBibliotecaNumericaVisuAlg,
     registrarBibliotecaCaracteresVisuAlg,
 } from '../bibliotecas';
-import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, Logico } from '@designliquido/delegua/fontes/construtos';
-import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma } from '@designliquido/delegua/fontes/declaracoes';
-import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/fontes/quebras';
-import { InterpretadorComDepuracao } from '@designliquido/delegua/fontes/interpretador/interpretador-com-depuracao';
+import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, Logico } from '@designliquido/delegua/construtos';
+import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma } from '@designliquido/delegua/declaracoes';
+import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
+import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 import * as comum from './comum';
 
 /**

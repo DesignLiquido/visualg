@@ -9,15 +9,15 @@ import {
     Logico,
     Unario,
     Variavel,
-} from '@designliquido/delegua/fontes/construtos';
-import { Aleatorio, CabecalhoPrograma, Declaracao, Expressao, InicioAlgoritmo, Leia, Para } from '@designliquido/delegua/fontes/declaracoes';
-import { Simbolo } from '@designliquido/delegua/fontes/lexador';
-import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/fontes/interfaces';
+} from '@designliquido/delegua/construtos';
+import { Aleatorio, CabecalhoPrograma, Declaracao, Expressao, InicioAlgoritmo, Leia, Para } from '@designliquido/delegua/declaracoes';
+import { Simbolo } from '@designliquido/delegua/lexador';
+import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 import { inferirTipoVariavel } from './inferenciador';
 
-import tiposDeSimbolos from '@designliquido/delegua/fontes/tipos-de-simbolos/visualg';
-import { ErroEmTempoDeExecucao } from '@designliquido/delegua/fontes/excecoes';
-import { InterpretadorBase } from '@designliquido/delegua/fontes/interpretador/interpretador-base';
+import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
+import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
+import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 
 export async function visitarDeclaracaoCabecalhoPrograma(interpretador: InterpretadorBase, declaracao: CabecalhoPrograma): Promise<any> {
     return Promise.resolve();

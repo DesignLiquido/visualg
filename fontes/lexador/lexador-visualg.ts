@@ -1,9 +1,9 @@
-import { RetornoLexador } from '@designliquido/delegua/fontes/interfaces/retornos';
-import { LexadorBaseLinhaUnica } from '@designliquido/delegua/fontes/lexador/lexador-base-linha-unica';
-import { ErroLexador } from '@designliquido/delegua/fontes/lexador/erro-lexador';
+import { RetornoLexador } from '@designliquido/delegua/interfaces/retornos';
+import { LexadorBaseLinhaUnica } from '@designliquido/delegua/lexador/lexador-base-linha-unica';
+import { ErroLexador } from '@designliquido/delegua/lexador/erro-lexador';
 
-import tiposDeSimbolos from '@designliquido/delegua/fontes/tipos-de-simbolos/visualg';
-import { SimboloInterface } from '@designliquido/delegua/fontes/interfaces';
+import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
+import { SimboloInterface } from '@designliquido/delegua/interfaces';
 
 import { palavrasReservadas } from './palavras-reservadas';
 

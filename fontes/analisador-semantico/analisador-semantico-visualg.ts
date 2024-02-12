@@ -6,7 +6,7 @@ import {
     Literal,
     Variavel,
     Vetor,
-} from '@designliquido/delegua/fontes/construtos';
+} from '@designliquido/delegua/construtos';
 import {
     Aleatorio,
     Declaracao,
@@ -16,17 +16,17 @@ import {
     Leia,
     Retorna,
     Var,
-} from '@designliquido/delegua/fontes/declaracoes';
+} from '@designliquido/delegua/declaracoes';
 
-import { AnalisadorSemanticoBase } from '@designliquido/delegua/fontes/analisador-semantico/analisador-semantico-base';
-import { SimboloInterface } from '@designliquido/delegua/fontes/interfaces';
-import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/fontes/interfaces/erros';
-import { FuncaoHipoteticaInterface } from '@designliquido/delegua/fontes/interfaces/funcao-hipotetica-interface';
-import { RetornoAnalisadorSemantico } from '@designliquido/delegua/fontes/interfaces/retornos/retorno-analisador-semantico';
-import { VariavelHipoteticaInterface } from '@designliquido/delegua/fontes/interfaces/variavel-hipotetica-interface';
+import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
+import { SimboloInterface } from '@designliquido/delegua/interfaces';
+import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
+import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
+import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
+import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
 
 import { PilhaVariaveis } from './pilha-variaveis';
-import { RetornoQuebra } from '@designliquido/delegua/fontes/quebras';
+import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;

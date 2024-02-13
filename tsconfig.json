@@ -1,14 +1,11 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@designliquido/delegua": ["node_modules/@designliquido/delegua/fontes"],
-            "@designliquido/delegua/*": ["node_modules/@designliquido/delegua/fontes/*"]
-        },
         "outDir": "dist",
         "module": "CommonJS",
         "target": "es2017",
         "rootDir": "fontes",
+        "sourceRoot": "fontes",
+        "mapRoot": "dist",
         "allowJs": true,
         "sourceMap": true,
         "declaration": true,

@@ -45,33 +45,43 @@ export async function atribuirVariavel(
 
         let alvo = promises[0];
         let indice = promises[1];
-        const subtipo = alvo.hasOwnProperty('subtipo') ? alvo.subtipo : undefined;
+        let valorAlvo: any;
+        let valorIndice: any;
 
         if (alvo.hasOwnProperty('valor')) {
-            alvo = alvo.valor;
+            valorAlvo = alvo.valor;
+        } else {
+            valorAlvo = alvo;
         }
 
         if (indice.hasOwnProperty('valor')) {
-            indice = indice.valor;
+            valorIndice = indice.valor;
+        } else {
+            valorIndice = indice;
         }
 
-        let valorResolvido;
+        const subtipo = String(alvo.tipo).replace('[]', '');
+
+        let valorResolvido: any;
         switch (subtipo) {
-            case 'texto':
-                valorResolvido = String(valor);
+            case 'inteiro':
+                valorResolvido = parseInt(valor);
+                break;
+            case 'lógico':
+                valorResolvido = Boolean(valor);
                 break;
             case 'número':
                 valorResolvido = Number(valor);
                 break;
-            case 'lógico':
-                valorResolvido = Boolean(valor);
+            case 'texto':
+                valorResolvido = String(valor);
                 break;
             default:
                 valorResolvido = valor;
                 break;
         }
 
-        alvo[indice] = valorResolvido;
+        valorAlvo[valorIndice] = valorResolvido;
     }
 }
 
@@ -102,7 +112,10 @@ function verificarOperandosNumeros(
 ): void {
     const tipoDireita: string = direita.tipo ? direita.tipo : typeof direita === 'number' ? 'número' : String(NaN);
     const tipoEsquerda: string = esquerda.tipo ? esquerda.tipo : typeof esquerda === 'number' ? 'número' : String(NaN);
-    if (tipoDireita === 'número' && tipoEsquerda === 'número') return;
+
+    const tiposNumericos = ['inteiro', 'numero', 'número', 'real'];
+    if (tiposNumericos.includes(tipoDireita.toLowerCase()) && tiposNumericos.includes(tipoEsquerda.toLowerCase())) return;
+
     throw new ErroEmTempoDeExecucao(operador, 'Operadores precisam ser números.', operador.linha);
 }
 

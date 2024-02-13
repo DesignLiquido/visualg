@@ -41,7 +41,8 @@ import {
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico';
-import { TipoDadosElementar } from '@designliquido/delegua/fontes/tipo-dados-elementar';
+import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
+
 import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
 
 import { ParametroVisuAlg } from './parametro-visualg';

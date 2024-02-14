@@ -1,5 +1,5 @@
-import { FuncaoPadrao } from '@designliquido/delegua/fontes/estruturas';
-import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/fontes/interfaces/pilha-escopos-execucao-interface';
+import { FuncaoPadrao } from '@designliquido/delegua/estruturas';
+import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 
 export function registrarBibliotecaNumericaVisuAlg(
     pilhaEscoposExecucao: PilhaEscoposExecucaoInterface

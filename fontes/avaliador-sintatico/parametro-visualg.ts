@@ -1,4 +1,4 @@
-import { SimboloInterface } from '@designliquido/delegua/fontes/interfaces';
+import { SimboloInterface } from '@designliquido/delegua/interfaces';
 
 export type ParametroVisuAlg = {
     identificadores: SimboloInterface[];

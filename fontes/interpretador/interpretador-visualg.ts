@@ -1,7 +1,8 @@
-import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, Logico } from '@designliquido/delegua/fontes/construtos';
-import { Aleatorio, CabecalhoPrograma, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para } from '@designliquido/delegua/fontes/declaracoes';
-import { InterpretadorBase } from '@designliquido/delegua/fontes/interpretador';
-import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/fontes/quebras';
+import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, Logico } from '@designliquido/delegua/construtos';
+import { Aleatorio, CabecalhoPrograma, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para } from '@designliquido/delegua/declaracoes';
+import { InterpretadorBase } from '@designliquido/delegua/interpretador';
+import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
+
 import {
     registrarBibliotecaNumericaVisuAlg,
     registrarBibliotecaCaracteresVisuAlg,
@@ -20,8 +21,8 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
     constructor(
         diretorioBase: string,
         performance = false,
-        funcaoDeRetorno: Function,
-        funcaoDeRetornoMesmaLinha: Function
+        funcaoDeRetorno: Function = null,
+        funcaoDeRetornoMesmaLinha: Function = null
     ) {
         super(diretorioBase, performance, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
         this.mensagemPrompt = '> ';
@@ -42,11 +43,11 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
         throw new Error('Método não implementado.');
     }
 
-    async visitarExpressaoAcessoElementoMatriz(expressao: AcessoElementoMatriz): Promise<any> {
+    override async visitarExpressaoAcessoElementoMatriz(expressao: AcessoElementoMatriz): Promise<any> {
         return await comum.visitarExpressaoAcessoElementoMatriz(this, expressao);
     }
 
-    async visitarExpressaoAtribuicaoPorIndicesMatriz(expressao: AtribuicaoPorIndicesMatriz): Promise<any> {
+    override async visitarExpressaoAtribuicaoPorIndicesMatriz(expressao: AtribuicaoPorIndicesMatriz): Promise<any> {
         return await comum.visitarExpressaoAtribuicaoPorIndicesMatriz(this, expressao);
     }
 

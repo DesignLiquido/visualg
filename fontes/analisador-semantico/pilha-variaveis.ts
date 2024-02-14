@@ -1,5 +1,5 @@
-import { VariavelInterface } from '@designliquido/delegua/fontes/interfaces';
-import { PilhaInterface } from '@designliquido/delegua/fontes/interfaces';
+import { VariavelInterface } from '@designliquido/delegua/interfaces';
+import { PilhaInterface } from '@designliquido/delegua/interfaces';
 
 export class PilhaVariaveis implements PilhaInterface<{ [nomeVariavel: string]: VariavelInterface }> {
     pilha: { [nomeVariavel: string]: VariavelInterface }[];

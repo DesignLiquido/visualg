@@ -1,4 +1,4 @@
-import tiposDeSimbolos from '@designliquido/delegua/fontes/tipos-de-simbolos/visualg';
+import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
 
 export const palavrasReservadas = {
     abs: tiposDeSimbolos.METODO_BIBLIOTECA_GLOBAL,

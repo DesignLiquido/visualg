@@ -22,7 +22,7 @@ import {
     Unario,
     Variavel,
     Vetor,
-} from '@designliquido/delegua/fontes/construtos';
+} from '@designliquido/delegua/construtos';
 import {
     Aleatorio,
     Classe,
@@ -52,11 +52,11 @@ import {
     Falhar,
     CabecalhoPrograma,
     TendoComo,
-} from '@designliquido/delegua/fontes/declaracoes';
-import { InicioAlgoritmo } from '@designliquido/delegua/fontes/declaracoes/inicio-algoritmo';
-import { SimboloInterface, VisitanteComumInterface } from '@designliquido/delegua/fontes/interfaces';
-import { ContinuarQuebra } from '@designliquido/delegua/fontes/quebras';
-import tiposDeSimbolos from '@designliquido/delegua/fontes/tipos-de-simbolos/visualg';
+} from '@designliquido/delegua/declaracoes';
+import { InicioAlgoritmo } from '@designliquido/delegua/declaracoes/inicio-algoritmo';
+import { SimboloInterface, VisitanteComumInterface } from '@designliquido/delegua/interfaces';
+import { ContinuarQuebra } from '@designliquido/delegua/quebras';
+import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
 
 export class FormatadorVisuAlg implements VisitanteComumInterface {
     indentacaoAtual: number;

@@ -1,4 +1,6 @@
-export function inferirTipoVariavel(variavel: string | number | Array<any> | boolean | null | undefined) {
+export type TipoInferencia = "texto" | "número" | "longo" | "vetor" | "dicionário" | "nulo" | "lógico" | "função" | "símbolo" | "objeto" | "módulo";
+
+export function inferirTipoVariavel(variavel: string | number | Array<any> | boolean | null | undefined): TipoInferencia {
     const tipo = typeof variavel;
     switch (tipo) {
         case 'string':
@@ -14,9 +16,9 @@ export function inferirTipoVariavel(variavel: string | number | Array<any> | boo
         case 'object':
             if (Array.isArray(variavel)) return 'vetor';
             if (variavel === null) return 'nulo';
-            // if (variavel.constructor.name === 'DeleguaFuncao') return 'função';
-            // if (variavel.constructor.name === 'DeleguaModulo') return 'módulo';
-            // if (variavel.constructor.name === 'Classe') return 'objeto';
+            if (variavel.constructor.name === 'DeleguaFuncao') return 'função';
+            if (variavel.constructor.name === 'DeleguaModulo') return 'módulo';
+            if (variavel.constructor.name === 'Classe') return 'objeto';
             return 'dicionário';
         case 'function':
             return 'função';

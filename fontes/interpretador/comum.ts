@@ -19,11 +19,17 @@ import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 
-export async function visitarDeclaracaoCabecalhoPrograma(interpretador: InterpretadorBase, declaracao: CabecalhoPrograma): Promise<any> {
+export async function visitarDeclaracaoCabecalhoPrograma(
+    interpretador: InterpretadorBase,
+    declaracao: CabecalhoPrograma
+): Promise<any> {
     return Promise.resolve();
 }
 
-export async function visitarDeclaracaoInicioAlgoritmo(interpretador: InterpretadorBase, declaracao: InicioAlgoritmo): Promise<any> {
+export async function visitarDeclaracaoInicioAlgoritmo(
+    interpretador: InterpretadorBase,
+    declaracao: InicioAlgoritmo
+): Promise<any> {
     return Promise.resolve();
 }
 
@@ -180,7 +186,9 @@ export async function visitarExpressaoBinaria(
                 return Number(valorEsquerdo) - Number(valorDireito);
 
             case tiposDeSimbolos.ADICAO:
-                if (tipoEsquerdo === 'número' && tipoDireito === 'número') {
+                let tiposNumericos = ['inteiro', 'numero', 'número', 'real']
+                if (tiposNumericos.includes(tipoEsquerdo.toLowerCase())
+                    && tiposNumericos.includes(tipoDireito.toLowerCase())) {
                     return Number(valorEsquerdo) + Number(valorDireito);
                 } else {
                     return String(valorEsquerdo) + String(valorDireito);
@@ -311,7 +319,10 @@ export async function resolverIncrementoPara(interpretador: InterpretadorBase, d
     }
 }
 
-export async function visitarExpressaoAcessoElementoMatriz(interpretador: InterpretadorBase, expressao: AcessoElementoMatriz): Promise<any> {
+export async function visitarExpressaoAcessoElementoMatriz(
+    interpretador: InterpretadorBase,
+    expressao: AcessoElementoMatriz
+): Promise<any> {
     const promises = await Promise.all([
         avaliar(interpretador, expressao.entidadeChamada),
         avaliar(interpretador, expressao.indicePrimario),
@@ -368,7 +379,10 @@ export async function visitarExpressaoAcessoElementoMatriz(interpretador: Interp
     );
 }
 
-export async function visitarExpressaoAtribuicaoPorIndicesMatriz(interpretador: InterpretadorBase, expressao: AtribuicaoPorIndicesMatriz): Promise<any> {
+export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
+    interpretador: InterpretadorBase,
+    expressao: AtribuicaoPorIndicesMatriz
+): Promise<any> {
     const promises = await Promise.all([
         avaliar(interpretador, expressao.objeto),
         avaliar(interpretador, expressao.indicePrimario),
@@ -413,10 +427,15 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(interpretador: 
     );
 }
 
-async function encontrarLeiaNoAleatorio(interpretador: InterpretadorBase, declaracao: Declaracao, menorNumero: number, maiorNumero: number) {
+async function encontrarLeiaNoAleatorio(
+    interpretador: InterpretadorBase,
+    declaracao: Declaracao,
+    menorNumero: number,
+    maiorNumero: number
+) {
     if ('declaracoes' in declaracao) {
         // Se a declaração tiver um campo 'declaracoes', ela é um Bloco
-        const declaracoes = declaracao.declaracoes as Declaracao[]
+        const declaracoes = declaracao.declaracoes as Declaracao[];
         for (const subDeclaracao of declaracoes) {
             encontrarLeiaNoAleatorio(interpretador, subDeclaracao, menorNumero, maiorNumero);
         }
@@ -424,9 +443,10 @@ async function encontrarLeiaNoAleatorio(interpretador: InterpretadorBase, declar
         // Se encontrarmos um Leia, podemos efetuar as operações imediatamente
         for (const argumento of declaracao.argumentos) {
             const arg1 = await interpretador.avaliar(argumento);
-            const tipoDe = arg1.tipo || inferirTipoVariavel(arg1)
-            const valor = tipoDe === "texto" ? palavraAleatoriaCom5Digitos() : gerarNumeroAleatorio(menorNumero, maiorNumero)
-            atribuirVariavel(interpretador, argumento, valor)
+            const tipoDe = arg1.tipo || inferirTipoVariavel(arg1);
+            const valor =
+                tipoDe === 'texto' ? palavraAleatoriaCom5Digitos() : gerarNumeroAleatorio(menorNumero, maiorNumero);
+            atribuirVariavel(interpretador, argumento, valor);
         }
     }
 }
@@ -436,8 +456,8 @@ function gerarNumeroAleatorio(min: number, max: number) {
 }
 
 function palavraAleatoriaCom5Digitos(): string {
-    const caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let palavra = "";
+    const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let palavra = '';
 
     for (let i = 0; i < 5; i++) {
         const indiceAleatorio = Math.floor(Math.random() * caracteres.length);
@@ -450,32 +470,33 @@ export async function visitarDeclaracaoAleatorio(interpretador: InterpretadorBas
     let retornoExecucao: any;
     try {
         let menorNumero = 0;
-        let maiorNumero = 100
+        let maiorNumero = 100;
 
         if (expressao.argumentos) {
             menorNumero = Math.min(expressao.argumentos.min, expressao.argumentos.max);
             maiorNumero = Math.max(expressao.argumentos.min, expressao.argumentos.max);
-
         }
         for (let corpoDeclaracao of expressao.corpo.declaracoes) {
             encontrarLeiaNoAleatorio(interpretador, corpoDeclaracao, menorNumero, maiorNumero);
-            retornoExecucao = await interpretador.executar(corpoDeclaracao)
+            retornoExecucao = await interpretador.executar(corpoDeclaracao);
         }
-
     } catch (error) {
         interpretador.erros.push({
             erroInterno: error,
             linha: expressao.linha,
             hashArquivo: expressao.hashArquivo,
         });
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
 
     return retornoExecucao;
 }
 
-
-export async function visitarExpressaoLeia(interpretador: InterpretadorBase, expressao: Leia, mensagemPrompt: string): Promise<any> {
+export async function visitarExpressaoLeia(
+    interpretador: InterpretadorBase,
+    expressao: Leia,
+    mensagemPrompt: string
+): Promise<any> {
     // Verifica se a leitura deve ser interrompida antes de prosseguir
     if (!expressao.eParaInterromper) {
         for (let argumento of expressao.argumentos) {

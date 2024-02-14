@@ -16,7 +16,7 @@ import * as comum from './comum';
 export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao {
     mensagemPrompt: string;
 
-    constructor(diretorioBase: string, funcaoDeRetorno: Function, funcaoDeRetornoMesmaLinha: Function) {
+    constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null) {
         super(diretorioBase, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
         this.mensagemPrompt = '> ';
 
@@ -158,7 +158,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
 
         // Aqui precisamos clonar a declaração `Para` porque inserimos
         // ao final dela o incremento. Diferente de declarações `Para` de
-        // outros dialetos, o incremento dessa declaração é implícito. 
+        // outros dialetos, o incremento dessa declaração é implícito.
         const cloneDeclaracao = _.cloneDeep(declaracao) as Para;
         const corpoExecucao = cloneDeclaracao.corpo as Bloco;
         // O incremento vai ao final do bloco de escopo.

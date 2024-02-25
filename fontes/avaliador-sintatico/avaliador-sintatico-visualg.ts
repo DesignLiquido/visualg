@@ -49,10 +49,12 @@ import { ParametroVisuAlg } from './parametro-visualg';
 
 export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     blocoPrincipalIniciado: boolean;
+    fimAlgoritmoEncontrado: boolean;
 
     constructor() {
         super();
         this.blocoPrincipalIniciado = false;
+        this.fimAlgoritmoEncontrado = false;
     }
 
     private validarSegmentoAlgoritmo(): SimboloInterface {
@@ -1189,6 +1191,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 return this.declaracaoEscrevaMesmaLinha();
             case tiposDeSimbolos.ESCREVA_LINHA:
                 return this.declaracaoEscreva();
+            case tiposDeSimbolos.FIM_ALGORITMO:
+                this.fimAlgoritmoEncontrado = true;
+                this.avancarEDevolverAnterior();
+                return null;
             case tiposDeSimbolos.FUNCAO:
                 return this.funcao('funcao');
             case tiposDeSimbolos.INICIO:
@@ -1249,6 +1255,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.atual = 0;
         this.blocos = 0;
         this.blocoPrincipalIniciado = false;
+        this.fimAlgoritmoEncontrado = false;
 
         this.hashArquivo = hashArquivo || 0;
         this.simbolos = retornoLexador?.simbolos || [];
@@ -1267,7 +1274,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             )
         );
 
-        while (!this.estaNoFinal() && this.simbolos[this.atual].tipo !== tiposDeSimbolos.FIM_ALGORITMO) {
+        while (!this.estaNoFinal()) {
             const declaracao = this.resolverDeclaracaoForaDeBloco();
             if (Array.isArray(declaracao)) {
                 declaracoes = declaracoes.concat(declaracao);
@@ -1277,11 +1284,11 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         }
 
         const ultimoSimbolo = this.simbolos[this.simbolos.length - 1];
-        if (ultimoSimbolo.tipo !== tiposDeSimbolos.FIM_ALGORITMO) {
+        if (ultimoSimbolo.tipo !== tiposDeSimbolos.FIM_ALGORITMO && !this.fimAlgoritmoEncontrado) {
             throw new ErroAvaliadorSintatico(
                 ultimoSimbolo,
                 `Programa não termina com 'fimalgoritmo'. Último símbolo: '${
-                    ultimoSimbolo.lexema || ultimoSimbolo.literal
+                    ultimoSimbolo.lexema || ultimoSimbolo.literal || ultimoSimbolo.tipo
                 }'.`
             );
         }

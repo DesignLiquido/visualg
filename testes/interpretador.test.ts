@@ -136,7 +136,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it.skip('Sucesso - Leia', async () => {
+            it('Sucesso - Leia', async () => {
                 // Aqui vamos simular a resposta para cinco variáveis de `leia()`.
                 const respostas = ["1", "2", "3", "4", "5"];
                 interpretador.interfaceEntradaSaida = {
@@ -259,6 +259,34 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
+            it('Sucesso - Repita Até com interrupção', async () => {
+                let _saidas = '';
+                const retornoLexador = lexador.mapear([
+                    'algoritmo "Números de 1 a 10 (com interrompa)"',
+                    'var x: inteiro',
+                    'inicio',
+                    'x <- 0',
+                    'repita',
+                    '   x <- x + 1',
+                    '   escreva (x)',
+                    '   se x = 10 entao',
+                    '      interrompa',
+                    '   fimse',
+                    'ate falso',
+                    'fimalgoritmo'
+                ], -1);
+
+                interpretador.funcaoDeRetorno = (saida: any) => {
+                    _saidas += saida;
+                }
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+            });
+
             it('Sucesso - IMC', async () => {
                 const saidasMensagens = ['Massa(Kg): ', 'Altura (m): ', 'Parabens! Voce esta no seu peso ideal']
                 // Aqui vamos simular a resposta para duas variáveis de `leia()`.
@@ -329,7 +357,7 @@ describe('Interpretador', () => {
                     'Media do 10º aluno: 85'
                 ];
 
-                // Aqui vamos simular a resposta para duas variáveis de `leia()`.
+                // Aqui vamos simular a resposta para diversas variáveis de `leia()`.
                 const respostas = [
                     "90", "80", "50", "100", "60", "70", "75", "85", "89", "91",
                     "74", "79", "99", "90", "65", "78", "100", "67", "93", "88"

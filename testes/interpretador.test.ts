@@ -102,6 +102,43 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
+            it('Sucesso - Enquanto com variável modificada em loop', async () => {
+                let saidas: string[] = [];
+                // Aqui vamos simular a resposta para quatro variáveis de `leia()`.
+                const respostas = [
+                    "-1", "-2", "1", "0"
+                ];
+
+                interpretador.interfaceEntradaSaida = {
+                    question: (mensagem: string, callback: Function) => {
+                        callback(respostas.shift());
+                    }
+                };
+
+                const retornoLexador = lexador.mapear([
+                    'algoritmo "atividade_enquanto_1"',
+                    'var',
+                    '    x: real',
+                    'inicio',
+                    '    x := 1',
+                    '    enquanto x <> 0 faca',
+                    '        escreval("Digite um número")',
+                    '        leia(x)',
+                    '    fimenquanto',
+                    'fimalgoritmo'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                interpretador.funcaoDeRetornoMesmaLinha = (saida: any) => {
+                    saidas.push(saida);
+                }
+
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+            });
+
             it('Sucesso - limpatela', async () => {
                 const saidasMensagens = [
                     "Teste 1",

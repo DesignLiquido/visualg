@@ -8,6 +8,7 @@ import {
     registrarBibliotecaCaracteresVisuAlg,
 } from '../bibliotecas';
 import * as comum from './comum';
+import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 
 /**
  * O Interpretador VisuAlg possui algumas diferenças em relação ao
@@ -25,6 +26,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
         funcaoDeRetornoMesmaLinha: Function = null
     ) {
         super(diretorioBase, performance, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
+        this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
 
         registrarBibliotecaNumericaVisuAlg(this.pilhaEscoposExecucao);

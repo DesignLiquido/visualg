@@ -28,6 +28,7 @@
         "lodash": "^4.17.21"
     },
     "devDependencies": {
+        "@types/estree": "^1.0.5",
         "@types/jest": "^29.5.12",
         "@types/lodash": "^4.14.202",
         "@types/node": "^20.11.17",

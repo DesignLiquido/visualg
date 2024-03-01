@@ -1,14 +1,16 @@
 import * as _ from 'lodash';
 
-import {
-    registrarBibliotecaNumericaVisuAlg,
-    registrarBibliotecaCaracteresVisuAlg,
-} from '../bibliotecas';
 import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, Logico } from '@designliquido/delegua/construtos';
 import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
+
+import {
+    registrarBibliotecaNumericaVisuAlg,
+    registrarBibliotecaCaracteresVisuAlg,
+} from '../bibliotecas';
 import * as comum from './comum';
+import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 
 /**
  * Interpretador com depuração para o dialeto VisuAlg.
@@ -18,6 +20,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
 
     constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null) {
         super(diretorioBase, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
+        this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
 
         registrarBibliotecaNumericaVisuAlg(this.pilhaEscoposExecucao);

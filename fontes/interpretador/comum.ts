@@ -77,6 +77,7 @@ export async function atribuirVariavel(
                 valorResolvido = Boolean(valor);
                 break;
             case 'número':
+            case 'real':
                 valorResolvido = Number(valor);
                 break;
             case 'texto':

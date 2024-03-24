@@ -124,9 +124,9 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
     async visitarExpressaoFimPara(declaracao: FimPara): Promise<any> {
         if (!this.eVerdadeiro(await this.avaliar(declaracao.condicaoPara))) {
             const escopoPara = this.pilhaEscoposExecucao.pilha[this.pilhaEscoposExecucao.pilha.length - 2];
-            if (this.comando === 'proximo') {
-                escopoPara.declaracaoAtual++;
-            }
+            // if (this.comando === 'proximo') {
+            escopoPara.declaracaoAtual++;
+            // }
 
             escopoPara.emLacoRepeticao = false;
             return new SustarQuebra();

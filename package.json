@@ -24,7 +24,7 @@
         "deixar-codigo-bonito": "prettier --config .prettierrc --write fontes/**/*.ts"
     },
     "dependencies": {
-        "@designliquido/delegua": "^0.33.6",
+        "@designliquido/delegua": "^0.33.11",
         "lodash": "^4.17.21"
     },
     "devDependencies": {

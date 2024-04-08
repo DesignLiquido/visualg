@@ -130,6 +130,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
     async visitarExpressaoFimPara(declaracao: FimPara): Promise<any> {
         if (!this.eVerdadeiro(await this.avaliar(declaracao.condicaoPara))) {
             const escopoPara = this.pilhaEscoposExecucao.pilha[this.pilhaEscoposExecucao.pilha.length - 2];
+            // TODO: Testar se é preciso ter isso para o comando "continuar" (aparentemente, não).
             escopoPara.declaracaoAtual++;
 
             escopoPara.emLacoRepeticao = false;

@@ -124,6 +124,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
     async visitarExpressaoFimPara(declaracao: FimPara): Promise<any> {
         if (!this.eVerdadeiro(await this.avaliar(declaracao.condicaoPara))) {
             const escopoPara = this.pilhaEscoposExecucao.pilha[this.pilhaEscoposExecucao.pilha.length - 2];
+            // TODO: Avaliar trazer este 'if' de volta com o código de https://github.com/DesignLiquido/visualg/issues/8.
             // if (this.comando === 'proximo') {
             escopoPara.declaracaoAtual++;
             // }

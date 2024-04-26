@@ -483,98 +483,127 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Para com passo negativo', async () => {
-                const saidasMensagens = ['Digite um valor: ', '10', '8', '6', '4', '2', '0']
-                // Aqui vamos simular a resposta para uma variável de `leia()`.
-                const respostas = [
-                    "10"
-                ];
-                interpretador.interfaceEntradaSaida = {
-                    question: (mensagem: string, callback: Function) => {
-                        callback(respostas.shift());
+            describe('Para', () => {
+                it('Para com passo negativo', async () => {
+                    const saidasMensagens = ['Digite um valor: ', '10', '8', '6', '4', '2', '0']
+                    // Aqui vamos simular a resposta para uma variável de `leia()`.
+                    const respostas = [
+                        "10"
+                    ];
+                    interpretador.interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.shift());
+                        }
+                    };
+    
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "valoresPares"',
+                        '',
+                        'var',
+                        'Cont, V: Inteiro',
+                        '',
+                        'inicio',
+                        '    escreval("Digite um valor: ")',
+                        '    Leia(V)',
+                        '    para CONT de V ate 0 passo -2 faca',
+                        '        Escreval(CONT)',
+                        '    Fimpara',
+                        '',
+                        'fimalgoritmo'
+                    ], -1);
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        expect(saidasMensagens.includes(saida)).toBeTruthy()
                     }
-                };
-
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "valoresPares"',
-                    '',
-                    'var',
-                    'Cont, V: Inteiro',
-                    '',
-                    'inicio',
-                    '    escreval("Digite um valor: ")',
-                    '    Leia(V)',
-                    '    para CONT de V ate 0 passo -2 faca',
-                    '        Escreval(CONT)',
-                    '    Fimpara',
-                    '',
-                    'fimalgoritmo'
-                ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                interpretador.funcaoDeRetorno = (saida: any) => {
-                    expect(saidasMensagens.includes(saida)).toBeTruthy()
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
-            });
-
-            it('Para com passo dinâmico', async () => {
-                const saidasMensagens = ['---------------------------', 'Digite o1º numero: ', 'Você deseja inserir mais um número? (S/N)', '---------------------------', 'Digite o2º numero: ', '---------------------------', 'Digite o3º numero: ', '---------------------------', 'Digite o4º numero: ', 'Valores repetidos não serão computados.', 'Você deseja inserir mais um número? (S/N)', '---------------------------', 'Digite o4º numero: ', '---------------------------', 'Digite o5º numero: ', 'Valores repetidos não serão computados.', 'Você deseja inserir mais um número? (S/N)']
-                // Aqui vamos simular a resposta para doze variáveis de `leia()`.
-                const respostas = [
-                    "2", 'S', "5", 'S', "6", 'S', "5", 'S', "3", 'S', "5", 'N'
-                ];
-                interpretador.interfaceEntradaSaida = {
-                    question: (mensagem: string, callback: Function) => {
-                        callback(respostas.shift());
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
+    
+                it('Para com passo dinâmico', async () => {
+                    const saidasMensagens = ['---------------------------', 'Digite o1º numero: ', 'Você deseja inserir mais um número? (S/N)', '---------------------------', 'Digite o2º numero: ', '---------------------------', 'Digite o3º numero: ', '---------------------------', 'Digite o4º numero: ', 'Valores repetidos não serão computados.', 'Você deseja inserir mais um número? (S/N)', '---------------------------', 'Digite o4º numero: ', '---------------------------', 'Digite o5º numero: ', 'Valores repetidos não serão computados.', 'Você deseja inserir mais um número? (S/N)']
+                    // Aqui vamos simular a resposta para doze variáveis de `leia()`.
+                    const respostas = [
+                        "2", 'S', "5", 'S', "6", 'S', "5", 'S', "3", 'S', "5", 'N'
+                    ];
+                    interpretador.interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.shift());
+                        }
+                    };
+    
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "semnome"',
+                        'var',
+                        '    li: vetor[0..9] de inteiro',
+                        '    i, j, k: inteiro',
+                        '    resposta: caractere',
+                        'inicio',
+                        '    i <- 0',
+                        '    k <- 0',
+                        '    enquanto resposta <> "N" faca',
+                        '        escreval("---------------------------")',
+                        '        escreval("Digite o", i + 1, "º numero: ")',
+                        '        leia(li[i])',
+                        '        se (i > 0) entao',
+                        '            para j de 0 ate i - 1 faca',
+                        '                se li[i] = li[j] entao',
+                        '                    escreval("Valores repetidos não serão computados.")',
+                        '                    i <- i - 1',
+                        '                    interrompa',
+                        '                fimse',
+                        '            fimpara',
+                        '        fimse',
+                        '        escreval ("Você deseja inserir mais um número? (S/N)")',
+                        '        leia(resposta)',
+                        '        se (resposta <> "N") entao',
+                        '            i <- i + 1',
+                        '        fimse',
+                        '    fimenquanto',
+                        '    para k de 0 ate i faca',
+                        '        escreva(li[k], " ")',
+                        '    fimPara',
+                        'fimAlgoritmo'
+                    ], -1);
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        expect(saidasMensagens.includes(saida)).toBeTruthy()
                     }
-                };
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
 
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "semnome"',
-                    'var',
-                    '    li: vetor[0..9] de inteiro',
-                    '    i, j, k: inteiro',
-                    '    resposta: caractere',
-                    'inicio',
-                    '    i <- 0',
-                    '    k <- 0',
-                    '    enquanto resposta <> "N" faca',
-                    '        escreval("---------------------------")',
-                    '        escreval("Digite o", i + 1, "º numero: ")',
-                    '        leia(li[i])',
-                    '        se (i > 0) entao',
-                    '            para j de 0 ate i - 1 faca',
-                    '                se li[i] = li[j] entao',
-                    '                    escreval("Valores repetidos não serão computados.")',
-                    '                    i <- i - 1',
-                    '                    interrompa',
-                    '                fimse',
-                    '            fimpara',
-                    '        fimse',
-                    '        escreval ("Você deseja inserir mais um número? (S/N)")',
-                    '        leia(resposta)',
-                    '        se (resposta <> "N") entao',
-                    '            i <- i + 1',
-                    '        fimse',
-                    '    fimenquanto',
-                    '    para k de 0 ate i faca',
-                    '        escreva(li[k], " ")',
-                    '    fimPara',
-                    'fimAlgoritmo'
-                ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                interpretador.funcaoDeRetorno = (saida: any) => {
-                    expect(saidasMensagens.includes(saida)).toBeTruthy()
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
+                it('Para, reatribuição do valor inicial de variável de controle', async () => {
+                    let _saidas = '';
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "valor x"',
+                        'var',
+                        '    x: inteiro',
+                        'inicio',
+                        '    x <- 0',
+                        '    para x de 1 ate 6 faca',
+                        '        escreval(x)',
+                        '    fimpara',
+                        '    para x de 1 ate 6 faca',
+                        '        escreval(x)',
+                        '    fimpara',
+                        'fimalgoritmo'
+                    ], -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        _saidas += saida;
+                    }
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
             });
 
             it('Procedimento', async () => {

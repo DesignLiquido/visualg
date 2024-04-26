@@ -128,10 +128,15 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
     async visitarExpressaoFimPara(declaracao: FimPara): Promise<any> {
         if (!this.eVerdadeiro(await this.avaliar(declaracao.condicaoPara))) {
             const escopoPara = this.pilhaEscoposExecucao.pilha[this.pilhaEscoposExecucao.pilha.length - 2];
-            // TODO: Avaliar trazer este 'if' de volta com o código de https://github.com/DesignLiquido/visualg/issues/8.
-            // if (this.comando === 'proximo') {
-            escopoPara.declaracaoAtual++;
-            // }
+            // Como o comando `proximo` ocorre fora de um laço de repetição que incrementa
+            // a declaração atual do escopo, precisamos incrementar a declaração atual
+            // do escopo do `para`. Normalmente, `FimPara` é sempre a última instrução
+            // desse bloco de `para`.
+            // TODO: Avaliar se há algum caso que pode ser afetado por esta lógica.
+            // Este `if` foi retirado antes, e pode ser que algum outro bug surja por causa disso.
+            if (this.comando === 'proximo') {
+                escopoPara.declaracaoAtual++;
+            }
 
             escopoPara.emLacoRepeticao = false;
             return new SustarQuebra();

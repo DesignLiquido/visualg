@@ -7,10 +7,6 @@ import { SimboloInterface } from '@designliquido/delegua/interfaces';
 
 import { palavrasReservadas } from './palavras-reservadas';
 
-const dicionarioBibliotecaGlobal = {
-    int: 'inteiro',
-};
-
 /**
  * O Lexador do VisuAlg é de linha única porque não possui comentários
  * multilinha na especificação.
@@ -65,7 +61,7 @@ export class LexadorVisuAlg extends LexadorBaseLinhaUnica {
         if (codigo in palavrasReservadas) {
             this.adicionarSimbolo(
                 palavrasReservadas[codigo],
-                dicionarioBibliotecaGlobal.hasOwnProperty(codigo) ? dicionarioBibliotecaGlobal[codigo] : codigo
+                codigo
             );
         } else {
             this.adicionarSimbolo(tiposDeSimbolos.IDENTIFICADOR, codigo);

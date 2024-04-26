@@ -284,30 +284,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return this.atual === this.simbolos.length;
     }
 
-    metodoBibliotecaGlobal(): Construto {
-        const simboloAnterior = this.simbolos[this.atual - 1];
-
-        switch (simboloAnterior.lexema) {
-            case 'int':
-                return new Chamada(
-                    this.hashArquivo,
-                    new Variavel(
-                        this.hashArquivo,
-                        new Simbolo(
-                            tiposDeSimbolos.IDENTIFICADOR,
-                            'inteiro',
-                            null,
-                            Number(simboloAnterior.linha),
-                            this.hashArquivo
-                        )
-                    ),
-                    null,
-                    []
-                );
-            default:
-                return null;
-        }
-    }
+    
 
     primario(): Construto {
         const simboloAtual = this.simbolos[this.atual];

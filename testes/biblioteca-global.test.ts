@@ -2,8 +2,8 @@ import { DeleguaFuncao } from '@designliquido/delegua/estruturas';
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
-import { InterpretadorVisuAlg } from '@designliquido/delegua/interpretador/dialetos/visualg/interpretador-visualg';
 
+import { InterpretadorVisuAlg } from '../fontes/interpretador';
 import { AvaliadorSintaticoVisuAlg } from '../fontes/avaliador-sintatico';
 import { registrarBibliotecaCaracteresVisuAlg, registrarBibliotecaNumericaVisuAlg } from '../fontes/bibliotecas';
 import { LexadorVisuAlg } from "../fontes/lexador";

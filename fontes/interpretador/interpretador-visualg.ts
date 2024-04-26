@@ -1,4 +1,4 @@
-import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, Logico } from '@designliquido/delegua/construtos';
+import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico } from '@designliquido/delegua/construtos';
 import { Aleatorio, CabecalhoPrograma, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
@@ -72,7 +72,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
      * @param declaracao A declaração `Fazer`
      * @returns Só retorna em caso de erro na execução, e neste caso, o erro.
      */
-    async visitarDeclaracaoFazer(declaracao: Fazer): Promise<any> {
+    override async visitarDeclaracaoFazer(declaracao: Fazer): Promise<any> {
         let retornoExecucao: any;
         do {
             try {
@@ -100,7 +100,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
      * @param declaracao A declaração.
      * @returns Sempre nulo, por convenção de visita.
      */
-    async visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
+    override async visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
         try {
             const formatoTexto: string = await this.avaliarArgumentosEscrevaVisuAlg(declaracao.argumentos);
             this.mensagemPrompt = formatoTexto;
@@ -117,7 +117,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
      * @param declaracao A declaração.
      * @returns Sempre nulo, por convenção de visita.
      */
-    async visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any> {
+    override async visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any> {
         try {
             const formatoTexto: string = await this.avaliarArgumentosEscrevaVisuAlg(declaracao.argumentos);
             this.funcaoDeRetorno(formatoTexto);
@@ -151,11 +151,11 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
      * @param expressao Expressão do tipo Leia
      * @returns Promise com o resultado da leitura.
      */
-    async visitarExpressaoLeia(expressao: Leia): Promise<any> {
+    override async visitarExpressaoLeia(expressao: Leia): Promise<any> {
         return comum.visitarExpressaoLeia(this, expressao, this.mensagemPrompt);
     }
 
-    async visitarDeclaracaoPara(declaracao: Para): Promise<any> {
+    override async visitarDeclaracaoPara(declaracao: Para): Promise<any> {
         if (declaracao.inicializador !== null) {
             await this.avaliar(declaracao.inicializador as any);
             await comum.resolverIncrementoPara(this, declaracao);
@@ -194,15 +194,19 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
         return retornoExecucao;
     }
 
-    async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
+    override async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
         return comum.visitarExpressaoBinaria(this, expressao);
     }
 
-    async visitarExpressaoLogica(expressao: Logico): Promise<any> {
+    override async visitarExpressaoLogica(expressao: Logico): Promise<any> {
         return comum.visitarExpressaoLogica(this, expressao);
     }
 
-    async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
+    override async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
         return comum.visitarDeclaracaoAleatorio(this, declaracao);
+    }
+    
+    override async visitarExpressaoFormatacaoEscrita(declaracao: FormatacaoEscrita): Promise<string> {
+        return comum.visitarExpressaoFormatacaoEscrita(this, declaracao);
     }
 }

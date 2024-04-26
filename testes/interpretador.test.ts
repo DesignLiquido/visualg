@@ -28,7 +28,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Atribuição', async () => {
+            it('Atribuição', async () => {
                 const saidasMensagens = [
                     "1",
                     "b"
@@ -58,7 +58,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it("Sucesso - Enquanto", async () => {
+            it("Enquanto", async () => {
                 const saidasMensagens = ['verdadeiro', 'num1 não é maior que 0', 'num1 não é maior que 0', 'num1 é maior que 0']
                 // Aqui vamos simular a resposta para três variáveis de `leia()`.
                 const respostas = [
@@ -102,7 +102,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Enquanto com variável modificada em loop', async () => {
+            it('Enquanto com variável modificada em loop', async () => {
                 let saidas: string[] = [];
                 // Aqui vamos simular a resposta para quatro variáveis de `leia()`.
                 const respostas = [
@@ -139,7 +139,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - limpatela', async () => {
+            it('limpatela', async () => {
                 const saidasMensagens = [
                     "Teste 1",
                     "Teste 2",
@@ -173,7 +173,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Leia', async () => {
+            it('Leia', async () => {
                 // Aqui vamos simular a resposta para cinco variáveis de `leia()`.
                 const respostas = ["1", "2", "3", "4", "5"];
                 interpretador.interfaceEntradaSaida = {
@@ -203,7 +203,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Equação Segundo Grau', async () => {
+            it('Equação de Segundo Grau', async () => {
                 const saidasMensagens = ['Informe o valor de A: ', 'Informe o valor de B: ', 'Informe o valor de C: ', 'Esta equação não possui raízes reais.']
                 const respostas = ["10", "21", "14"];
                 interpretador.interfaceEntradaSaida = {
@@ -256,7 +256,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - "Repita Até" com acento', async () => {
+            it('"Repita Até" com acento', async () => {
                 const saidasMensagens = ['1 - Dizer olá!', '2 – Dizer oi! ', '0 - Sair do programa']
                 const respostas = ["0"];
                 interpretador.interfaceEntradaSaida = {
@@ -296,7 +296,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Repita Até com interrupção', async () => {
+            it('Repita Até com interrupção', async () => {
                 let _saidas = '';
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Números de 1 a 10 (com interrompa)"',
@@ -324,7 +324,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - IMC', async () => {
+            it('IMC', async () => {
                 const saidasMensagens = ['Massa(Kg): ', 'Altura (m): ', 'Parabens! Voce esta no seu peso ideal']
                 // Aqui vamos simular a resposta para duas variáveis de `leia()`.
                 const respostas = ["78", "1.78"];
@@ -369,7 +369,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it("Sucesso - Média de Vetor", async () => {
+            it("Média de Vetor", async () => {
                 const saidasMensagens = [
                     'Digite a nota do 1º Aluno', 
                     'Digite a nota do 2º Aluno', 
@@ -435,7 +435,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it("Sucesso - Declaração de Vetores", async () => {
+            it("Declaração de Vetores", async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "teste"',
                     'var',
@@ -451,7 +451,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it("Sucesso - Matriz - Jogo da Velha", async () => {
+            it("Matriz - Jogo da Velha", async () => {
                 const retornoLexador = lexador.mapear([
                     'Algoritmo "Jogo da Velha"',
                     'Var',
@@ -483,7 +483,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Para com passo negativo', async () => {
+            it('Para com passo negativo', async () => {
                 const saidasMensagens = ['Digite um valor: ', '10', '8', '6', '4', '2', '0']
                 // Aqui vamos simular a resposta para uma variável de `leia()`.
                 const respostas = [
@@ -521,7 +521,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Para com passo dinâmico', async () => {
+            it('Para com passo dinâmico', async () => {
                 const saidasMensagens = ['---------------------------', 'Digite o1º numero: ', 'Você deseja inserir mais um número? (S/N)', '---------------------------', 'Digite o2º numero: ', '---------------------------', 'Digite o3º numero: ', '---------------------------', 'Digite o4º numero: ', 'Valores repetidos não serão computados.', 'Você deseja inserir mais um número? (S/N)', '---------------------------', 'Digite o4º numero: ', '---------------------------', 'Digite o5º numero: ', 'Valores repetidos não serão computados.', 'Você deseja inserir mais um número? (S/N)']
                 // Aqui vamos simular a resposta para doze variáveis de `leia()`.
                 const respostas = [
@@ -572,13 +572,12 @@ describe('Interpretador', () => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
                 }
 
-
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Procedimento', async () => {
+            it('Procedimento', async () => {
                 const saidasMensagens = ['Digite dois valores: ', 'A variavel escolhida é 3']
                 // Aqui vamos simular a resposta para duas variáveis de `leia()`.
                 const respostas = [
@@ -622,13 +621,12 @@ describe('Interpretador', () => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
                 }
 
-
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Procedimento com passagem por referência', async () => {
+            it('Procedimento com passagem por referência', async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Exemplo Parametros Referencia"',
                     'var',
@@ -656,7 +654,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             })
 
-            it('Sucesso - Operadores Lógicos', async () => {
+            it('Operadores Lógicos', async () => {
                 const saidasMensagens = ['A verdadeiro', 'A falso', 'A falso', 'A verdadeiro', 'B falso', 'C verdadeiro']
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Exemplo Xou"',
@@ -691,7 +689,7 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Aleatorio', async () => {
+            it('Aleatorio', async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "declaração aleatorio on"',
                     'var',
@@ -701,8 +699,34 @@ describe('Interpretador', () => {
                     'leia(numero)',
                     'fimalgoritmo'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
 
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+            });
+
+            it('Impressão de resultados formatados', async () => {
+                let _saidas = '';
+                const retornoLexador = lexador.mapear([
+                    'algoritmo "X SOMA"',
+                    'var',
+                    '    x, SOMA: inteiro',
+                    'inicio',
+                    '    x <- 0',
+                    '    SOMA <- 0',
+                    '    para x de 1 ate 6 faca',
+                    '        SOMA <- x + 1',
+                    '    fimpara',
+                    '    escreval("x: ", x:10:1, "  SOMA:", soma)',
+                    'fimalgoritmo'
+                ], -1);
+
+                interpretador.funcaoDeRetorno = (saida: any) => {
+                    _saidas += saida;
+                }
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);

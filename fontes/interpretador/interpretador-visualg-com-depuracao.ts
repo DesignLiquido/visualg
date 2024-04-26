@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, Logico } from '@designliquido/delegua/construtos';
+import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico } from '@designliquido/delegua/construtos';
 import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
@@ -35,6 +35,10 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
         return comum.visitarDeclaracaoCabecalhoPrograma(this, declaracao);
     }
 
+    /**
+     * VisuAlg não tem o conceito de declaração de constantes.
+     * @param declaracao Uma declaração Const.
+     */
     visitarDeclaracaoConst(declaracao: Const): Promise<any> {
         throw new Error('Método não implementado.');
     }
@@ -66,7 +70,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
      * @param declaracao A declaração `Fazer`
      * @returns Só retorna em caso de erro na execução, e neste caso, o erro.
      */
-    async visitarDeclaracaoFazer(declaracao: Fazer): Promise<any> {
+    override async visitarDeclaracaoFazer(declaracao: Fazer): Promise<any> {
         let retornoExecucao: any;
         do {
             try {
@@ -94,7 +98,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
      * @param declaracao A declaração.
      * @returns Sempre nulo, por convenção de visita.
      */
-    async visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
+    override async visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
         try {
             const formatoTexto: string = await this.avaliarArgumentosEscrevaVisuAlg(declaracao.argumentos);
             this.mensagemPrompt = formatoTexto;
@@ -111,7 +115,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
      * @param declaracao A declaração.
      * @returns Sempre nulo, por convenção de visita.
      */
-    async visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any> {
+    override async visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any> {
         try {
             const formatoTexto: string = await this.avaliarArgumentosEscrevaVisuAlg(declaracao.argumentos);
             this.funcaoDeRetorno(formatoTexto);
@@ -146,11 +150,11 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
      * @param expressao Expressão do tipo Leia
      * @returns Promise com o resultado da leitura.
      */
-    async visitarExpressaoLeia(expressao: Leia): Promise<any> {
+    override async visitarExpressaoLeia(expressao: Leia): Promise<any> {
         return comum.visitarExpressaoLeia(this, expressao, this.mensagemPrompt);
     }
 
-    async visitarDeclaracaoPara(declaracao: Para): Promise<any> {
+    override async visitarDeclaracaoPara(declaracao: Para): Promise<any> {
         if (!declaracao.inicializada && declaracao.inicializador !== null) {
             await this.avaliar(declaracao.inicializador as any);
             if (declaracao.incrementar !== null) {
@@ -214,15 +218,19 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
         }
     }
 
-    async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
+    override async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
         return comum.visitarExpressaoBinaria(this, expressao);
     }
 
-    async visitarExpressaoLogica(expressao: Logico): Promise<any> {
+    override async visitarExpressaoLogica(expressao: Logico): Promise<any> {
         return comum.visitarExpressaoLogica(this, expressao);
     }
 
-    async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
+    override async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
         return comum.visitarDeclaracaoAleatorio(this, declaracao);
+    }
+
+    override async visitarExpressaoFormatacaoEscrita(declaracao: FormatacaoEscrita): Promise<string> {
+        return comum.visitarExpressaoFormatacaoEscrita(this, declaracao);
     }
 }

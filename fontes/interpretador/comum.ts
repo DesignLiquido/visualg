@@ -5,6 +5,7 @@ import {
     Binario,
     Construto,
     FimPara,
+    FormatacaoEscrita,
     Literal,
     Logico,
     Unario,
@@ -491,6 +492,33 @@ export async function visitarDeclaracaoAleatorio(interpretador: InterpretadorBas
     }
 
     return retornoExecucao;
+}
+
+/**
+ * Formata uma saída de acordo com o número e espaços e casas decimais solicitados.
+ * @param declaracao A declaração de formatação de escrita.
+ * @returns {string} A saída formatada como texto e os respectivos parâmetros aplicados.
+ */
+export async function visitarExpressaoFormatacaoEscrita(interpretador: InterpretadorBase, declaracao: FormatacaoEscrita): Promise<string> {
+    let resultado = '';
+    const conteudo: VariavelInterface | any = await interpretador.avaliar(declaracao.expressao);
+
+    const valorConteudo: any = conteudo?.hasOwnProperty('valor') ? conteudo.valor : conteudo;
+    const tipoConteudo: string = conteudo.hasOwnProperty('tipo') ? conteudo.tipo : typeof conteudo;
+
+    resultado = valorConteudo;
+    if (
+        ['real', 'inteiro'].includes(tipoConteudo) &&
+        declaracao.casasDecimais > 0
+    ) {
+        resultado = valorConteudo.toLocaleString('pt', { minimumFractionDigits: declaracao.casasDecimais });
+    }
+
+    if (declaracao.espacos > 0) {
+        resultado = ' '.repeat(declaracao.espacos) + resultado;
+    }
+
+    return resultado;
 }
 
 export async function visitarExpressaoLeia(

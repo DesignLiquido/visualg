@@ -6,6 +6,7 @@ import {
     Atribuir,
     Binario,
     Chamada,
+    Comentario,
     Construto,
     DefinirValor,
     Dicionario,
@@ -78,6 +79,16 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         this.deveIndentar = true;
         this.contadorDeclaracaoVar = 0;
         this.retornoFuncaoAtual = undefined;
+    }
+
+    /**
+     * VisuAlg não possui comentários multilinha.
+     * @param declaracao A declaração de comentário.
+     */
+    visitarDeclaracaoComentario(declaracao: Comentario): void | Promise<any> {
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}// `;
+        this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, " ");
+        this.codigoFormatado += `${this.quebraLinha}`;
     }
 
     visitarDeclaracaoTendoComo(declaracao: TendoComo): void | Promise<any> {

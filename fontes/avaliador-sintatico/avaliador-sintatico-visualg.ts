@@ -37,15 +37,16 @@ import {
     Logico,
     Unario,
     Variavel,
+    Comentario,
 } from '@designliquido/delegua/construtos';
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
-import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
-
 import { ParametroVisuAlg } from './parametro-visualg';
+
+import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     blocoPrincipalIniciado: boolean;
@@ -172,6 +173,9 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
             const simboloAtual = this.simbolos[this.atual];
             switch (simboloAtual.tipo) {
+                case tiposDeSimbolos.COMENTARIO:
+                    inicializacoes.push(this.declaracaoComentario());
+                    break;
                 case tiposDeSimbolos.FUNCAO:
                 case tiposDeSimbolos.FUNÇÃO:
                     const dadosFuncao = this.funcao('funcao');
@@ -509,6 +513,16 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             parametros,
             corpo.filter((d) => d),
             tipoRetorno
+        );
+    }
+
+    declaracaoComentario(): Comentario {
+        const simboloComentario = this.avancarEDevolverAnterior();
+        return new Comentario(
+            simboloComentario.hashArquivo, 
+            simboloComentario.linha, 
+            simboloComentario.literal, 
+            false
         );
     }
 
@@ -1160,6 +1174,8 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         switch (simboloAtual.tipo) {
             case tiposDeSimbolos.ALEATORIO:
                 return this.declaracaoAleatorio();
+            case tiposDeSimbolos.COMENTARIO:
+                return this.declaracaoComentario();
             case tiposDeSimbolos.ENQUANTO:
                 return this.declaracaoEnquanto();
             case tiposDeSimbolos.ESCOLHA:

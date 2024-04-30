@@ -175,9 +175,9 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
     }
 
     visitarDeclaracaoEnquanto(declaracao: Enquanto) {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}enquanto(`;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}enquanto `;
         this.formatarDeclaracaoOuConstruto(declaracao.condicao);
-        this.codigoFormatado += ` ) faca`;
+        this.codigoFormatado += ` faca`;
         this.codigoFormatado += this.quebraLinha;
 
         this.formatarDeclaracaoOuConstruto(declaracao.corpo);
@@ -645,6 +645,9 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
                 break;
             case 'Classe':
                 this.visitarDeclaracaoClasse(declaracaoOuConstruto as Classe);
+                break;
+            case 'Comentario':
+                this.visitarDeclaracaoComentario(declaracaoOuConstruto as Comentario);
                 break;
             case 'Continua':
                 this.visitarExpressaoContinua(declaracaoOuConstruto as Continua);

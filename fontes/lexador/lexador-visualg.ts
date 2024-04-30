@@ -1,9 +1,9 @@
 import { RetornoLexador } from '@designliquido/delegua/interfaces/retornos';
 import { LexadorBaseLinhaUnica } from '@designliquido/delegua/lexador/lexador-base-linha-unica';
 import { ErroLexador } from '@designliquido/delegua/lexador/erro-lexador';
-
-import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
 import { SimboloInterface } from '@designliquido/delegua/interfaces';
+
+import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 import { palavrasReservadas } from './palavras-reservadas';
 
@@ -45,6 +45,18 @@ export class LexadorVisuAlg extends LexadorBaseLinhaUnica {
 
         const valor = this.codigo.substring(this.inicioSimbolo + 1, this.atual);
         this.adicionarSimbolo(tiposDeSimbolos.CARACTERE, valor);
+    }
+
+    comentarioUmaLinha(): void {
+        this.avancar();
+        let ultimoAtual = this.atual;
+        while (this.codigo.charAt(this.atual) !== '\n' && !this.eFinalDoCodigo()) {
+            ultimoAtual = this.atual;
+            this.avancar();
+        }
+
+        const conteudo = this.codigo.substring(this.inicioSimbolo + 2, ultimoAtual);
+        this.adicionarSimbolo(tiposDeSimbolos.COMENTARIO, conteudo.trim());
     }
 
     /**
@@ -164,7 +176,7 @@ export class LexadorVisuAlg extends LexadorBaseLinhaUnica {
                 this.avancar();
                 switch (this.simboloAtual()) {
                     case '/':
-                        while (this.simboloAtual() != '\n' && !this.eFinalDoCodigo()) this.avancar();
+                        this.comentarioUmaLinha();
                         break;
                     default:
                         this.adicionarSimbolo(tiposDeSimbolos.DIVISAO);

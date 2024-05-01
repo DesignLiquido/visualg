@@ -696,10 +696,14 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
         this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após os valores em escreva.");
 
-        this.consumir(
-            tiposDeSimbolos.QUEBRA_LINHA,
-            "Esperado quebra de linha após fechamento de parênteses pós instrução 'escreva'."
-        );
+        // A linha pode simplesmente terminar com um comentário. Neste caso, 
+        // não verificamos a quebra de linha.
+        if (this.simbolos[this.atual].tipo !== tiposDeSimbolos.COMENTARIO) {
+            this.consumir(
+                tiposDeSimbolos.QUEBRA_LINHA,
+                "Esperado quebra de linha após fechamento de parênteses pós instrução 'escreva'."
+            );
+        }
 
         return argumentos;
     }

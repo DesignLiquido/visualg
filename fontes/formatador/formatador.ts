@@ -57,9 +57,12 @@ import {
 import { InicioAlgoritmo } from '@designliquido/delegua/declaracoes/inicio-algoritmo';
 import { SimboloInterface, VisitanteComumInterface } from '@designliquido/delegua/interfaces';
 import { ContinuarQuebra } from '@designliquido/delegua/quebras';
+
 import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
+import { PilhaEscoposFormatacao } from './pilha-escopos-formatacao';
 
 export class FormatadorVisuAlg implements VisitanteComumInterface {
+    pilhaEscoposFormatacao: PilhaEscoposFormatacao;
     indentacaoAtual: number;
     quebraLinha: string;
     tamanhoIndentacao: number;
@@ -73,6 +76,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         this.quebraLinha = quebraLinha;
         this.tamanhoIndentacao = tamanhoIndentacao;
 
+        this.pilhaEscoposFormatacao = new PilhaEscoposFormatacao();
         this.indentacaoAtual = 0;
         this.codigoFormatado = '';
         this.devePularLinha = false;
@@ -82,21 +86,43 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
     }
 
     /**
+     * Se a próxima declaração for um comentário, não pula linha aqui,
+     * e não indenta o comentário.
+     */
+    protected logicaComumComentarioComOutraInstrucao() {
+        const blocoAtual = this.pilhaEscoposFormatacao.topoDaPilha();
+        if (blocoAtual.declaracaoAtual < blocoAtual.declaracoes.length) {
+            if (blocoAtual.declaracoes[blocoAtual.declaracaoAtual + 1] instanceof Comentario) {
+                this.deveIndentar = false;
+            } else if (this.devePularLinha) {
+                this.codigoFormatado += this.quebraLinha;
+                this.devePularLinha = false;
+            }
+        }
+    }
+
+    /**
+     * Formatação de comentários.
      * VisuAlg não possui comentários multilinha.
+     * Um comentário pode vir ao final da linha.
      * @param declaracao A declaração de comentário.
      */
     visitarDeclaracaoComentario(declaracao: Comentario): void | Promise<any> {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}// `;
+        if (this.deveIndentar) {
+            this.codigoFormatado += ' '.repeat(this.indentacaoAtual);
+        } else {
+            this.codigoFormatado += ' ';
+            this.deveIndentar = true;
+        }
+
+        this.codigoFormatado += `// `;
         this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, " ");
         this.codigoFormatado += `${this.quebraLinha}`;
     }
 
-    visitarDeclaracaoTendoComo(declaracao: TendoComo): void | Promise<any> {
-        throw new Error('Método não implementado.');
-    }
-
     visitarDeclaracaoInicioAlgoritmo(declaracao: InicioAlgoritmo): any {
         this.codigoFormatado += `inicio${this.quebraLinha}`;
+        this.indentacaoAtual += this.tamanhoIndentacao;
     }
 
     visitarDeclaracaoCabecalhoPrograma(declaracao: CabecalhoPrograma): any {
@@ -182,6 +208,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
 
         this.formatarDeclaracaoOuConstruto(declaracao.corpo);
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimenquanto`;
+        this.codigoFormatado += this.quebraLinha;
     }
 
     visitarDeclaracaoEscolha(declaracao: Escolha) {
@@ -219,10 +246,14 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
             this.formatarDeclaracaoOuConstruto(argumento);
             this.codigoFormatado += ', ';
         }
+
         if (declaracao.argumentos.length && this.codigoFormatado[this.codigoFormatado.length - 2] === ',') {
             this.codigoFormatado = this.codigoFormatado.slice(0, -2);
         }
-        this.codigoFormatado += `)${this.quebraLinha}`;
+
+        this.codigoFormatado += `)`;
+        this.devePularLinha = true;
+        this.logicaComumComentarioComOutraInstrucao();
     }
 
     visitarDeclaracaoFazer(declaracao: Fazer) {
@@ -306,22 +337,28 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         }
 
         if (this.deveIndentar) {
-            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}`;
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual + 4)}`;
         }
 
         this.codigoFormatado += `${declaracao.simbolo.lexema}`;
 
         if (declaracao.inicializador) {
-            this.codigoFormatado += ` : ${declaracao.tipo.toLowerCase()}`;
+            this.codigoFormatado += `: ${declaracao.tipo.toLowerCase()}`;
         }
 
         if (this.devePularLinha) {
             this.codigoFormatado += this.quebraLinha;
         }
+
         if (this.contadorDeclaracaoVar > 2) {
             this.indentacaoAtual -= this.tamanhoIndentacao;
         }
     }
+
+    visitarDeclaracaoTendoComo(declaracao: TendoComo): void {
+        throw new Error('Método não implementado.');
+    }
+
     visitarDeclaracaoVarMultiplo(declaracao: VarMultiplo): any {
         throw new Error('Método não implementado.');
     }
@@ -400,9 +437,13 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
 
     private formatarBlocoOuVetorDeclaracoes(declaracoes: Declaracao[]) {
         this.indentacaoAtual += this.tamanhoIndentacao;
+        this.pilhaEscoposFormatacao.empilharDeclaracoes(declaracoes);
         for (let declaracaoBloco of declaracoes) {
             this.formatarDeclaracaoOuConstruto(declaracaoBloco);
+            this.pilhaEscoposFormatacao.topoDaPilha().declaracaoAtual++;
         }
+
+        this.pilhaEscoposFormatacao.removerUltimo();
         this.indentacaoAtual -= this.tamanhoIndentacao;
     }
 
@@ -414,7 +455,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         throw new Error('Método não implementado.');
     }
 
-    visitarExpressaoDeChamada(expressao: any) {
+    visitarExpressaoDeChamada(expressao: Chamada) {
         this.formatarDeclaracaoOuConstruto(expressao.entidadeChamada);
         this.codigoFormatado += '(';
         for (let argumento of expressao.argumentos) {
@@ -479,7 +520,7 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
     }
 
     visitarExpressaoLeia(expressao: Leia): any {
-        this.codigoFormatado += `${' '.repeat(this.tamanhoIndentacao)}leia(`;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}leia(`;
         for (let argumento of expressao.argumentos) {
             this.formatarDeclaracaoOuConstruto(argumento);
             this.codigoFormatado += `, `;
@@ -758,11 +799,11 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
     }
 
     formatar(declaracoes: Declaracao[]): string {
+        this.pilhaEscoposFormatacao = new PilhaEscoposFormatacao();
         this.indentacaoAtual = 0;
         this.codigoFormatado = '';
         this.devePularLinha = true;
         this.deveIndentar = true;
-        this.indentacaoAtual += this.tamanhoIndentacao;
 
         for (let declaracao of declaracoes) {
             this.formatarDeclaracaoOuConstruto(declaracao);

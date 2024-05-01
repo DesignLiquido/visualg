@@ -91,7 +91,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
-        expect(linhasResultado).toHaveLength(9)
+        expect(linhasResultado).toHaveLength(10)
     })
 
     it('Escolha', () => {

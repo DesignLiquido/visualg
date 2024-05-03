@@ -55,13 +55,16 @@ import {
     TendoComo,
 } from '@designliquido/delegua/declaracoes';
 import { InicioAlgoritmo } from '@designliquido/delegua/declaracoes/inicio-algoritmo';
-import { SimboloInterface, VisitanteComumInterface } from '@designliquido/delegua/interfaces';
+import { SimboloInterface } from '@designliquido/delegua/interfaces';
 import { ContinuarQuebra } from '@designliquido/delegua/quebras';
 
 import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
-import { PilhaEscoposFormatacao } from './pilha-escopos-formatacao';
 
-export class FormatadorVisuAlg implements VisitanteComumInterface {
+import { PilhaEscoposFormatacao } from './pilha-escopos-formatacao';
+import { VisitanteVisuAlgInterface } from '../interfaces';
+import { LimpaTela } from 'fontes/construtos';
+
+export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     pilhaEscoposFormatacao: PilhaEscoposFormatacao;
     indentacaoAtual: number;
     quebraLinha: string;
@@ -83,6 +86,12 @@ export class FormatadorVisuAlg implements VisitanteComumInterface {
         this.deveIndentar = true;
         this.contadorDeclaracaoVar = 0;
         this.retornoFuncaoAtual = undefined;
+    }
+
+    visitarExpressaoLimpaTela(expressao: LimpaTela): void | Promise<any> {
+        this.codigoFormatado += ' '.repeat(this.indentacaoAtual);
+        this.codigoFormatado += 'limpatela';
+        this.codigoFormatado += this.quebraLinha;
     }
 
     /**

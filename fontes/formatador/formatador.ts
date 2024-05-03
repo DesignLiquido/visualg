@@ -58,11 +58,11 @@ import { InicioAlgoritmo } from '@designliquido/delegua/declaracoes/inicio-algor
 import { SimboloInterface } from '@designliquido/delegua/interfaces';
 import { ContinuarQuebra } from '@designliquido/delegua/quebras';
 
-import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
-
 import { PilhaEscoposFormatacao } from './pilha-escopos-formatacao';
 import { VisitanteVisuAlgInterface } from '../interfaces';
-import { LimpaTela } from 'fontes/construtos';
+import { LimpaTela } from '../construtos';
+
+import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     pilhaEscoposFormatacao: PilhaEscoposFormatacao;
@@ -807,8 +807,16 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         }
     }
 
+    /**
+     * A formatação de fato.
+     * @param declaracoes Um vetor de declarações.
+     * @returns O código formatado.
+     */
     formatar(declaracoes: Declaracao[]): string {
         this.pilhaEscoposFormatacao = new PilhaEscoposFormatacao();
+        this.pilhaEscoposFormatacao.empilharDeclaracoes(declaracoes);
+        const escopoInicialFormatacao = this.pilhaEscoposFormatacao.topoDaPilha();
+
         this.indentacaoAtual = 0;
         this.codigoFormatado = '';
         this.devePularLinha = true;
@@ -816,10 +824,13 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
 
         for (let declaracao of declaracoes) {
             this.formatarDeclaracaoOuConstruto(declaracao);
+            escopoInicialFormatacao.declaracaoAtual++;
         }
 
         this.indentacaoAtual -= this.tamanhoIndentacao;
+        this.pilhaEscoposFormatacao.removerUltimo();
         this.codigoFormatado += `${this.quebraLinha}fimalgoritmo`;
+
         return this.codigoFormatado;
     }
 }

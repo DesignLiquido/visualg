@@ -24,9 +24,9 @@ import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designli
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
+import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 import { PilhaVariaveis } from './pilha-variaveis';
-import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;

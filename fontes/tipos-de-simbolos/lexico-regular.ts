@@ -43,6 +43,7 @@ export default {
     INTEIRO: 'INTEIRO',
     INTERROMPA: 'INTERROMPA',
     LEIA: 'LEIA',
+    LIMPA_TELA: 'LIMPA_TELA',
     LOGICO: 'LOGICO',
     MAIOR: 'MAIOR',
     MAIOR_IGUAL: 'MAIOR_IGUAL',

@@ -1,4 +1,4 @@
-import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
+import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 export const palavrasReservadas = {
     abs: tiposDeSimbolos.METODO_BIBLIOTECA_GLOBAL,
@@ -43,7 +43,7 @@ export const palavrasReservadas = {
     inteiro: tiposDeSimbolos.INTEIRO,
     interrompa: tiposDeSimbolos.INTERROMPA,
     leia: tiposDeSimbolos.LEIA,
-    limpatela: tiposDeSimbolos.METODO_BIBLIOTECA_GLOBAL,
+    limpatela: tiposDeSimbolos.LIMPA_TELA,
     log: tiposDeSimbolos.METODO_BIBLIOTECA_GLOBAL,
     logn: tiposDeSimbolos.METODO_BIBLIOTECA_GLOBAL,
     logico: tiposDeSimbolos.LOGICO,

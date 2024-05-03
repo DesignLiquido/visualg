@@ -45,6 +45,7 @@ import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintati
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 import { ParametroVisuAlg } from './parametro-visualg';
+import { LimpaTela } from '../construtos/limpa-tela';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
@@ -1172,6 +1173,11 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         );
     }
 
+    expressaoLimpaTela(): LimpaTela {
+        const simboloLimpaTela = this.avancarEDevolverAnterior();
+        return new LimpaTela(simboloLimpaTela.hashArquivo, simboloLimpaTela.linha);
+    }
+
     resolverDeclaracaoForaDeBloco(): Declaracao | Declaracao[] | Construto | Construto[] | any {
         const simboloAtual = this.simbolos[this.atual];
 
@@ -1201,6 +1207,8 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 return this.declaracaoInterrompa();
             case tiposDeSimbolos.LEIA:
                 return this.declaracaoLeia();
+            case tiposDeSimbolos.LIMPA_TELA:
+                return this.expressaoLimpaTela();
             case tiposDeSimbolos.PARA:
                 return this.declaracaoPara();
             case tiposDeSimbolos.PARENTESE_DIREITO:

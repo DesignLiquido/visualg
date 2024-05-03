@@ -1,5 +1,8 @@
+import { FuncaoDeclaracao } from "@designliquido/delegua";
+
 import { AvaliadorSintaticoVisuAlg } from "../fontes/avaliador-sintatico";
 import { LexadorVisuAlg } from "../fontes/lexador";
+import { LimpaTela } from '../fontes/construtos';
 
 describe('Avaliador sintático', () => {
     describe('analisar()', () => {
@@ -303,6 +306,25 @@ describe('Avaliador sintático', () => {
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
+            });
+
+            it('limpatela', async () => {
+                const retornoLexador = lexador.mapear([
+                    'Algoritmo "limpatela"',
+                    'Var',
+                    'Inicio',
+                    '    escreval("Teste 1")',
+                    '    limpatela',
+                    '    escreval("Teste 2")',
+                    'Fimalgoritmo'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(5);
+                const funcaoLimpaTela = retornoAvaliadorSintatico.declaracoes[3];
+                expect(funcaoLimpaTela).toBeInstanceOf(LimpaTela);
             });
         });
 

@@ -289,8 +289,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return this.atual === this.simbolos.length;
     }
 
-    
-
     primario(): Construto {
         const simboloAtual = this.simbolos[this.atual];
 
@@ -298,11 +296,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             return new Literal(this.hashArquivo, Number(simboloAtual.linha), false);
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VERDADEIRO))
             return new Literal(this.hashArquivo, Number(simboloAtual.linha), true);
-        if (simboloAtual.lexema === 'limpatela') {
-            const variavel = new Variavel(this.hashArquivo, simboloAtual);
-            this.avancarEDevolverAnterior();
-            return new Chamada(this.hashArquivo, variavel, null, []);
-        }
+
         if (
             this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IDENTIFICADOR, tiposDeSimbolos.METODO_BIBLIOTECA_GLOBAL)
         ) {
@@ -451,14 +445,13 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return expressao;
     }
 
-    simboloAtual(): SimboloInterface {
-        return this.simbolos[this.atual - 2];
-    }
-
     verificarDefinicaoTipoAtual(): TipoDadosElementar {
         const tipos = ['inteiro', 'qualquer', 'real', 'texto', 'vazio', 'vetor', 'caracter'];
 
-        const lexema = this.simboloAtual().lexema.toLowerCase();
+        // TODO: Remover isso. O máximo que o avaliador sintático
+        // deveria olhar é o símbolo anterior, não dois
+        // símbolos para trás.
+        const lexema = this.simbolos[this.atual - 2].lexema.toLowerCase();
 
         const contemTipo = tipos.find((tipo) => tipo === lexema);
 
@@ -988,7 +981,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 const tipoDadoParametro = {
                     nome: dadosParametros.simbolo.lexema,
                     tipo: dadosParametros.tipo as TipoDadosElementar,
-                    tipoInvalido: !dadosParametros.tipo ? this.simboloAtual().lexema : null,
+                    // TODO: Remover isso. O máximo que o avaliador sintático
+                    // deveria olhar é o símbolo anterior, não dois
+                    // símbolos para trás.
+                    tipoInvalido: !dadosParametros.tipo ? this.simbolos[this.atual - 2].lexema : null,
                 };
 
                 for (let parametro of dadosParametros.identificadores) {
@@ -1131,7 +1127,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.NUMERO)) {
             this.consumir(tiposDeSimbolos.VIRGULA, "Esperado ',' após declaração do primeiro número.");
 
-            argumentos.min = Number(this.simboloAtual().literal);
+            // TODO: Remover isso. O máximo que o avaliador sintático
+            // deveria olhar é o símbolo anterior, não dois
+            // símbolos para trás.
+            argumentos.min = Number(this.simbolos[this.atual - 2].literal);
 
             this.consumir(tiposDeSimbolos.NUMERO, "Esperado um número após ','.");
 

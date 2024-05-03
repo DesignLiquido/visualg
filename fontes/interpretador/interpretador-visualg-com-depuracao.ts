@@ -11,20 +11,33 @@ import {
 } from '../bibliotecas';
 import * as comum from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
+import { VisitanteVisuAlgInterface } from 'fontes/interfaces';
+import { LimpaTela } from 'fontes/construtos';
 
 /**
  * Interpretador com depuração para o dialeto VisuAlg.
  */
-export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao {
+export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao implements VisitanteVisuAlgInterface {
     mensagemPrompt: string;
+    funcaoLimpaTela: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
 
-    constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null) {
+    constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null, funcaoLimpaTela: Function = null) {
         super(diretorioBase, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
+
+        if (funcaoLimpaTela !== null) {
+            this.funcaoLimpaTela = funcaoLimpaTela;
+        }
+
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
 
         registrarBibliotecaNumericaVisuAlg(this.pilhaEscoposExecucao);
         registrarBibliotecaCaracteresVisuAlg(this.pilhaEscoposExecucao);
+    }
+
+    async visitarExpressaoLimpaTela(expressao: LimpaTela): Promise<any> {
+        this.funcaoLimpaTela();
+        return Promise.resolve();
     }
 
     async visitarDeclaracaoInicioAlgoritmo(declaracao: CabecalhoPrograma): Promise<any> {

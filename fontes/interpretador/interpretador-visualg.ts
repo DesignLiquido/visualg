@@ -7,30 +7,42 @@ import {
     registrarBibliotecaNumericaVisuAlg,
     registrarBibliotecaCaracteresVisuAlg,
 } from '../bibliotecas';
-import * as comum from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
+import { VisitanteVisuAlgInterface } from '../interfaces';
+import { LimpaTela } from '../construtos';
+
+import * as comum from './comum';
 
 /**
- * O Interpretador VisuAlg possui algumas diferenças em relação ao
- * Interpretador Delégua quanto à escrita na saída.
- * Para N argumentos, Delégua inclui um espaço entre cada argumento.
- * Já VisuAlg imprime todos os argumentos concatenados.
+ * Interpretador do VisuAlg, baseado no interpretador de Delégua.
  */
-export class InterpretadorVisuAlg extends InterpretadorBase {
+export class InterpretadorVisuAlg extends InterpretadorBase implements VisitanteVisuAlgInterface {
     mensagemPrompt: string;
+    funcaoLimpaTela: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
 
     constructor(
         diretorioBase: string,
         performance = false,
         funcaoDeRetorno: Function = null,
-        funcaoDeRetornoMesmaLinha: Function = null
+        funcaoDeRetornoMesmaLinha: Function = null,
+        funcaoLimpaTela: Function = null
     ) {
         super(diretorioBase, performance, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
+
+        if (funcaoLimpaTela !== null) {
+            this.funcaoLimpaTela = funcaoLimpaTela;
+        }
+
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
 
         registrarBibliotecaNumericaVisuAlg(this.pilhaEscoposExecucao);
         registrarBibliotecaCaracteresVisuAlg(this.pilhaEscoposExecucao);
+    }
+
+    visitarExpressaoLimpaTela(expressao: LimpaTela): void | Promise<any> {
+        this.funcaoLimpaTela();
+        return Promise.resolve();
     }
 
     async visitarDeclaracaoInicioAlgoritmo(declaracao: CabecalhoPrograma): Promise<any> {
@@ -53,6 +65,12 @@ export class InterpretadorVisuAlg extends InterpretadorBase {
         return await comum.visitarExpressaoAtribuicaoPorIndicesMatriz(this, expressao);
     }
 
+    /**
+     * O Interpretador VisuAlg possui algumas diferenças em relação ao
+     * Interpretador Delégua quanto à escrita na saída.
+     * Para N argumentos, Delégua inclui um espaço entre cada argumento.
+     * Já VisuAlg imprime todos os argumentos concatenados.
+     */
     private async avaliarArgumentosEscrevaVisuAlg(argumentos: Construto[]): Promise<string> {
         let formatoTexto: string = '';
 

@@ -44,14 +44,13 @@ export function registrarBibliotecaCaracteresVisuAlg(
 
     // Esse método não existe na biblioteca padrão. É usado para outros
     // projetos montarem lógicas de tratamento de erro.
+    // TODO: Reencontrar onde isso é usado e refatorar.
     pilhaEscoposExecucao.definirVariavel(
         'erro2',
         new FuncaoPadrao(0, function () {
             throw new Error('Essa função atira erro também. É usada para testes variados.');
         })
     );
-
-    pilhaEscoposExecucao.definirVariavel('limpatela', new FuncaoPadrao(0, console.clear));
 
     pilhaEscoposExecucao.definirVariavel(
         'maiusc',

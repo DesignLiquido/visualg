@@ -147,6 +147,8 @@ describe('Interpretador', () => {
                     "Teste 4",
                     "Teste 5",
                 ]
+                const metodoVisitarExpressaoLimpaTela = jest.spyOn(interpretador, 'visitarExpressaoLimpaTela');
+
                 const retornoLexador = lexador.mapear([
                     'Algoritmo "limpatela"',
                     'Var',
@@ -171,6 +173,7 @@ describe('Interpretador', () => {
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
+                expect(metodoVisitarExpressaoLimpaTela).toHaveBeenCalledTimes(3);
             });
 
             it('Leia', async () => {

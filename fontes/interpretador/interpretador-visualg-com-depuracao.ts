@@ -9,10 +9,11 @@ import {
     registrarBibliotecaNumericaVisuAlg,
     registrarBibliotecaCaracteresVisuAlg,
 } from '../bibliotecas';
-import * as comum from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
-import { VisitanteVisuAlgInterface } from 'fontes/interfaces';
-import { LimpaTela } from 'fontes/construtos';
+import { VisitanteVisuAlgInterface } from '../interfaces';
+import { LimpaTela } from '../construtos';
+
+import * as comum from './comum';
 
 /**
  * Interpretador com depuração para o dialeto VisuAlg.

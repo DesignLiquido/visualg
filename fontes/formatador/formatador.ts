@@ -249,8 +249,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimescolha${this.quebraLinha}`;
     }
 
+    /**
+     * A expressão `Escreva` traduz no VisuAlg como `escreval()`.
+     * @param {Escreva} declaracao Uma declaração do tipo `Escreva`. 
+     */
     visitarDeclaracaoEscreva(declaracao: Escreva) {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}escreva(`;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}escreval(`;
         for (let argumento of declaracao.argumentos) {
             this.formatarDeclaracaoOuConstruto(argumento);
             this.codigoFormatado += ', ';
@@ -263,6 +267,23 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += `)`;
         this.devePularLinha = true;
         this.logicaComumComentarioComOutraInstrucao();
+    }
+
+    /**
+     * A expressão `EscrevaMesmaLinha` traduz no VisuAlg como `escreva()`.
+     * @param {EscrevaMesmaLinha} declaracao Uma declaração do tipo `EscrevaMesmaLinha`.
+     */
+    visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha) {
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}escreva(`;
+        for (let argumento of declaracao.argumentos) {
+            const argumentoTratado = argumento as FormatacaoEscrita;
+            this.formatarDeclaracaoOuConstruto(argumentoTratado);
+            this.codigoFormatado += ', ';
+        }
+        if (declaracao.argumentos.length && this.codigoFormatado[this.codigoFormatado.length - 2] === ',') {
+            this.codigoFormatado = this.codigoFormatado.slice(0, -2);
+        }
+        this.codigoFormatado += `)${this.quebraLinha}`;
     }
 
     visitarDeclaracaoFazer(declaracao: Fazer) {
@@ -497,19 +518,6 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
 
     visitarExpressaoExpressaoRegular(expressao: ExpressaoRegular): Promise<RegExp> {
         throw new Error('Método não implementado.');
-    }
-
-    visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha) {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}escreva(`;
-        for (let argumento of declaracao.argumentos) {
-            const argumentoTratado = argumento as FormatacaoEscrita;
-            this.formatarDeclaracaoOuConstruto(argumentoTratado);
-            this.codigoFormatado += ', ';
-        }
-        if (declaracao.argumentos.length && this.codigoFormatado[this.codigoFormatado.length - 2] === ',') {
-            this.codigoFormatado = this.codigoFormatado.slice(0, -2);
-        }
-        this.codigoFormatado += `)${this.quebraLinha}`;
     }
 
     visitarExpressaoFalhar(expressao: any): any {

@@ -14,11 +14,12 @@ import {
 import { Aleatorio, CabecalhoPrograma, Declaracao, Expressao, InicioAlgoritmo, Leia, Para } from '@designliquido/delegua/declaracoes';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
-import { inferirTipoVariavel } from './inferenciador';
 
-import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/visualg';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
+
+import { inferirTipoVariavel } from './inferenciador';
+import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 export async function visitarDeclaracaoCabecalhoPrograma(
     interpretador: InterpretadorBase,

@@ -1,6 +1,4 @@
-import { FuncaoPadrao } from '@designliquido/delegua/estruturas';
 import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
-import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 
 export function abs(
     interpretador: InterpretadorInterface,

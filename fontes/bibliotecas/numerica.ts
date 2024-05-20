@@ -1,152 +1,135 @@
 import { FuncaoPadrao } from '@designliquido/delegua/estruturas';
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 
-export function registrarBibliotecaNumericaVisuAlg(
-    pilhaEscoposExecucao: PilhaEscoposExecucaoInterface
-) {
-    pilhaEscoposExecucao.definirVariavel(
-        'abs',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.abs(valor);
-        })
-    );
+export function abs(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.abs(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'arccos',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.acos(valor);
-        })
-    );
+export function arccos(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.acos(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'arcsen',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.asin(valor);
-        })
-    );
+export function arcsen(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.asin(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'arctan',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.atan(valor);
-        })
-    );
+export function arctan(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.atan(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'cos',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.cos(valor);
-        })
-    );
+export function cos(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.cos(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'cotan',
-        new FuncaoPadrao(1, function (valor: number) {
-            return 1 / Math.tan(valor);
-        })
-    );
+export function cotan(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(1 / Math.tan(valor));
+}
 
-    // Esse método não existe na biblioteca padrão. É usado para outros
-    // projetos montarem lógicas de tratamento de erro.
-    pilhaEscoposExecucao.definirVariavel(
-        'erro',
-        new FuncaoPadrao(0, function () {
-            throw new Error('Essa função atira erro. É usada para testes variados.');
-        })
-    );
+export function exp(
+    interpretador: InterpretadorInterface,
+    base: any, 
+    expoente: any
+): Promise<number> {
+    const baseResolvida = base.hasOwnProperty('valor') ? base.valor : base;
+    const expoenteResolvido = base.hasOwnProperty('valor') ? expoente.valor : expoente;
+    return Promise.resolve(Math.pow(baseResolvida, expoenteResolvido));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'exp',
-        new FuncaoPadrao(2, function (base: any, expoente: any) {
-            const baseResolvida = base.hasOwnProperty('valor') ? base.valor : base;
-            const expoenteResolvido = base.hasOwnProperty('valor') ? expoente.valor : expoente;
-            return Math.pow(baseResolvida, expoenteResolvido);
-        })
-    );
+export function grauprad(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve((valor * Math.PI) / 180);
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'grauprad',
-        new FuncaoPadrao(1, function (valor: number) {
-            return (valor * Math.PI) / 180;
-        })
-    );
+export function int(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.floor(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'int',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.floor(valor);
-        })
-    );
+export function log(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.log10(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'log',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.log10(valor);
-        })
-    );
+export function logn(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.log(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'logn',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.log(valor);
-        })
-    );
+export function pi(): Promise<number> {
+    return Promise.resolve(Math.PI);
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'pi',
-        new FuncaoPadrao(0, function () {
-            return Math.PI;
-        })
-    );
+export function quad(
+    interpretador: InterpretadorInterface,
+    valor: any
+): Promise<number> {
+    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    return Promise.resolve(valorResolvido * valorResolvido);
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'quad',
-        new FuncaoPadrao(1, function (valor: any) {
-            const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
-            return valorResolvido * valorResolvido;
-        })
-    );
+export function radpgrau(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve((valor * 180) / Math.PI);
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'radpgrau',
-        new FuncaoPadrao(1, function (valor: number) {
-            return (valor * 180) / Math.PI;
-        })
-    );
+export function raizq(
+    interpretador: InterpretadorInterface,
+    valor: any
+): Promise<number> {
+    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    return Promise.resolve(Math.sqrt(valorResolvido));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'raizq',
-        new FuncaoPadrao(1, function (valor: any) {
-            const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
-            return Math.sqrt(valorResolvido);
-        })
-    );
+export function rand(): Promise<number> {
+    return Promise.resolve(Math.random());
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'rand',
-        new FuncaoPadrao(0, function () {
-            return Math.random();
-        })
-    );
+export function randi(
+    interpretador: InterpretadorInterface,
+    limite: number
+): Promise<number> {
+    return Promise.resolve(Math.floor(Math.random() * limite));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'randi',
-        new FuncaoPadrao(1, function (limite: number) {
-            return Math.floor(Math.random() * limite);
-        })
-    );
+export function sen(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.sin(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'sen',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.sin(valor);
-        })
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'tan',
-        new FuncaoPadrao(1, function (valor: number) {
-            return Math.tan(valor);
-        })
-    );
+export function tan(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<number> {
+    return Promise.resolve(Math.tan(valor));
 }

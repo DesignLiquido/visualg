@@ -1,84 +1,72 @@
-import { FuncaoPadrao } from '@designliquido/delegua/estruturas';
-import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 
-export function registrarBibliotecaCaracteresVisuAlg(
-    pilhaEscoposExecucao: PilhaEscoposExecucaoInterface
-) {
-    pilhaEscoposExecucao.definirVariavel(
-        'asc',
-        new FuncaoPadrao(1, function (valor: any) {
-            const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
-            return String(valorResolvido).charCodeAt(0);
-        })
-    );
+export function asc(
+    interpretador: InterpretadorInterface,
+    valor: any
+): Promise<number> {
+    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    return Promise.resolve(String(valorResolvido).charCodeAt(0));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'carac',
-        new FuncaoPadrao(1, function (valor: number) {
-            return String.fromCharCode(valor);
-        })
-    );
+export function carac(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<string> {
+    return Promise.resolve(String.fromCharCode(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'caracpnum',
-        new FuncaoPadrao(1, function (valor: any) {
-            const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
-            return Number(valorResolvido);
-        })
-    );
+export function caracpnum(
+    interpretador: InterpretadorInterface,
+    valor: any
+): Promise<number> {
+    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    return Promise.resolve(Number(valorResolvido));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'compr',
-        new FuncaoPadrao(1, function (valor: any) {
-            const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
-            return String(valorResolvido).length;
-        })
-    );
+export function compr(
+    interpretador: InterpretadorInterface,
+    valor: any
+): Promise<number> {
+    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    return Promise.resolve(String(valorResolvido).length);
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'copia',
-        new FuncaoPadrao(3, function (valor: string, inicio: number, fim: number) {
-            return valor.substring(inicio, inicio + fim);
-        })
-    );
+export function copia(
+    interpretador: InterpretadorInterface,
+    valor: string, 
+    inicio: number, 
+    fim: number
+): Promise<string> {
+    return Promise.resolve(valor.substring(inicio, inicio + fim));
+}
 
-    // Esse método não existe na biblioteca padrão. É usado para outros
-    // projetos montarem lógicas de tratamento de erro.
-    // TODO: Reencontrar onde isso é usado e refatorar.
-    pilhaEscoposExecucao.definirVariavel(
-        'erro2',
-        new FuncaoPadrao(0, function () {
-            throw new Error('Essa função atira erro também. É usada para testes variados.');
-        })
-    );
+export function maiusc(
+    interpretador: InterpretadorInterface,
+    valor: any
+): Promise<string> {
+    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    return Promise.resolve(String(valorResolvido).toUpperCase());
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'maiusc',
-        new FuncaoPadrao(1, function (valor: any) {
-            const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
-            return String(valorResolvido).toUpperCase();
-        })
-    );
+export function minusc(
+    interpretador: InterpretadorInterface,
+    valor: string
+): Promise<string> {
+    return Promise.resolve(valor.toLowerCase());
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'minusc',
-        new FuncaoPadrao(1, function (valor: string) {
-            return valor.toLowerCase();
-        })
-    );
+export function numpcarac(
+    interpretador: InterpretadorInterface,
+    valor: number
+): Promise<string> {
+    return Promise.resolve(String(valor));
+}
 
-    pilhaEscoposExecucao.definirVariavel(
-        'numpcarac',
-        new FuncaoPadrao(1, function (valor: number) {
-            return String(valor);
-        })
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'pos',
-        new FuncaoPadrao(2, function (busca: string, valor: any) {
-            const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
-            return String(valorResolvido).indexOf(busca) + 1;
-        })
-    );
+export function pos(
+    interpretador: InterpretadorInterface,
+    busca: string, 
+    valor: any
+): Promise<number> {
+    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    return Promise.resolve(String(valorResolvido).indexOf(busca) + 1);
 }

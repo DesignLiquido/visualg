@@ -17,9 +17,159 @@ import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/inte
 
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
+import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
+import { FuncaoPadrao } from '@designliquido/delegua/estruturas';
 
 import { inferirTipoVariavel } from './inferenciador';
+
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
+
+import * as bibliotecaCaracteres from '../bibliotecas/caracteres';
+import * as bibliotecaNumerica from '../bibliotecas/numerica';
+
+export function carregarBibliotecaGlobalCaracter(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
+    pilhaEscoposExecucao.definirVariavel(
+        'asc',
+        new FuncaoPadrao(1, bibliotecaCaracteres.asc)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'carac',
+        new FuncaoPadrao(1, bibliotecaCaracteres.carac)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'caracpnum',
+        new FuncaoPadrao(1, bibliotecaCaracteres.caracpnum)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'compr',
+        new FuncaoPadrao(1, bibliotecaCaracteres.compr)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'copia',
+        new FuncaoPadrao(3, bibliotecaCaracteres.copia)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'maiusc',
+        new FuncaoPadrao(1, bibliotecaCaracteres.maiusc)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'minusc',
+        new FuncaoPadrao(1, bibliotecaCaracteres.minusc)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'numpcarac',
+        new FuncaoPadrao(1, bibliotecaCaracteres.numpcarac)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'pos',
+        new FuncaoPadrao(2, bibliotecaCaracteres.pos)
+    );
+}
+
+export function carregarBibliotecaGlobalNumerica(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
+    pilhaEscoposExecucao.definirVariavel(
+        'abs',
+        new FuncaoPadrao(1, bibliotecaNumerica.abs)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'arccos',
+        new FuncaoPadrao(1, bibliotecaNumerica.arccos)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'arcsen',
+        new FuncaoPadrao(1, bibliotecaNumerica.arcsen)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'arctan',
+        new FuncaoPadrao(1, bibliotecaNumerica.arctan)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'cos',
+        new FuncaoPadrao(1, bibliotecaNumerica.cos)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'cotan',
+        new FuncaoPadrao(1, bibliotecaNumerica.cotan)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'exp',
+        new FuncaoPadrao(2, bibliotecaNumerica.exp)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'grauprad',
+        new FuncaoPadrao(1, bibliotecaNumerica.grauprad)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'int',
+        new FuncaoPadrao(1, bibliotecaNumerica.int)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'log',
+        new FuncaoPadrao(1, bibliotecaNumerica.log)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'logn',
+        new FuncaoPadrao(1, bibliotecaNumerica.logn)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'pi',
+        new FuncaoPadrao(0, bibliotecaNumerica.pi)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'quad',
+        new FuncaoPadrao(1, bibliotecaNumerica.quad)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'radpgrau',
+        new FuncaoPadrao(1, bibliotecaNumerica.radpgrau)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'raizq',
+        new FuncaoPadrao(1, bibliotecaNumerica.raizq)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'rand',
+        new FuncaoPadrao(0, bibliotecaNumerica.rand)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'randi',
+        new FuncaoPadrao(1, bibliotecaNumerica.randi)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'sen',
+        new FuncaoPadrao(1, bibliotecaNumerica.sen)
+    );
+
+    pilhaEscoposExecucao.definirVariavel(
+        'tan',
+        new FuncaoPadrao(1, bibliotecaNumerica.tan)
+    );
+}
 
 export async function visitarDeclaracaoCabecalhoPrograma(
     interpretador: InterpretadorBase,

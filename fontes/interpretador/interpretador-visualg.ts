@@ -4,9 +4,9 @@ import { InterpretadorBase } from '@designliquido/delegua/interpretador';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 
 import {
-    registrarBibliotecaNumericaVisuAlg,
-    registrarBibliotecaCaracteresVisuAlg,
-} from '../bibliotecas';
+    carregarBibliotecaGlobalCaracter,
+    carregarBibliotecaGlobalNumerica,
+} from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 import { VisitanteVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
@@ -36,8 +36,8 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Visitante
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
 
-        registrarBibliotecaNumericaVisuAlg(this.pilhaEscoposExecucao);
-        registrarBibliotecaCaracteresVisuAlg(this.pilhaEscoposExecucao);
+        carregarBibliotecaGlobalCaracter(this.pilhaEscoposExecucao);
+        carregarBibliotecaGlobalNumerica(this.pilhaEscoposExecucao);
     }
 
     visitarExpressaoLimpaTela(expressao: LimpaTela): void | Promise<any> {

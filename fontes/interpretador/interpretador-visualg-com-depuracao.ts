@@ -6,9 +6,9 @@ import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/qu
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 
 import {
-    registrarBibliotecaNumericaVisuAlg,
-    registrarBibliotecaCaracteresVisuAlg,
-} from '../bibliotecas';
+    carregarBibliotecaGlobalCaracter,
+    carregarBibliotecaGlobalNumerica,
+} from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 import { VisitanteVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
@@ -32,8 +32,8 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
 
-        registrarBibliotecaNumericaVisuAlg(this.pilhaEscoposExecucao);
-        registrarBibliotecaCaracteresVisuAlg(this.pilhaEscoposExecucao);
+        carregarBibliotecaGlobalCaracter(this.pilhaEscoposExecucao);
+        carregarBibliotecaGlobalNumerica(this.pilhaEscoposExecucao);
     }
 
     async visitarExpressaoLimpaTela(expressao: LimpaTela): Promise<any> {

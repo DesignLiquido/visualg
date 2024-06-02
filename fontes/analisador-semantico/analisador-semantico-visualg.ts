@@ -44,23 +44,17 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         this.diagnosticos = [];
     }
 
-    erro(simbolo: SimboloInterface, mensagem: string): void {
+    adicionarDiagnostico(
+        simbolo: SimboloInterface, 
+        mensagem: string, 
+        severidade: DiagnosticoSeveridade = DiagnosticoSeveridade.ERRO
+    ): void {
         this.diagnosticos.push({
             simbolo: simbolo,
             mensagem: mensagem,
             hashArquivo: simbolo.hashArquivo,
             linha: simbolo.linha,
-            severidade: DiagnosticoSeveridade.ERRO,
-        });
-    }
-
-    aviso(simbolo: SimboloInterface, mensagem: string): void {
-        this.diagnosticos.push({
-            simbolo: simbolo,
-            mensagem: mensagem,
-            hashArquivo: simbolo.hashArquivo,
-            linha: simbolo.linha,
-            severidade: DiagnosticoSeveridade.AVISO,
+            severidade: severidade,
         });
     }
 
@@ -68,17 +62,17 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         const { simbolo, valor } = expressao;
         let variavel = this.variaveis[simbolo.lexema];
         if (!variavel) {
-            this.erro(simbolo, `Variável ${simbolo.lexema} ainda não foi declarada.`);
+            this.adicionarDiagnostico(simbolo, `Variável ${simbolo.lexema} ainda não foi declarada.`);
             return Promise.resolve();
         }
 
         if (variavel.tipo) {
             if (valor instanceof Literal && variavel.tipo.includes('[]')) {
-                this.erro(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
+                this.adicionarDiagnostico(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
                 return Promise.resolve();
             }
             if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
-                this.erro(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
+                this.adicionarDiagnostico(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
                 return Promise.resolve();
             }
 
@@ -87,13 +81,13 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 if (!['qualquer'].includes(variavel.tipo)) {
                     if (valorLiteral === 'string') {
                         if (variavel.tipo.toLowerCase() != 'caractere') {
-                            this.erro(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
+                            this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
                             return Promise.resolve();
                         }
                     }
                     if (valorLiteral === 'number') {
                         if (!['inteiro', 'real'].includes(variavel.tipo.toLowerCase())) {
-                            this.erro(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
+                            this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
                             return Promise.resolve();
                         }
                     }
@@ -201,21 +195,21 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
         for (let parametro of declaracao.funcao.parametros) {
             if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado.tipo) {
-                this.erro(declaracao.simbolo, `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`);
+                this.adicionarDiagnostico(declaracao.simbolo, `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`);
             }
         }
 
-        if (declaracao.funcao.tipoRetorno === undefined) {
-            this.erro(declaracao.simbolo, `Declaração de retorno da função é inválida`);
-        }
-
         if (declaracao.funcao.parametros.length >= 255) {
-            this.erro(declaracao.simbolo, 'Não pode haver mais de 255 parâmetros');
+            this.adicionarDiagnostico(declaracao.simbolo, 'Não pode haver mais de 255 parâmetros');
         }
 
         this.funcoes[declaracao.simbolo.lexema] = {
             valor: declaracao.funcao,
         };
+
+        // TODO: Ao inspecionar corpo da função, verificar se todas as
+        // declarações `Retorna` retornam um tipo diferente do tipo da função
+        // (se for função). 
 
         return Promise.resolve();
     }
@@ -224,7 +218,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         declaracao.argumentos.forEach((argumento: FormatacaoEscrita) => {
             if (argumento.expressao instanceof Variavel) {
                 if (!this.variaveis[argumento.expressao.simbolo.lexema]) {
-                    this.erro(
+                    this.adicionarDiagnostico(
                         argumento.expressao.simbolo,
                         `Variável '${argumento.expressao.simbolo.lexema}' não existe.`
                     );
@@ -232,9 +226,10 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 }
 
                 if (this.variaveis[argumento.expressao.simbolo.lexema]?.valor === undefined) {
-                    this.aviso(
+                    this.adicionarDiagnostico(
                         argumento.expressao.simbolo,
-                        `Variável '${argumento.expressao.simbolo.lexema}' não foi inicializada.`
+                        `Variável '${argumento.expressao.simbolo.lexema}' não foi inicializada.`,
+                        DiagnosticoSeveridade.AVISO
                     );
                 }
             }
@@ -248,12 +243,12 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
             const variavel = expressao.entidadeChamada as Variavel;
             const funcaoChamada = this.variaveis[variavel.simbolo.lexema] || this.funcoes[variavel.simbolo.lexema];
             if (!funcaoChamada) {
-                this.erro(variavel.simbolo, `Função '${variavel.simbolo.lexema}' não foi declarada.`);
+                this.adicionarDiagnostico(variavel.simbolo, `Função '${variavel.simbolo.lexema}' não foi declarada.`);
                 return Promise.resolve();
             }
             const funcao = funcaoChamada.valor as FuncaoConstruto;
             if (funcao.parametros.length != expressao.argumentos.length) {
-                this.erro(
+                this.adicionarDiagnostico(
                     variavel.simbolo,
                     `Esperava ${funcao.parametros.length} ${
                         funcao.parametros.length > 1 ? 'argumentos' : 'argumento'
@@ -268,7 +263,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                         argumentoFuncao.tipoDado?.tipo.toLowerCase() === 'caracter' &&
                         typeof argumentoChamada.valor !== 'string'
                     ) {
-                        this.erro(
+                        this.adicionarDiagnostico(
                             variavel.simbolo,
                             `O tipo do valor passado para o parâmetro '${argumentoFuncao.nome.lexema}' (${argumentoFuncao.tipoDado.nome}) é diferente do esperado pela função.`
                         );
@@ -276,7 +271,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                         ['inteiro', 'real'].includes(argumentoFuncao.tipoDado?.tipo.toLowerCase()) &&
                         typeof argumentoChamada.valor !== 'number'
                     ) {
-                        this.erro(
+                        this.adicionarDiagnostico(
                             variavel.simbolo,
                             `O tipo do valor passado para o parâmetro '${argumentoFuncao.nome.lexema}' (${argumentoFuncao.tipoDado.nome}) é diferente do esperado pela função.`
                         );

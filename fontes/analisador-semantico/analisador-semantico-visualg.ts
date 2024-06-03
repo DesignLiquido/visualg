@@ -19,7 +19,7 @@ import {
 } from '@designliquido/delegua/declaracoes';
 
 import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
-import { SimboloInterface } from '@designliquido/delegua/interfaces';
+import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
@@ -246,6 +246,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 this.adicionarDiagnostico(variavel.simbolo, `Função '${variavel.simbolo.lexema}' não foi declarada.`);
                 return Promise.resolve();
             }
+
             const funcao = funcaoChamada.valor as FuncaoConstruto;
             if (funcao.parametros.length != expressao.argumentos.length) {
                 this.adicionarDiagnostico(
@@ -256,29 +257,31 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 );
             }
 
-            for (let [indice, argumentoFuncao] of funcao.parametros.entries()) {
-                const argumentoChamada = expressao.argumentos[indice];
-                if (argumentoChamada) {
-                    if (
-                        argumentoFuncao.tipoDado?.tipo.toLowerCase() === 'caracter' &&
-                        typeof argumentoChamada.valor !== 'string'
-                    ) {
-                        this.adicionarDiagnostico(
-                            variavel.simbolo,
-                            `O tipo do valor passado para o parâmetro '${argumentoFuncao.nome.lexema}' (${argumentoFuncao.tipoDado.nome}) é diferente do esperado pela função.`
-                        );
-                    } else if (
-                        ['inteiro', 'real'].includes(argumentoFuncao.tipoDado?.tipo.toLowerCase()) &&
-                        typeof argumentoChamada.valor !== 'number'
-                    ) {
-                        this.adicionarDiagnostico(
-                            variavel.simbolo,
-                            `O tipo do valor passado para o parâmetro '${argumentoFuncao.nome.lexema}' (${argumentoFuncao.tipoDado.nome}) é diferente do esperado pela função.`
-                        );
-                    }
+            for (let [indice, argumento] of expressao.argumentos.entries()) {
+                const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
+                const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
+                const parametroCorrespondente = funcao.parametros[indice];
+                const tipoDadoParametro = parametroCorrespondente.tipoDado.tipo.toLowerCase();
+
+                if (tipoVariavelCorrespondente !== tipoDadoParametro) {
+                    this.adicionarDiagnostico(
+                        variavel.simbolo,
+                        `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (${tipoVariavelCorrespondente}) é diferente do esperado pela função (${tipoDadoParametro}).`
+                    );
                 }
             }
         }
+
+        return Promise.resolve();
+    }
+
+    visitarExpressaoLeia(declaracao: Leia): Promise<any> {
+        for (let argumento of declaracao.argumentos) {
+            const argumentoComoVariavel = argumento as Variavel;
+            // TODO: Reabilitar na próxima versão do núcleo de Delégua.
+            // this.variaveis[argumentoComoVariavel.simbolo.lexema].valorDefinido = true;
+        }
+        
         return Promise.resolve();
     }
 

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico } from '@designliquido/delegua/construtos';
+import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
 import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
@@ -239,6 +239,10 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
 
     override async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
         return comum.visitarExpressaoBinaria(this, expressao);
+    }
+
+    override visitarExpressaoDeVariavel(expressao: Variavel): any {
+        return comum.visitarExpressaoDeVariavel(this, expressao);
     }
 
     override async visitarExpressaoLogica(expressao: Logico): Promise<any> {

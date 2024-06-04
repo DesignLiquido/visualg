@@ -1,4 +1,4 @@
-import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico } from '@designliquido/delegua/construtos';
+import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
 import { Aleatorio, CabecalhoPrograma, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
@@ -214,6 +214,10 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Visitante
 
     override async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
         return comum.visitarExpressaoBinaria(this, expressao);
+    }
+
+    override visitarExpressaoDeVariavel(expressao: Variavel): any {
+        return comum.visitarExpressaoDeVariavel(this, expressao);
     }
 
     override async visitarExpressaoLogica(expressao: Logico): Promise<any> {

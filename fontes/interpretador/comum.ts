@@ -11,14 +11,14 @@ import {
     Unario,
     Variavel,
 } from '@designliquido/delegua/construtos';
-import { Aleatorio, CabecalhoPrograma, Declaracao, Expressao, InicioAlgoritmo, Leia, Para } from '@designliquido/delegua/declaracoes';
+import { Aleatorio, CabecalhoPrograma, Declaracao, Expressao, FuncaoDeclaracao, InicioAlgoritmo, Leia, Para } from '@designliquido/delegua/declaracoes';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
-import { FuncaoPadrao } from '@designliquido/delegua/estruturas';
+import { DeleguaFuncao, FuncaoPadrao } from '@designliquido/delegua/estruturas';
 
 import { inferirTipoVariavel } from './inferenciador';
 
@@ -578,6 +578,22 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
             expressao.linha
         )
     );
+}
+
+export function visitarExpressaoDeVariavel(
+    interpretador: InterpretadorBase,
+    expressao: Variavel
+): any {
+    const variavel = (interpretador as any).procurarVariavel(expressao.simbolo);
+    // Este caso abaixo ocorre quando uma função é chamada sem parâmetros.
+    if (variavel.tipo === 'função') {
+        const funcao: DeleguaFuncao = variavel.valor;
+        if (funcao.declaracao.parametros.length === 0) {
+            return funcao.chamar(interpretador, []);
+        }
+    }
+    
+    return variavel;
 }
 
 async function encontrarLeiaNoAleatorio(

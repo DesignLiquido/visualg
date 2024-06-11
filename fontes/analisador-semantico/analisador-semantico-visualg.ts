@@ -19,7 +19,7 @@ import {
 } from '@designliquido/delegua/declaracoes';
 
 import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
-import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
+import { SimboloInterface } from '@designliquido/delegua/interfaces';
 import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
@@ -172,6 +172,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                         ? declaracao.inicializador.valor
                         : declaracao.inicializador
                     : undefined,
+            valorDefinido: true
         };
         return Promise.resolve();
     }

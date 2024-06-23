@@ -4,6 +4,7 @@ import {
     Aleatorio,
     Bloco,
     CabecalhoPrograma,
+    Classe,
     Declaracao,
     Enquanto,
     Escolha,
@@ -15,6 +16,7 @@ import {
     InicioAlgoritmo,
     Leia,
     Para,
+    PropriedadeClasse,
     Retorna,
     Se,
     Sustar,
@@ -38,6 +40,7 @@ import {
     Unario,
     Variavel,
     Comentario,
+    AcessoMetodoOuPropriedade,
 } from '@designliquido/delegua/construtos';
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
@@ -52,11 +55,13 @@ import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     blocoPrincipalIniciado: boolean;
     fimAlgoritmoEncontrado: boolean;
+    tiposConhecidos: string[];
 
     constructor() {
         super();
         this.blocoPrincipalIniciado = false;
         this.fimAlgoritmoEncontrado = false;
+        this.tiposConhecidos = [];
     }
 
     private validarSegmentoAlgoritmo(): SimboloInterface {
@@ -122,14 +127,14 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.consumir(tiposDeSimbolos.DOIS_PONTOS, 'Esperado dois-pontos após nome de variável.');
 
         if (
-            !this.verificarSeSimboloAtualEIgualA(
+            ![
                 tiposDeSimbolos.CARACTER,
                 tiposDeSimbolos.CARACTERE,
                 tiposDeSimbolos.INTEIRO,
                 tiposDeSimbolos.LOGICO,
                 tiposDeSimbolos.REAL,
                 tiposDeSimbolos.VETOR
-            )
+            ].includes(this.simbolos[this.atual].tipo) && !this.tiposConhecidos.includes(this.simbolos[this.atual].lexema)
         ) {
             throw this.erro(
                 this.simbolos[this.atual],
@@ -137,13 +142,16 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             );
         }
 
-        const simboloAnterior = this.simbolos[this.atual - 1];
-        const tipoVariavel: string = simboloAnterior.tipo;
+        const simboloTipo = this.avancarEDevolverAnterior();
+        let tipoVariavel: string = simboloTipo.tipo;
+        if (tipoVariavel === tiposDeSimbolos.IDENTIFICADOR) {
+            tipoVariavel = simboloTipo.lexema;
+        }
 
         return {
             identificadores,
             tipo: tipoVariavel,
-            simbolo: simboloAnterior,
+            simbolo: simboloTipo,
             referencia: referencia,
         };
     }
@@ -214,9 +222,9 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                 tiposDeSimbolos.LOGICO,
                                 tiposDeSimbolos.REAL,
                                 tiposDeSimbolos.VETOR,
-                            ].includes(simboloTipo.tipo)
+                            ].includes(simboloTipo.tipo) && !this.tiposConhecidos.includes(simboloTipo.lexema)
                         ) {
-                            throw this.erro(simboloTipo, 'Tipo de variável não conhecido para inicialização de vetor.');
+                            throw this.erro(simboloTipo, 'Tipo de variável ou registro não conhecido para inicialização de vetor.');
                         }
                         for (let identificador of dadosVariaveis.identificadores) {
                             inicializacoes.push(
@@ -265,6 +273,20 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                         )
                                     );
                                     break;
+                                default:
+                                    // Neste caso, o tipo pode ser um registro.
+                                    // Se for, verificamos aqui.
+                                    if (!this.tiposConhecidos.includes(dadosVariaveis.tipo)) {
+                                        throw this.erro(identificador, `Tipo ${dadosVariaveis.tipo} não parece ser de um tipo conhecido ou registro.`);
+                                    }
+
+                                    inicializacoes.push(
+                                        new Var(
+                                            identificador,
+                                            new Literal(this.hashArquivo, Number(dadosVariaveis.simbolo.linha), false),
+                                            dadosVariaveis.tipo as any
+                                        )
+                                    );
                             }
                         }
                     }
@@ -416,6 +438,9 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         while (true) {
             if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARENTESE_ESQUERDO)) {
                 expressao = this.finalizarChamada(expressao);
+            } else if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PONTO)) {
+                const nome = this.consumir(tiposDeSimbolos.IDENTIFICADOR, "Esperado nome da propriedade após '.'.");
+                expressao = new AcessoMetodoOuPropriedade(this.hashArquivo, expressao, nome);
             } else if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
                 const indices = [];
                 do {
@@ -1116,6 +1141,46 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         );
     }
 
+    /**
+     * No VisuAlg não existe o conceito de classe, mas existe o conceito de registro,
+     * que é como se fosse uma classe sem métodos. 
+     * Por isso aqui retornamos `Classe`
+     * @returns {Classe} Uma declaração de Classe, que serve como um tipo.
+     */
+    declaracaoTipo(): Classe {
+        const simboloTipo: SimboloInterface = this.avancarEDevolverAnterior();
+        const nomeTipo: SimboloInterface = this.consumir(
+            tiposDeSimbolos.IDENTIFICADOR, 
+            'Esperado identificador com o nome do tipo a ser declarado.'
+        );
+
+        this.consumir(tiposDeSimbolos.IGUAL, 'Esperado símbolo de igual após nome do tipo.');
+        this.consumir(tiposDeSimbolos.REGISTRO, 'Esperado expressão "registro" após sinal de igual em declaração de tipo.');
+        this.consumir(tiposDeSimbolos.QUEBRA_LINHA, 'Esperado quebra de linha após palavra reservada "registro".');
+
+        let propriedades = [];
+        while (this.simbolos[this.atual].tipo !== tiposDeSimbolos.FIM_REGISTRO) {
+            const nomePropriedade = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador como nome de propriedade em especificação de registro.');
+            this.consumir(tiposDeSimbolos.DOIS_PONTOS, 'Esperado dois-pontos após nome de propriedade em especificação de registro.');
+            if (!this.verificarSeSimboloAtualEIgualA(
+                tiposDeSimbolos.INTEIRO, 
+                tiposDeSimbolos.CARACTERE, 
+                tiposDeSimbolos.REAL, 
+                tiposDeSimbolos.LOGICO
+            )) {
+                throw this.erro(this.simbolos[this.atual], `Esperado um tipo válido de propriedade em especificação de registro. Atual: ${this.simbolos[this.atual].lexema}.`);
+            }
+
+            const tipoPropriedade = this.simboloAnterior();
+            this.consumir(tiposDeSimbolos.QUEBRA_LINHA, 'Esperado quebra de linha após tipo de propriedade em especificação de registro.');
+            propriedades.push(new PropriedadeClasse(nomePropriedade, tipoPropriedade.lexema))
+        }
+
+        this.consumir(tiposDeSimbolos.FIM_REGISTRO, 'Não deve ocorrer erro aqui.');
+        this.tiposConhecidos.push(nomeTipo.lexema);
+        return new Classe(simboloTipo, undefined, [], propriedades, []);
+    }
+
     declaracaoAleatorio(): Aleatorio {
         const simboloAleatorio: SimboloInterface = this.avancarEDevolverAnterior();
 
@@ -1223,6 +1288,8 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 return this.declaracaoRetorna();
             case tiposDeSimbolos.SE:
                 return this.declaracaoSe();
+            case tiposDeSimbolos.TIPO:
+                return this.declaracaoTipo();
             case tiposDeSimbolos.VAR:
                 if (this.blocoPrincipalIniciado) {
                     throw this.erro(
@@ -1260,6 +1327,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.blocos = 0;
         this.blocoPrincipalIniciado = false;
         this.fimAlgoritmoEncontrado = false;
+        this.tiposConhecidos = [];
 
         this.hashArquivo = hashArquivo || 0;
         this.simbolos = retornoLexador?.simbolos || [];

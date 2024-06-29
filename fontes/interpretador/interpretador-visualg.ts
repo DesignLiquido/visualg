@@ -1,5 +1,5 @@
 import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
-import { Aleatorio, CabecalhoPrograma, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para } from '@designliquido/delegua/declaracoes';
+import { Aleatorio, CabecalhoPrograma, Classe, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 
@@ -8,7 +8,7 @@ import {
     carregarBibliotecaGlobalNumerica,
 } from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
-import { VisitanteVisuAlgInterface } from '../interfaces';
+import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
 
 import * as comum from './comum';
@@ -16,8 +16,9 @@ import * as comum from './comum';
 /**
  * Interpretador do VisuAlg, baseado no interpretador de Delégua.
  */
-export class InterpretadorVisuAlg extends InterpretadorBase implements VisitanteVisuAlgInterface {
+export class InterpretadorVisuAlg extends InterpretadorBase implements InterpretadorVisuAlgInterface {
     mensagemPrompt: string;
+    tiposConhecidos: string[];
     funcaoLimpaTela: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
 
     constructor(
@@ -35,6 +36,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Visitante
 
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
+        this.tiposConhecidos = [];
 
         carregarBibliotecaGlobalCaracter(this.pilhaEscoposExecucao);
         carregarBibliotecaGlobalNumerica(this.pilhaEscoposExecucao);
@@ -171,6 +173,10 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Visitante
      */
     override async visitarExpressaoLeia(expressao: Leia): Promise<any> {
         return comum.visitarExpressaoLeia(this, expressao, this.mensagemPrompt);
+    }
+    
+    override async visitarDeclaracaoClasse(declaracao: Classe): Promise<any> {
+        return comum.visitarDeclaracaoClasse(this, declaracao);
     }
 
     override async visitarDeclaracaoPara(declaracao: Para): Promise<any> {

@@ -41,6 +41,10 @@ import {
     Variavel,
     Comentario,
     AcessoMetodoOuPropriedade,
+    DefinirValor,
+    Isto,
+    Constante,
+    Vetor,
 } from '@designliquido/delegua/construtos';
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
@@ -77,18 +81,22 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return descricaoAlgoritmo;
     }
 
-    private criarVetorNDimensional(dimensoes: number[]) {
+    private criarVetorNDimensional(dimensoes: number[], construtoInicializacao: any = undefined) {
         if (dimensoes.length > 0) {
             const dimensao = dimensoes[0] + 1;
             const resto = dimensoes.slice(1);
-            const novoArray = Array(dimensao);
+            // const novoVetor = Array(dimensao);
+            const novasDimensoes = [];
             for (let i = 0; i <= dimensao; i++) {
-                novoArray[i] = this.criarVetorNDimensional(resto);
+                // novoVetor[i] = this.criarVetorNDimensional(resto, construtoInicializacao);
+                novasDimensoes.push(this.criarVetorNDimensional(resto, construtoInicializacao));
             }
-            return novoArray;
+
+            const novoVetor = new Vetor(this.hashArquivo, -1, novasDimensoes);
+            return novoVetor;
         } 
             
-        return undefined;
+        return construtoInicializacao;
     }
 
     private validarDimensoesVetor(): number[] {
@@ -226,18 +234,43 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                         ) {
                             throw this.erro(simboloTipo, 'Tipo de variável ou registro não conhecido para inicialização de vetor.');
                         }
+
                         for (let identificador of dadosVariaveis.identificadores) {
-                            inicializacoes.push(
-                                new Var(
-                                    identificador,
-                                    new Literal(
-                                        this.hashArquivo,
-                                        Number(dadosVariaveis.simbolo.linha),
-                                        this.criarVetorNDimensional(dimensoes)
-                                    ),
-                                    `${simboloTipo.lexema}[]` as TipoDadosElementar
-                                )
-                            );
+                            if (this.tiposConhecidos.includes(simboloTipo.lexema)) {
+                                inicializacoes.push(
+                                    new Var(
+                                        identificador,
+                                        this.criarVetorNDimensional(dimensoes, new Chamada(
+                                            this.hashArquivo, 
+                                            new Constante(
+                                                this.hashArquivo, 
+                                                new Simbolo(
+                                                    tiposDeSimbolos.IDENTIFICADOR, 
+                                                    simboloTipo.lexema, 
+                                                    simboloTipo.lexema, 
+                                                    identificador.linha, 
+                                                    this.hashArquivo
+                                                )
+                                            ),
+                                            undefined, 
+                                            []
+                                        )),
+                                        `${simboloTipo.lexema}[]` as any
+                                    )
+                                );
+                            } else {
+                                inicializacoes.push(
+                                    new Var(
+                                        identificador,
+                                        new Literal(
+                                            this.hashArquivo,
+                                            Number(dadosVariaveis.simbolo.linha),
+                                            this.criarVetorNDimensional(dimensoes)
+                                        ),
+                                        `${simboloTipo.lexema}[]` as TipoDadosElementar
+                                    )
+                                );
+                            }
                         }
                         this.atual++;
                     } else {
@@ -283,7 +316,23 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                     inicializacoes.push(
                                         new Var(
                                             identificador,
-                                            new Literal(this.hashArquivo, Number(dadosVariaveis.simbolo.linha), false),
+                                            // A inicialização de um registro é uma chamada ao
+                                            // construtor de classe.
+                                            new Chamada(
+                                                this.hashArquivo, 
+                                                new Constante(
+                                                    this.hashArquivo, 
+                                                    new Simbolo(
+                                                        tiposDeSimbolos.IDENTIFICADOR, 
+                                                        dadosVariaveis.tipo, 
+                                                        dadosVariaveis.tipo, 
+                                                        identificador.linha, 
+                                                        this.hashArquivo
+                                                    )
+                                                ),
+                                                undefined, 
+                                                []
+                                            ),
                                             dadosVariaveis.tipo as any
                                         )
                                     );
@@ -947,7 +996,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             simboloAtualBlocoPara = this.simbolos[this.atual];
         }
 
-        this.consumir(tiposDeSimbolos.FIM_PARA, '');
+        this.consumir(tiposDeSimbolos.FIM_PARA, 'Aqui nunca deve ocorrer erro.');
         this.consumir(tiposDeSimbolos.QUEBRA_LINHA, "Esperado quebra de linha após palavra reservada 'fimpara'.");
 
         const corpo = new Bloco(
@@ -1126,7 +1175,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         }
 
         this.consumir(tiposDeSimbolos.FIM_SE, "Esperado palavra-chave 'fimse' para fechamento de declaração 'se'.");
-
         this.consumir(tiposDeSimbolos.QUEBRA_LINHA, "Esperado quebra de linha após palavra-chave 'fimse'.");
 
         return new Se(
@@ -1141,6 +1189,76 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         );
     }
 
+    private gerarConstrutorParaTipo(simboloTipo: SimboloInterface, propriedades: PropriedadeClasse[]): FuncaoDeclaracao {
+        const instrucoesConstrutor = [];
+        for (let propriedade of propriedades) {
+            let valorInicializacao: any;
+            switch (propriedade.tipo) {
+                case 'inteiro':
+                case 'real':
+                    valorInicializacao = 0;
+                    break;
+                case 'caracter':
+                case 'caractere':
+                    valorInicializacao = '';
+                    break;
+                case 'logico':
+                case 'lógico':
+                    valorInicializacao = false;
+                    break;
+            }
+
+            instrucoesConstrutor.push(
+                new Expressao(
+                    new DefinirValor(
+                        propriedade.hashArquivo,
+                        propriedade.linha,
+                        new Isto(
+                            propriedade.hashArquivo,
+                            propriedade.linha,
+                            new Simbolo(
+                                'ISTO',
+                                'isto',
+                                undefined,
+                                simboloTipo.linha,
+                                simboloTipo.hashArquivo
+                            )
+                        ),
+                        propriedade.nome,
+                        new Literal(propriedade.hashArquivo, propriedade.linha, valorInicializacao)
+                    )
+                )
+            );
+        }
+
+        const construtorConstruto = new FuncaoConstruto(
+            simboloTipo.hashArquivo,
+            simboloTipo.linha,
+            propriedades.map(
+                (p) =>
+                    ({
+                        abrangencia: 'padrao',
+                        nome: p.nome,
+                    } as ParametroInterface)
+            ),
+            instrucoesConstrutor
+        );
+
+        const construtor = new FuncaoDeclaracao(
+            new Simbolo(
+                'CONSTRUTOR',
+                'construtor',
+                undefined,
+                simboloTipo.hashArquivo,
+                simboloTipo.linha
+            ),
+            construtorConstruto,
+            undefined
+        );
+
+        return construtor;
+    }
+
     /**
      * No VisuAlg não existe o conceito de classe, mas existe o conceito de registro,
      * que é como se fosse uma classe sem métodos. 
@@ -1148,7 +1266,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
      * @returns {Classe} Uma declaração de Classe, que serve como um tipo.
      */
     declaracaoTipo(): Classe {
-        const simboloTipo: SimboloInterface = this.avancarEDevolverAnterior();
+        this.avancarEDevolverAnterior(); // 'tipo'
         const nomeTipo: SimboloInterface = this.consumir(
             tiposDeSimbolos.IDENTIFICADOR, 
             'Esperado identificador com o nome do tipo a ser declarado.'
@@ -1158,7 +1276,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.consumir(tiposDeSimbolos.REGISTRO, 'Esperado expressão "registro" após sinal de igual em declaração de tipo.');
         this.consumir(tiposDeSimbolos.QUEBRA_LINHA, 'Esperado quebra de linha após palavra reservada "registro".');
 
-        let propriedades = [];
+        let propriedades: PropriedadeClasse[] = [];
         while (this.simbolos[this.atual].tipo !== tiposDeSimbolos.FIM_REGISTRO) {
             const nomePropriedade = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador como nome de propriedade em especificação de registro.');
             this.consumir(tiposDeSimbolos.DOIS_PONTOS, 'Esperado dois-pontos após nome de propriedade em especificação de registro.');
@@ -1178,7 +1296,12 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
         this.consumir(tiposDeSimbolos.FIM_REGISTRO, 'Não deve ocorrer erro aqui.');
         this.tiposConhecidos.push(nomeTipo.lexema);
-        return new Classe(simboloTipo, undefined, [], propriedades, []);
+
+        // Em teoria, um registro é inicializado implicitamente.
+        // Para isso, geramos um construtor que inicializa todas as propriedades
+        // com valores padrão.
+        const construtor = this.gerarConstrutorParaTipo(nomeTipo, propriedades);
+        return new Classe(nomeTipo, undefined, [construtor], propriedades, []);
     }
 
     declaracaoAleatorio(): Aleatorio {

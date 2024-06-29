@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
-import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma } from '@designliquido/delegua/declaracoes';
+import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma, Classe } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 
@@ -10,7 +10,7 @@ import {
     carregarBibliotecaGlobalNumerica,
 } from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
-import { VisitanteVisuAlgInterface } from '../interfaces';
+import { InterpretadorVisuAlgInterface, VisitanteVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
 
 import * as comum from './comum';
@@ -18,8 +18,9 @@ import * as comum from './comum';
 /**
  * Interpretador com depuração para o dialeto VisuAlg.
  */
-export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao implements VisitanteVisuAlgInterface {
+export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao implements InterpretadorVisuAlgInterface {
     mensagemPrompt: string;
+    tiposConhecidos: string[];
     funcaoLimpaTela: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
 
     constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null, funcaoLimpaTela: Function = null) {
@@ -31,6 +32,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
 
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
+        this.tiposConhecidos = [];
 
         carregarBibliotecaGlobalCaracter(this.pilhaEscoposExecucao);
         carregarBibliotecaGlobalNumerica(this.pilhaEscoposExecucao);
@@ -47,6 +49,10 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
 
     async visitarDeclaracaoCabecalhoPrograma(declaracao: CabecalhoPrograma): Promise<any> {
         return comum.visitarDeclaracaoCabecalhoPrograma(this, declaracao);
+    }
+
+    override async visitarDeclaracaoClasse(declaracao: Classe): Promise<any> {
+        return comum.visitarDeclaracaoClasse(this, declaracao);
     }
 
     /**

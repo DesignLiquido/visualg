@@ -1,6 +1,7 @@
 import { EscopoExecucao } from "@designliquido/delegua/interfaces/escopo-execucao";
 import { PilhaEscoposExecucaoInterface } from "@designliquido/delegua/interfaces/pilha-escopos-execucao-interface";
-import { Simbolo, SimboloInterface, VariavelInterface } from "@designliquido/delegua";
+import { SimboloInterface, VariavelInterface } from "@designliquido/delegua/interfaces";
+import { Simbolo } from "@designliquido/delegua/lexador";
 import { ErroEmTempoDeExecucao } from "@designliquido/delegua/excecoes";
 import { DeleguaClasse, DeleguaFuncao } from "@designliquido/delegua/estruturas";
 import { EspacoVariaveis } from "@designliquido/delegua/espaco-variaveis";

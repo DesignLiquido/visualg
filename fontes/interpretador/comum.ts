@@ -1,6 +1,7 @@
 import {
     AcessoElementoMatriz,
     AcessoIndiceVariavel,
+    AcessoMetodoOuPropriedade,
     AtribuicaoPorIndicesMatriz,
     Binario,
     Construto,
@@ -11,16 +12,26 @@ import {
     Unario,
     Variavel,
 } from '@designliquido/delegua/construtos';
-import { Aleatorio, CabecalhoPrograma, Declaracao, Expressao, FuncaoDeclaracao, InicioAlgoritmo, Leia, Para } from '@designliquido/delegua/declaracoes';
+import {
+    Aleatorio,
+    CabecalhoPrograma,
+    Classe,
+    Declaracao,
+    Expressao,
+    InicioAlgoritmo,
+    Leia,
+    Para,
+} from '@designliquido/delegua/declaracoes';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
-import { DeleguaFuncao, FuncaoPadrao } from '@designliquido/delegua/estruturas';
+import { DeleguaClasse, DeleguaFuncao, FuncaoPadrao, ObjetoDeleguaClasse } from '@designliquido/delegua/estruturas';
 
 import { inferirTipoVariavel } from './inferenciador';
+import { InterpretadorVisuAlgInterface } from '../interfaces';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
@@ -28,165 +39,96 @@ import * as bibliotecaCaracteres from '../bibliotecas/caracteres';
 import * as bibliotecaNumerica from '../bibliotecas/numerica';
 
 export function carregarBibliotecaGlobalCaracter(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
-    pilhaEscoposExecucao.definirVariavel(
-        'asc',
-        new FuncaoPadrao(1, bibliotecaCaracteres.asc)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'carac',
-        new FuncaoPadrao(1, bibliotecaCaracteres.carac)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'caracpnum',
-        new FuncaoPadrao(1, bibliotecaCaracteres.caracpnum)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'compr',
-        new FuncaoPadrao(1, bibliotecaCaracteres.compr)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'copia',
-        new FuncaoPadrao(3, bibliotecaCaracteres.copia)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'maiusc',
-        new FuncaoPadrao(1, bibliotecaCaracteres.maiusc)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'minusc',
-        new FuncaoPadrao(1, bibliotecaCaracteres.minusc)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'numpcarac',
-        new FuncaoPadrao(1, bibliotecaCaracteres.numpcarac)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'pos',
-        new FuncaoPadrao(2, bibliotecaCaracteres.pos)
-    );
+    pilhaEscoposExecucao.definirVariavel('asc', new FuncaoPadrao(1, bibliotecaCaracteres.asc));
+    pilhaEscoposExecucao.definirVariavel('carac', new FuncaoPadrao(1, bibliotecaCaracteres.carac));
+    pilhaEscoposExecucao.definirVariavel('caracpnum', new FuncaoPadrao(1, bibliotecaCaracteres.caracpnum));
+    pilhaEscoposExecucao.definirVariavel('compr', new FuncaoPadrao(1, bibliotecaCaracteres.compr));
+    pilhaEscoposExecucao.definirVariavel('copia', new FuncaoPadrao(3, bibliotecaCaracteres.copia));
+    pilhaEscoposExecucao.definirVariavel('maiusc', new FuncaoPadrao(1, bibliotecaCaracteres.maiusc));
+    pilhaEscoposExecucao.definirVariavel('minusc', new FuncaoPadrao(1, bibliotecaCaracteres.minusc));
+    pilhaEscoposExecucao.definirVariavel('numpcarac', new FuncaoPadrao(1, bibliotecaCaracteres.numpcarac));
+    pilhaEscoposExecucao.definirVariavel('pos', new FuncaoPadrao(2, bibliotecaCaracteres.pos));
 }
 
 export function carregarBibliotecaGlobalNumerica(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
-    pilhaEscoposExecucao.definirVariavel(
-        'abs',
-        new FuncaoPadrao(1, bibliotecaNumerica.abs)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'arccos',
-        new FuncaoPadrao(1, bibliotecaNumerica.arccos)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'arcsen',
-        new FuncaoPadrao(1, bibliotecaNumerica.arcsen)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'arctan',
-        new FuncaoPadrao(1, bibliotecaNumerica.arctan)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'cos',
-        new FuncaoPadrao(1, bibliotecaNumerica.cos)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'cotan',
-        new FuncaoPadrao(1, bibliotecaNumerica.cotan)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'exp',
-        new FuncaoPadrao(2, bibliotecaNumerica.exp)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'grauprad',
-        new FuncaoPadrao(1, bibliotecaNumerica.grauprad)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'int',
-        new FuncaoPadrao(1, bibliotecaNumerica.int)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'log',
-        new FuncaoPadrao(1, bibliotecaNumerica.log)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'logn',
-        new FuncaoPadrao(1, bibliotecaNumerica.logn)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'pi',
-        new FuncaoPadrao(0, bibliotecaNumerica.pi)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'quad',
-        new FuncaoPadrao(1, bibliotecaNumerica.quad)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'radpgrau',
-        new FuncaoPadrao(1, bibliotecaNumerica.radpgrau)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'raizq',
-        new FuncaoPadrao(1, bibliotecaNumerica.raizq)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'rand',
-        new FuncaoPadrao(0, bibliotecaNumerica.rand)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'randi',
-        new FuncaoPadrao(1, bibliotecaNumerica.randi)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'sen',
-        new FuncaoPadrao(1, bibliotecaNumerica.sen)
-    );
-
-    pilhaEscoposExecucao.definirVariavel(
-        'tan',
-        new FuncaoPadrao(1, bibliotecaNumerica.tan)
-    );
+    pilhaEscoposExecucao.definirVariavel('abs', new FuncaoPadrao(1, bibliotecaNumerica.abs));
+    pilhaEscoposExecucao.definirVariavel('arccos', new FuncaoPadrao(1, bibliotecaNumerica.arccos));
+    pilhaEscoposExecucao.definirVariavel('arcsen', new FuncaoPadrao(1, bibliotecaNumerica.arcsen));
+    pilhaEscoposExecucao.definirVariavel('arctan', new FuncaoPadrao(1, bibliotecaNumerica.arctan));
+    pilhaEscoposExecucao.definirVariavel('cos', new FuncaoPadrao(1, bibliotecaNumerica.cos));
+    pilhaEscoposExecucao.definirVariavel('cotan', new FuncaoPadrao(1, bibliotecaNumerica.cotan));
+    pilhaEscoposExecucao.definirVariavel('exp', new FuncaoPadrao(2, bibliotecaNumerica.exp));
+    pilhaEscoposExecucao.definirVariavel('grauprad', new FuncaoPadrao(1, bibliotecaNumerica.grauprad));
+    pilhaEscoposExecucao.definirVariavel('int', new FuncaoPadrao(1, bibliotecaNumerica.int));
+    pilhaEscoposExecucao.definirVariavel('log', new FuncaoPadrao(1, bibliotecaNumerica.log));
+    pilhaEscoposExecucao.definirVariavel('logn', new FuncaoPadrao(1, bibliotecaNumerica.logn));
+    pilhaEscoposExecucao.definirVariavel('pi', new FuncaoPadrao(0, bibliotecaNumerica.pi));
+    pilhaEscoposExecucao.definirVariavel('quad', new FuncaoPadrao(1, bibliotecaNumerica.quad));
+    pilhaEscoposExecucao.definirVariavel('radpgrau', new FuncaoPadrao(1, bibliotecaNumerica.radpgrau));
+    pilhaEscoposExecucao.definirVariavel('raizq', new FuncaoPadrao(1, bibliotecaNumerica.raizq));
+    pilhaEscoposExecucao.definirVariavel('rand', new FuncaoPadrao(0, bibliotecaNumerica.rand));
+    pilhaEscoposExecucao.definirVariavel('randi', new FuncaoPadrao(1, bibliotecaNumerica.randi));
+    pilhaEscoposExecucao.definirVariavel('sen', new FuncaoPadrao(1, bibliotecaNumerica.sen));
+    pilhaEscoposExecucao.definirVariavel('tan', new FuncaoPadrao(1, bibliotecaNumerica.tan));
 }
 
 export async function visitarDeclaracaoCabecalhoPrograma(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     declaracao: CabecalhoPrograma
 ): Promise<any> {
     return Promise.resolve();
 }
 
+/**
+ * Uma declaração de "classe" no VisuAlg nada mais é que a definição de um registro.
+ * Não há propriedades e não há herança. Por isso usamos uma versão simplificada
+ * da implementação original de Delégua.
+ * @param declaracao A declaração de registro.
+ * @returns Sempre retorna nulo, por ser requerido pelo contrato de visita.
+ */
+export async function visitarDeclaracaoClasse(
+    interpretador: InterpretadorVisuAlgInterface, 
+    declaracao: Classe
+): Promise<any> {
+    const metodos = {};
+    if (declaracao.metodos.length > 0) {
+        const declaracaoConstrutor = declaracao.metodos[0];
+        const funcao = new DeleguaFuncao('construtor', declaracaoConstrutor.funcao, undefined, true);
+        metodos['construtor'] = funcao;
+    }
+
+    const deleguaClasse: DeleguaClasse = new DeleguaClasse(declaracao.simbolo, undefined, metodos, declaracao.propriedades);
+
+    interpretador.pilhaEscoposExecucao.definirConstante(declaracao.simbolo.lexema, deleguaClasse);
+    interpretador.tiposConhecidos.push(declaracao.simbolo.lexema);
+    return null;
+}
+
 export async function visitarDeclaracaoInicioAlgoritmo(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     declaracao: InicioAlgoritmo
 ): Promise<any> {
     return Promise.resolve();
 }
 
+function converterValor(valor: any, tipo: string) {
+    switch (tipo) {
+        case 'inteiro':
+            return parseInt(valor);
+        case 'lógico':
+            return Boolean(valor);
+        case 'número':
+        case 'real':
+            return Number(valor);
+        case 'texto':
+            return String(valor);
+        default:
+            return valor;
+    }
+}
+
 export async function atribuirVariavel(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     expressao: Construto,
     valor: any
 ): Promise<any> {
@@ -219,32 +161,44 @@ export async function atribuirVariavel(
         }
 
         const subtipo = String(alvo.tipo).replace('[]', '');
-
-        let valorResolvido: any;
-        switch (subtipo) {
-            case 'inteiro':
-                valorResolvido = parseInt(valor);
-                break;
-            case 'lógico':
-                valorResolvido = Boolean(valor);
-                break;
-            case 'número':
-            case 'real':
-                valorResolvido = Number(valor);
-                break;
-            case 'texto':
-                valorResolvido = String(valor);
-                break;
-            default:
-                valorResolvido = valor;
-                break;
-        }
+        const valorResolvido: any = converterValor(valor, subtipo);
 
         valorAlvo[valorIndice] = valorResolvido;
+        return;
+    }
+
+    if (expressao instanceof AcessoMetodoOuPropriedade) {
+        // Há apenas duas possibilidades aqui:
+        // 1. A entidade é uma variável
+        // 2. A entidade é um elemento de um vetor.
+        let referenciaVariavel;
+        let tipoBaseVariavel: string;
+        if (expressao.objeto instanceof AcessoIndiceVariavel) {
+            referenciaVariavel = await interpretador.avaliar(expressao.objeto.entidadeChamada);
+            tipoBaseVariavel = referenciaVariavel.tipo.replace('[]', '');
+        } else {
+            referenciaVariavel = await interpretador.avaliar(expressao.objeto);
+            tipoBaseVariavel = referenciaVariavel.tipo;
+        }
+
+        // A única forma de o avaliador sintático gerar uma expressão do tipo
+        // `AcessoMetodoOuPropriedade` é se o `objeto` é um registro.
+        // Portanto, temos que pesquisar aqui o tipo da propriedade.
+        const tipoRelacionado = interpretador.pilhaEscoposExecucao.obterVariavelPorNome(tipoBaseVariavel);
+        const valorTipoRelacionado: DeleguaClasse = tipoRelacionado.hasOwnProperty('valor') ? tipoRelacionado.valor : tipoRelacionado;
+        const propriedadeRelacionada = valorTipoRelacionado.propriedades.find(p => p.nome.lexema === expressao.simbolo.lexema);
+        if (!propriedadeRelacionada) {
+            throw new ErroEmTempoDeExecucao(expressao.simbolo, `Propriedade "${expressao.simbolo.lexema}" não existe no tipo ${valorTipoRelacionado.simboloOriginal.lexema}.`);
+        }
+
+        let variavelObjeto: VariavelInterface = await interpretador.avaliar(expressao.objeto);
+        const valorVariavelObjeto: ObjetoDeleguaClasse = variavelObjeto.hasOwnProperty('valor') ? variavelObjeto.valor : variavelObjeto;
+        let valorConvertido = converterValor(valor, propriedadeRelacionada.tipo);
+        valorVariavelObjeto.definir(expressao.simbolo, valorConvertido);
     }
 }
 
-async function avaliar(interpretador: InterpretadorBase, expressao: Construto): Promise<any> {
+async function avaliar(interpretador: InterpretadorVisuAlgInterface, expressao: Construto): Promise<any> {
     return await expressao.aceitar(interpretador);
 }
 
@@ -273,7 +227,8 @@ function verificarOperandosNumeros(
     const tipoEsquerda: string = esquerda.tipo ? esquerda.tipo : typeof esquerda === 'number' ? 'número' : String(NaN);
 
     const tiposNumericos = ['inteiro', 'numero', 'número', 'real'];
-    if (tiposNumericos.includes(tipoDireita.toLowerCase()) && tiposNumericos.includes(tipoEsquerda.toLowerCase())) return;
+    if (tiposNumericos.includes(tipoDireita.toLowerCase()) && tiposNumericos.includes(tipoEsquerda.toLowerCase()))
+        return;
 
     throw new ErroEmTempoDeExecucao(operador, 'Operadores precisam ser números.', operador.linha);
 }
@@ -285,7 +240,7 @@ function verificarOperandosNumeros(
  * @returns O resultado da resolução da expressão.
  */
 export async function visitarExpressaoBinaria(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     expressao: Binario | any
 ): Promise<any> {
     try {
@@ -339,9 +294,11 @@ export async function visitarExpressaoBinaria(
                 return Number(valorEsquerdo) - Number(valorDireito);
 
             case tiposDeSimbolos.ADICAO:
-                let tiposNumericos = ['inteiro', 'numero', 'número', 'real']
-                if (tiposNumericos.includes(tipoEsquerdo.toLowerCase())
-                    && tiposNumericos.includes(tipoDireito.toLowerCase())) {
+                let tiposNumericos = ['inteiro', 'numero', 'número', 'real'];
+                if (
+                    tiposNumericos.includes(tipoEsquerdo.toLowerCase()) &&
+                    tiposNumericos.includes(tipoDireito.toLowerCase())
+                ) {
                     return Number(valorEsquerdo) + Number(valorDireito);
                 } else {
                     return String(valorEsquerdo) + String(valorDireito);
@@ -388,7 +345,7 @@ export async function visitarExpressaoBinaria(
     }
 }
 
-export async function visitarExpressaoLogica(interpretador: InterpretadorBase, expressao: Logico): Promise<any> {
+export async function visitarExpressaoLogica(interpretador: InterpretadorVisuAlgInterface, expressao: Logico): Promise<any> {
     const esquerda = await avaliar(interpretador, expressao.esquerda);
 
     // se um estado for verdadeiro, retorna verdadeiro
@@ -416,7 +373,10 @@ export async function visitarExpressaoLogica(interpretador: InterpretadorBase, e
  * Quando um dos operandos é uma variável, tanto a condição do laço quanto o
  * passo são considerados indefinidos aqui.
  */
-export async function resolverIncrementoPara(interpretador: InterpretadorBase, declaracao: Para): Promise<any> {
+export async function resolverIncrementoPara(
+    interpretador: InterpretadorVisuAlgInterface, 
+    declaracao: Para
+): Promise<any> {
     if (declaracao.resolverIncrementoEmExecucao) {
         const promises = await Promise.all([
             avaliar(interpretador, (declaracao.condicao as any).esquerda),
@@ -473,7 +433,7 @@ export async function resolverIncrementoPara(interpretador: InterpretadorBase, d
 }
 
 export async function visitarExpressaoAcessoElementoMatriz(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     expressao: AcessoElementoMatriz
 ): Promise<any> {
     const promises = await Promise.all([
@@ -533,7 +493,7 @@ export async function visitarExpressaoAcessoElementoMatriz(
 }
 
 export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     expressao: AtribuicaoPorIndicesMatriz
 ): Promise<any> {
     const promises = await Promise.all([
@@ -581,7 +541,7 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
 }
 
 export function visitarExpressaoDeVariavel(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface, 
     expressao: Variavel
 ): any {
     const variavel = (interpretador as any).procurarVariavel(expressao.simbolo);
@@ -592,12 +552,12 @@ export function visitarExpressaoDeVariavel(
             return funcao.chamar(interpretador, []);
         }
     }
-    
+
     return variavel;
 }
 
 async function encontrarLeiaNoAleatorio(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     declaracao: Declaracao,
     menorNumero: number,
     maiorNumero: number
@@ -635,7 +595,10 @@ function palavraAleatoriaCom5Digitos(): string {
     return palavra;
 }
 
-export async function visitarDeclaracaoAleatorio(interpretador: InterpretadorBase, expressao: Aleatorio): Promise<any> {
+export async function visitarDeclaracaoAleatorio(
+    interpretador: InterpretadorVisuAlgInterface, 
+    expressao: Aleatorio
+): Promise<any> {
     let retornoExecucao: any;
     try {
         let menorNumero = 0;
@@ -647,7 +610,7 @@ export async function visitarDeclaracaoAleatorio(interpretador: InterpretadorBas
         }
         for (let corpoDeclaracao of expressao.corpo.declaracoes) {
             encontrarLeiaNoAleatorio(interpretador, corpoDeclaracao, menorNumero, maiorNumero);
-            retornoExecucao = await interpretador.executar(corpoDeclaracao);
+            retornoExecucao = await interpretador.executar(corpoDeclaracao, false);
         }
     } catch (error) {
         interpretador.erros.push({
@@ -666,7 +629,10 @@ export async function visitarDeclaracaoAleatorio(interpretador: InterpretadorBas
  * @param declaracao A declaração de formatação de escrita.
  * @returns {string} A saída formatada como texto e os respectivos parâmetros aplicados.
  */
-export async function visitarExpressaoFormatacaoEscrita(interpretador: InterpretadorBase, declaracao: FormatacaoEscrita): Promise<string> {
+export async function visitarExpressaoFormatacaoEscrita(
+    interpretador: InterpretadorBase,
+    declaracao: FormatacaoEscrita
+): Promise<string> {
     let resultado = '';
     const conteudo: VariavelInterface | any = await interpretador.avaliar(declaracao.expressao);
 
@@ -674,10 +640,7 @@ export async function visitarExpressaoFormatacaoEscrita(interpretador: Interpret
     const tipoConteudo: string = conteudo.hasOwnProperty('tipo') ? conteudo.tipo : typeof conteudo;
 
     resultado = valorConteudo;
-    if (
-        ['real', 'inteiro'].includes(tipoConteudo) &&
-        declaracao.casasDecimais > 0
-    ) {
+    if (['real', 'inteiro'].includes(tipoConteudo) && declaracao.casasDecimais > 0) {
         resultado = valorConteudo.toLocaleString('pt', { minimumFractionDigits: declaracao.casasDecimais });
     }
 
@@ -689,7 +652,7 @@ export async function visitarExpressaoFormatacaoEscrita(interpretador: Interpret
 }
 
 export async function visitarExpressaoLeia(
-    interpretador: InterpretadorBase,
+    interpretador: InterpretadorVisuAlgInterface,
     expressao: Leia,
     mensagemPrompt: string
 ): Promise<any> {

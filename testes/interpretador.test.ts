@@ -1,4 +1,5 @@
 import { AvaliadorSintaticoVisuAlg } from '../fontes/avaliador-sintatico';
+import { InterpretadorVisuAlgInterface } from '../fontes/interfaces';
 import { InterpretadorVisuAlg } from "../fontes/interpretador/interpretador-visualg";
 import { LexadorVisuAlg } from '../fontes/lexador';
 
@@ -64,7 +65,7 @@ describe('Interpretador', () => {
                 const respostas = [
                     "-1", "-2", "1"
                 ];
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.shift());
                     }
@@ -93,11 +94,11 @@ describe('Interpretador', () => {
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
 
-                interpretador.funcaoDeRetorno = (saida: any) => {
+                (interpretador as any).funcaoDeRetorno = (saida: any) => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
                 }
 
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+                const retornoInterpretador = await (interpretador as any).interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
@@ -109,7 +110,7 @@ describe('Interpretador', () => {
                     "-1", "-2", "1", "0"
                 ];
 
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.shift());
                     }
@@ -179,7 +180,7 @@ describe('Interpretador', () => {
             it('Leia', async () => {
                 // Aqui vamos simular a resposta para cinco variáveis de `leia()`.
                 const respostas = ["1", "2", "3", "4", "5"];
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.shift());
                     }
@@ -209,7 +210,7 @@ describe('Interpretador', () => {
             it('Equação de Segundo Grau', async () => {
                 const saidasMensagens = ['Informe o valor de A: ', 'Informe o valor de B: ', 'Informe o valor de C: ', 'Esta equação não possui raízes reais.']
                 const respostas = ["10", "21", "14"];
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.shift());
                     }
@@ -262,7 +263,7 @@ describe('Interpretador', () => {
             it('"Repita Até" com acento', async () => {
                 const saidasMensagens = ['1 - Dizer olá!', '2 – Dizer oi! ', '0 - Sair do programa']
                 const respostas = ["0"];
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.shift());
                     }
@@ -331,7 +332,7 @@ describe('Interpretador', () => {
                 const saidasMensagens = ['Massa(Kg): ', 'Altura (m): ', 'Parabens! Voce esta no seu peso ideal']
                 // Aqui vamos simular a resposta para duas variáveis de `leia()`.
                 const respostas = ["78", "1.78"];
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.shift());
                     }
@@ -374,16 +375,16 @@ describe('Interpretador', () => {
 
             it("Média de Vetor", async () => {
                 const saidasMensagens = [
-                    'Digite a nota do 1º Aluno', 
-                    'Digite a nota do 2º Aluno', 
-                    'Digite a nota do 3º Aluno', 
-                    'Digite a nota do 4º Aluno', 
-                    'Digite a nota do 5º Aluno', 
-                    'Digite a nota do 6º Aluno', 
-                    'Digite a nota do 7º Aluno', 
-                    'Digite a nota do 8º Aluno', 
-                    'Digite a nota do 9º Aluno', 
-                    'Digite a nota do 10º Aluno', 
+                    'Digite o par de notas do 1º Aluno', 
+                    'Digite o par de notas do 2º Aluno', 
+                    'Digite o par de notas do 3º Aluno', 
+                    'Digite o par de notas do 4º Aluno', 
+                    'Digite o par de notas do 5º Aluno', 
+                    'Digite o par de notas do 6º Aluno', 
+                    'Digite o par de notas do 7º Aluno', 
+                    'Digite o par de notas do 8º Aluno', 
+                    'Digite o par de notas do 9º Aluno', 
+                    'Digite o par de notas do 10º Aluno', 
                     '-', 
                     'Media do 1º aluno: 90.5', 
                     'Media do 2º aluno: 83.5', 
@@ -402,7 +403,7 @@ describe('Interpretador', () => {
                     "90", "80", "50", "100", "60", "70", "75", "85", "89", "91",
                     "74", "79", "99", "90", "65", "78", "100", "67", "93", "88"
                 ];
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.pop());
                     }
@@ -416,7 +417,7 @@ describe('Interpretador', () => {
                     'n1,n2:real',
                     'inicio',
                     'para i de 1 ate 10 faca',
-                    '     escreval ("Digite a nota do ",i,"º Aluno")',
+                    '     escreval ("Digite o par de notas do ",i,"º Aluno")',
                     '     leia (n1,n2)',
                     '     media[i]<-(n1+n2)/2',
                     'fimpara',
@@ -493,7 +494,7 @@ describe('Interpretador', () => {
                     const respostas = [
                         "10"
                     ];
-                    interpretador.interfaceEntradaSaida = {
+                    (interpretador as any).interfaceEntradaSaida = {
                         question: (mensagem: string, callback: Function) => {
                             callback(respostas.shift());
                         }
@@ -531,7 +532,7 @@ describe('Interpretador', () => {
                     const respostas = [
                         "2", 'S', "5", 'S', "6", 'S', "5", 'S', "3", 'S', "5", 'N'
                     ];
-                    interpretador.interfaceEntradaSaida = {
+                    (interpretador as any).interfaceEntradaSaida = {
                         question: (mensagem: string, callback: Function) => {
                             callback(respostas.shift());
                         }
@@ -615,7 +616,7 @@ describe('Interpretador', () => {
                 const respostas = [
                     "2", "3"
                 ];
-                interpretador.interfaceEntradaSaida = {
+                (interpretador as any).interfaceEntradaSaida = {
                     question: (mensagem: string, callback: Function) => {
                         callback(respostas.pop());
                     }
@@ -753,6 +754,51 @@ describe('Interpretador', () => {
                     '    escreval("x: ", x:10:1, "  SOMA:", soma)',
                     'fimalgoritmo'
                 ], -1);
+
+                interpretador.funcaoDeRetorno = (saida: any) => {
+                    _saidas += saida;
+                }
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+            });
+
+            it('Sucesso - Registro', async () => {
+                // Aqui vamos simular a resposta para duas variáveis de `leia()`.
+                const respostas = [
+                    "1", "Descrição 1", "2", "Descrição 2", "3", "Descrição 3", "4", "Descrição 4"
+                ];
+                (interpretador as any).interfaceEntradaSaida = {
+                    question: (mensagem: string, callback: Function) => {
+                        callback(respostas.shift());
+                    }
+                };
+
+                let _saidas = '';
+                const retornoLexador = lexador.mapear(
+                    [
+                        `algoritmo "teste registro"`,
+                        `Tipo deposito = registro`,
+                        `    codigo: inteiro`,
+                        `    descricao: caractere`,
+                        `Fimregistro`,
+                        `Var`,
+                        `    testeProduto: deposito`,
+                        `    produto: vetor[1..3] de deposito`,
+                        `    i: inteiro`,
+                        `Inicio`,
+                        `    leia(testeProduto.codigo)`,
+                        `    leia(testeProduto.descricao)`,
+                        `    para i de 1 ate 3 faca`,
+                        `        escreva("CODIGO DO PRODUTO: ")`,
+                        `        leia(produto[i].codigo)`,
+                        `        escreva("DESCRIÇÃO DO PRODUTO: ")`,
+                        `        leia(produto[i].descricao)`,
+                        `    fimpara`,
+                        `Fimalgoritmo`
+                    ], -1);
 
                 interpretador.funcaoDeRetorno = (saida: any) => {
                     _saidas += saida;

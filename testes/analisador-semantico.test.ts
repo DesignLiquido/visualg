@@ -2,7 +2,7 @@ import { AnalisadorSemanticoVisuAlg } from '../fontes/analisador-semantico';
 import { AvaliadorSintaticoVisuAlg } from "../fontes/avaliador-sintatico";
 import { LexadorVisuAlg } from "../fontes/lexador";
 
-describe('Analisador sêmantico', () => {
+describe('Analisador semântico', () => {
     describe('analisar()', () => {
         let lexador: LexadorVisuAlg;
         let avaliadorSintatico: AvaliadorSintaticoVisuAlg;

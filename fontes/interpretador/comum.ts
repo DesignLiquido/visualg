@@ -599,22 +599,23 @@ export async function visitarExpressaoAcessoElementoMatriz(
     let valorIndicePrimario = indicePrimario.hasOwnProperty('valor') ? indicePrimario.valor : indicePrimario;
     let valorIndiceSecundario = indiceSecundario.hasOwnProperty('valor') ? indiceSecundario.valor : indiceSecundario;
 
-    if (Array.isArray(objeto)) {
-        if (!Number.isInteger(valorIndicePrimario) || !Number.isInteger(valorIndiceSecundario)) {
-            return Promise.reject(
-                new ErroEmTempoDeExecucao(
-                    expressao.simboloFechamento,
-                    'Somente inteiros podem ser usados para indexar um vetor.',
-                    expressao.linha
-                )
-            );
-        }
+    if (!Number.isInteger(valorIndicePrimario) || !Number.isInteger(valorIndiceSecundario)) {
+        return Promise.reject(
+            new ErroEmTempoDeExecucao(
+                expressao.simboloFechamento,
+                'Somente inteiros podem ser usados para indexar um vetor.',
+                expressao.linha
+            )
+        );
+    }
 
+    if (Array.isArray(objeto)) {
         if (valorIndicePrimario < 0 && objeto.length !== 0) {
             while (valorIndicePrimario < 0) {
                 valorIndicePrimario += objeto.length;
             }
         }
+
         if (valorIndiceSecundario < 0 && objeto.length !== 0) {
             while (valorIndiceSecundario < 0) {
                 valorIndiceSecundario += objeto.length;
@@ -630,8 +631,14 @@ export async function visitarExpressaoAcessoElementoMatriz(
                 )
             );
         }
+
         return objeto[valorIndicePrimario][valorIndiceSecundario];
     }
+
+    if (objeto instanceof Vetor) {
+        return objeto.valores[valorIndicePrimario][valorIndiceSecundario];
+    }
+
     return Promise.reject(
         new ErroEmTempoDeExecucao(
             expressao.entidadeChamada.valor,
@@ -680,6 +687,12 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
         objeto[indicePrimario][indiceSecundario] = valor;
         return Promise.resolve();
     }
+
+    if (objeto instanceof Vetor) {
+        objeto.valores[indicePrimario][indiceSecundario] = valor;
+        return Promise.resolve();
+    }
+
     return Promise.reject(
         new ErroEmTempoDeExecucao(
             expressao.objeto.nome,

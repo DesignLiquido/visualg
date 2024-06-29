@@ -14,7 +14,6 @@ describe('Analisador sêmantico', () => {
             analisadorSemantico = new AnalisadorSemanticoVisuAlg();
         });
 
-
         describe('Cenários de falha', () => {
             it('Variável indefinida, não declarada (escreva)', () => {
                 const retornoLexador = lexador.mapear([
@@ -98,7 +97,7 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
             })
 
-            it("Chamada de função com número de parâmetros diferentes", () => {
+            it("Chamada de função com tipos de parâmetros diferentes", () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "definindo função"',
                     'var',

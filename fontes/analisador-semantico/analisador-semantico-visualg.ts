@@ -259,16 +259,33 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
             }
 
             for (let [indice, argumento] of expressao.argumentos.entries()) {
-                const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
-                const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
                 const parametroCorrespondente = funcao.parametros[indice];
                 const tipoDadoParametro = parametroCorrespondente.tipoDado.tipo.toLowerCase();
 
-                if (tipoVariavelCorrespondente !== tipoDadoParametro) {
-                    this.adicionarDiagnostico(
-                        variavel.simbolo,
-                        `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (${tipoVariavelCorrespondente}) é diferente do esperado pela função (${tipoDadoParametro}).`
-                    );
+                if (argumento instanceof Variavel) {
+                    const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
+                    const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();    
+    
+                    if (tipoVariavelCorrespondente !== tipoDadoParametro) {
+                        this.adicionarDiagnostico(
+                            variavel.simbolo,
+                            `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (${tipoVariavelCorrespondente}) é diferente do esperado pela função (${tipoDadoParametro}).`
+                        );
+                    }
+                }
+
+                if (argumento instanceof Literal) {
+                    switch (argumento.valor.constructor.name) {
+                        case 'Number':
+                            if (!['inteiro', 'real'].includes(tipoDadoParametro)) {
+                                this.adicionarDiagnostico(
+                                    variavel.simbolo,
+                                    `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (inteiro ou real) é diferente do esperado pela função (${tipoDadoParametro}).`
+                                );      
+                            }
+                            break;
+                        // TODO: Finalizar.
+                    }
                 }
             }
         }

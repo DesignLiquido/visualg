@@ -491,6 +491,36 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return declaracoes;
     }
 
+    /**
+     * A finalização de chamada no VisuAlg é um pouco diferente.
+     * Como há uma detecção de procedimentos e funções na avaliação de construtos primários,
+     * `entidadeChmada` já pode vir como uma chamada.
+     * O que este método faz é apenas complementar os argumentos.
+     * @param entidadeChamada Um construto. Normalmente uma `Chamada`.
+     * @returns Ou a entidade chamada enriquecida, ou uma nova `Chamada`.
+     */
+    override finalizarChamada(entidadeChamada: Construto): Construto {
+        const argumentos: Array<Construto> = [];
+
+        if (!this.verificarTipoSimboloAtual(tiposDeSimbolos.PARENTESE_DIREITO)) {
+            do {
+                if (argumentos.length >= 255) {
+                    throw this.erro(this.simbolos[this.atual], 'Não pode haver mais de 255 argumentos.');
+                }
+                argumentos.push(this.expressao());
+            } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
+        }
+
+        const parenteseDireito = this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após os argumentos.");
+
+        if (entidadeChamada instanceof Chamada) {
+            entidadeChamada.argumentos = argumentos;
+            return entidadeChamada;
+        }
+
+        return new Chamada(this.hashArquivo, entidadeChamada, parenteseDireito, argumentos);
+    }
+
     chamar(): Construto {
         let expressao = this.primario();
 

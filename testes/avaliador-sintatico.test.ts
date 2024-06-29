@@ -354,7 +354,7 @@ describe('Avaliador sintático', () => {
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
-                expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(33);
+                expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(32);
             });
 
             it('Sucesso - Repita', () => {

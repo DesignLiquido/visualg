@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { AcessoElementoMatriz, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
+import { AcessoElementoMatriz, AcessoIndiceVariavel, AtribuicaoPorIndice, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
 import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma, Classe } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
@@ -243,12 +243,16 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
         }
     }
 
-    override async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
-        return comum.visitarExpressaoBinaria(this, expressao);
+    override async visitarExpressaoAcessoIndiceVariavel(expressao: AcessoIndiceVariavel): Promise<any> {
+        return comum.visitarExpressaoAcessoIndiceVariavel(this, expressao);
     }
 
-    override visitarExpressaoDeVariavel(expressao: Variavel): any {
-        return comum.visitarExpressaoDeVariavel(this, expressao);
+    override async visitarExpressaoAtribuicaoPorIndice(expressao: AtribuicaoPorIndice): Promise<any> {
+        return comum.visitarExpressaoAtribuicaoPorIndice(this, expressao);
+    }
+
+    override async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {
+        return comum.visitarExpressaoBinaria(this, expressao);
     }
 
     override async visitarExpressaoLogica(expressao: Logico): Promise<any> {

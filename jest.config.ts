@@ -10,7 +10,7 @@ export default async (): Promise<Config.InitialOptions> => {
         coverageReporters: ['json-summary', 'lcov', 'text', 'text-summary'],
         moduleNameMapper: {
             // Se for utilizar módulos linkados, comentar a linha abaixo:
-            '@designliquido/delegua/(.*)': '<rootDir>/node_modules/@designliquido/delegua/$1'
+            '@designliquido/delegua/(.*)': '<rootDir>/node_modules/@designliquido/delegua/dist/$1'
             // E descomentar a linha abaixo:
             // '@designliquido/delegua/(.*)': '<rootDir>/node_modules/@designliquido/delegua/fontes/$1'
         },

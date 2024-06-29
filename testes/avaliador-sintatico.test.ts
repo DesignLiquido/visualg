@@ -247,7 +247,6 @@ describe('Avaliador sintático', () => {
                         `Fimregistro`,
                         `Var`,
                         `    produto: vetor[1..50] de deposito`,
-                        `    i: inteiro`,
                         `    maisCaro, maisBarato: deposito`,
                         `    Procedimento lerProdutos()`,
                         `    Inicio`,

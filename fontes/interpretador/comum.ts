@@ -2,6 +2,7 @@ import {
     AcessoElementoMatriz,
     AcessoIndiceVariavel,
     AcessoMetodoOuPropriedade,
+    AtribuicaoPorIndice,
     AtribuicaoPorIndicesMatriz,
     Binario,
     Construto,
@@ -11,6 +12,7 @@ import {
     Logico,
     Unario,
     Variavel,
+    Vetor,
 } from '@designliquido/delegua/construtos';
 import {
     Aleatorio,
@@ -145,7 +147,7 @@ export async function atribuirVariavel(
 
         let alvo = promises[0];
         let indice = promises[1];
-        let valorAlvo: any;
+        let valorAlvo: Vetor | Array<any>;
         let valorIndice: any;
 
         if (alvo.hasOwnProperty('valor')) {
@@ -163,7 +165,12 @@ export async function atribuirVariavel(
         const subtipo = String(alvo.tipo).replace('[]', '');
         const valorResolvido: any = converterValor(valor, subtipo);
 
-        valorAlvo[valorIndice] = valorResolvido;
+        if (valorAlvo instanceof Vetor) {
+            valorAlvo.valores[valorIndice] = valorResolvido;
+        } else {
+            valorAlvo[valorIndice] = valorResolvido;
+        }
+
         return;
     }
 
@@ -231,6 +238,148 @@ function verificarOperandosNumeros(
         return;
 
     throw new ErroEmTempoDeExecucao(operador, 'Operadores precisam ser números.', operador.linha);
+}
+
+export async function visitarExpressaoAcessoIndiceVariavel(
+    interpretador: InterpretadorVisuAlgInterface,
+    expressao: AcessoIndiceVariavel | any
+): Promise<any> {
+    const promises = await Promise.all([
+        interpretador.avaliar(expressao.entidadeChamada), 
+        interpretador.avaliar(expressao.indice)
+    ]);
+
+    const variavelObjeto: VariavelInterface = promises[0];
+    const indice = promises[1];
+
+    const objeto = variavelObjeto.hasOwnProperty('valor') ? variavelObjeto.valor : variavelObjeto;
+    let valorIndice = indice.hasOwnProperty('valor') ? indice.valor : indice;
+
+    if (Array.isArray(objeto)) {
+        if (!Number.isInteger(valorIndice)) {
+            return Promise.reject(
+                new ErroEmTempoDeExecucao(
+                    expressao.simboloFechamento,
+                    'Somente inteiros podem ser usados para indexar um vetor.',
+                    expressao.linha
+                )
+            );
+        }
+
+        if (valorIndice < 0 && objeto.length !== 0) {
+            while (valorIndice < 0) {
+                valorIndice += objeto.length;
+            }
+        }
+
+        if (valorIndice >= objeto.length) {
+            return Promise.reject(
+                new ErroEmTempoDeExecucao(
+                    expressao.simboloFechamento,
+                    'Índice do vetor fora do intervalo.',
+                    expressao.linha
+                )
+            );
+        }
+
+        return objeto[valorIndice];
+    } 
+
+    if (objeto instanceof Vetor) {
+        return objeto.valores[valorIndice];
+    }
+    
+    if (
+        objeto.constructor === Object ||
+        objeto instanceof ObjetoDeleguaClasse ||
+        objeto instanceof DeleguaFuncao ||
+        objeto instanceof DeleguaClasse
+    ) {
+        return objeto[valorIndice] || null;
+    } 
+    
+    if (typeof objeto === 'string') {
+        if (!Number.isInteger(valorIndice)) {
+            return Promise.reject(
+                new ErroEmTempoDeExecucao(
+                    expressao.simboloFechamento,
+                    'Somente inteiros podem ser usados para indexar um vetor.',
+                    expressao.linha
+                )
+            );
+        }
+
+        if (valorIndice < 0 && objeto.length !== 0) {
+            while (valorIndice < 0) {
+                valorIndice += objeto.length;
+            }
+        }
+
+        if (valorIndice >= objeto.length) {
+            return Promise.reject(
+                new ErroEmTempoDeExecucao(expressao.simboloFechamento, 'Índice fora do tamanho.', expressao.linha)
+            );
+        }
+
+        return objeto.charAt(valorIndice);
+    }
+
+    return Promise.reject(
+        new ErroEmTempoDeExecucao(
+            expressao.entidadeChamada.nome,
+            'Somente listas, dicionários, classes e objetos podem ter seus valores indexados.',
+            expressao.linha
+        )
+    );
+}
+
+export async function visitarExpressaoAtribuicaoPorIndice(
+    interpretador: InterpretadorVisuAlgInterface,
+    expressao: AtribuicaoPorIndice
+): Promise<any> {
+    const promises = await Promise.all([
+        interpretador.avaliar(expressao.objeto),
+        interpretador.avaliar(expressao.indice),
+        interpretador.avaliar(expressao.valor),
+    ]);
+
+    let objeto = promises[0];
+    let indice = promises[1];
+    const valor = promises[2];
+
+    objeto = objeto.hasOwnProperty('valor') ? objeto.valor : objeto;
+    indice = indice.hasOwnProperty('valor') ? indice.valor : indice;
+
+    if (Array.isArray(objeto)) {
+        if (indice < 0 && objeto.length !== 0) {
+            while (indice < 0) {
+                indice += objeto.length;
+            }
+        }
+
+        while (objeto.length < indice) {
+            objeto.push(null);
+        }
+
+        objeto[indice] = valor;
+    } else if (objeto instanceof Vetor) {
+        objeto.valores[indice] = valor;
+    } else if (
+        objeto.constructor === Object ||
+        objeto instanceof ObjetoDeleguaClasse ||
+        objeto instanceof DeleguaFuncao ||
+        objeto instanceof DeleguaClasse
+    ) {
+        objeto[indice] = valor;
+    } else {
+        return Promise.reject(
+            new ErroEmTempoDeExecucao(
+                expressao.objeto.nome,
+                'Somente listas, dicionários, classes e objetos podem ser mudados por sobrescrita.',
+                expressao.linha
+            )
+        );
+    }
 }
 
 /**
@@ -538,22 +687,6 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
             expressao.linha
         )
     );
-}
-
-export function visitarExpressaoDeVariavel(
-    interpretador: InterpretadorVisuAlgInterface, 
-    expressao: Variavel
-): any {
-    const variavel = (interpretador as any).procurarVariavel(expressao.simbolo);
-    // Este caso abaixo ocorre quando uma função é chamada sem parâmetros.
-    if (variavel.tipo === 'função') {
-        const funcao: DeleguaFuncao = variavel.valor;
-        if (funcao.declaracao.parametros.length === 0) {
-            return funcao.chamar(interpretador, []);
-        }
-    }
-
-    return variavel;
 }
 
 async function encontrarLeiaNoAleatorio(

@@ -60,12 +60,14 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     blocoPrincipalIniciado: boolean;
     fimAlgoritmoEncontrado: boolean;
     tiposConhecidos: string[];
+    funcoesProcedimentosConhecidos: string[];
 
     constructor() {
         super();
         this.blocoPrincipalIniciado = false;
         this.fimAlgoritmoEncontrado = false;
         this.tiposConhecidos = [];
+        this.funcoesProcedimentosConhecidos = [];
     }
 
     private validarSegmentoAlgoritmo(): SimboloInterface {
@@ -196,6 +198,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 case tiposDeSimbolos.FUNCAO:
                 case tiposDeSimbolos.FUNÇÃO:
                     const dadosFuncao = this.funcao('funcao');
+                    this.funcoesProcedimentosConhecidos.push(dadosFuncao.simbolo.lexema);
                     inicializacoes.push(dadosFuncao);
                     break;
                 case tiposDeSimbolos.PROCEDIMENTO:
@@ -371,7 +374,14 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         if (
             this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IDENTIFICADOR, tiposDeSimbolos.METODO_BIBLIOTECA_GLOBAL)
         ) {
-            return new Variavel(this.hashArquivo, this.simbolos[this.atual - 1]);
+            const simboloIdentificadorOuMetodo = this.simbolos[this.atual - 1];
+            const variavel = new Variavel(this.hashArquivo, simboloIdentificadorOuMetodo);
+            // Chamada de função ou procedimento sem parâmetros.
+            if (this.funcoesProcedimentosConhecidos.includes(simboloIdentificadorOuMetodo.lexema)) {
+                return new Chamada(this.hashArquivo, variavel, undefined, []);
+            }
+
+            return variavel;
         }
 
         if (
@@ -1099,6 +1109,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.validarSegmentoInicio('procedimento');
 
         const corpo: any[] = (inicializacoes as any[]).concat(this.blocoEscopo());
+        this.funcoesProcedimentosConhecidos.push(nomeProcedimento.lexema);
 
         return new FuncaoDeclaracao(
             nomeProcedimento,
@@ -1451,6 +1462,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.blocoPrincipalIniciado = false;
         this.fimAlgoritmoEncontrado = false;
         this.tiposConhecidos = [];
+        this.funcoesProcedimentosConhecidos = [];
 
         this.hashArquivo = hashArquivo || 0;
         this.simbolos = retornoLexador?.simbolos || [];

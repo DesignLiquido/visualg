@@ -233,7 +233,7 @@ describe('Interpretador', () => {
                         'LEIA (b)',
                         'ESCREVA ("Informe o valor de C: ")',
                         'LEIA (c)',
-                        'delta := calcula_delta()',
+                        'delta := calcula_delta',
                         'SE ( delta < 0 ) ENTAO',
                            'ESCREVA ("Esta equação não possui raízes reais.")',
                         'SENAO',

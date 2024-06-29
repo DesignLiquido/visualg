@@ -21,6 +21,7 @@ import * as comum from './comum';
 export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao implements InterpretadorVisuAlgInterface {
     mensagemPrompt: string;
     tiposConhecidos: string[];
+    deveEscreverPrompt: boolean;
     funcaoLimpaTela: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
 
     constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null, funcaoLimpaTela: Function = null) {
@@ -32,6 +33,10 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
 
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
+        // Por padrão, a escrita de prompt fica desabilitada. 
+        // Se precisar escrever no prompt (por exemplo, em uma aplicação web usando `window.prompt`),
+        // basta reabilitar este parâmetro.
+        this.deveEscreverPrompt = false;
         this.tiposConhecidos = [];
 
         carregarBibliotecaGlobalCaracter(this.pilhaEscoposExecucao);

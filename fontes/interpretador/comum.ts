@@ -797,6 +797,15 @@ export async function visitarExpressaoFormatacaoEscrita(
     return resultado;
 }
 
+/**
+ * Customização da leitura de dados de entrada. 
+ * A interrupção da execução para leitura de dados do usuário
+ * ocorre quando o modo aleatório não está habilitado.
+ * @param interpretador A instância do interpretador.
+ * @param expressao A expressão `Leia`
+ * @param mensagemPrompt A mensagem de prompt. Normalmente é o último conteúdo da função `escreva()`
+ *                       ou ainda `escreval()`, e é usada em prompts Web, como por exemplo `window.prompt`.
+ */
 export async function visitarExpressaoLeia(
     interpretador: InterpretadorVisuAlgInterface,
     expressao: Leia,
@@ -807,10 +816,13 @@ export async function visitarExpressaoLeia(
         for (let argumento of expressao.argumentos) {
             const promessaLeitura: Function = () =>
                 new Promise((resolucao) =>
-                    interpretador.interfaceEntradaSaida.question(mensagemPrompt, (resposta: any) => {
-                        mensagemPrompt = '> ';
-                        resolucao(resposta);
-                    })
+                    interpretador.interfaceEntradaSaida.question(
+                        interpretador.deveEscreverPrompt ? mensagemPrompt : '', 
+                        (resposta: any) => {
+                            mensagemPrompt = '> ';
+                            resolucao(resposta);
+                        }
+                    )
                 );
             const valorLido = await promessaLeitura();
             await atribuirVariavel(interpretador, argumento, valorLido);

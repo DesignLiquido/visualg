@@ -219,6 +219,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
                 }
 
                 escopoAtual.emLacoRepeticao = false;
+                declaracao.inicializada = false;
                 return null;
             default:
                 let retornoExecucao: any;
@@ -233,10 +234,12 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
                     try {
                         retornoExecucao = await this.executar(corpoExecucao);
                         if (retornoExecucao instanceof SustarQuebra) {
+                            declaracao.inicializada = false;
                             return null;
                         }
 
                         if (retornoExecucao instanceof ContinuarQuebra) {
+                            declaracao.inicializada = false;
                             retornoExecucao = null;
                         }
                     } catch (erro: any) {
@@ -244,6 +247,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
                     }
                 }
 
+                declaracao.inicializada = false;
                 return retornoExecucao;
         }
     }

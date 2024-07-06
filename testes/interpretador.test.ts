@@ -608,6 +608,30 @@ describe('Interpretador', () => {
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
                 });
+
+                it('Para aninhado', async () => {
+                    let _saidas = '';
+                    const retornoLexador = lexador.mapear(['algoritmo "combinacoes"',
+                        'var',
+                        '    c1, c2: inteiro',
+                        'inicio',
+                        '    para c1 de 1 ate 3 passo 1 faca',
+                        '        para c2 de 1 ate 3 passo 1 faca',
+                        '            escreval(c1, c2)',
+                        '        fimpara',
+                        '    fimpara',
+                        'fimalgoritmo'], -1);
+
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        _saidas += saida + ', ';
+                    }
+
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toBe('11, 12, 13, 21, 22, 23, 31, 32, 33, ');
+                });
             });
 
             it('Procedimento', async () => {

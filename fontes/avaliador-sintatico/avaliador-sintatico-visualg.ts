@@ -83,16 +83,16 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return descricaoAlgoritmo;
     }
 
-    private criarVetorNDimensional(dimensoes: number[], construtoInicializacao: any = undefined) {
+    private criarVetorNDimensional(linhaOriginal: number, dimensoes: number[], construtoInicializacao: any = undefined) {
         if (dimensoes.length > 0) {
             const dimensao = dimensoes[0] + 1;
             const resto = dimensoes.slice(1);
             const novasDimensoes = [];
             for (let i = 0; i <= dimensao; i++) {
-                novasDimensoes.push(this.criarVetorNDimensional(resto, construtoInicializacao));
+                novasDimensoes.push(this.criarVetorNDimensional(linhaOriginal, resto, construtoInicializacao));
             }
 
-            const novoVetor = new Vetor(this.hashArquivo, -1, novasDimensoes);
+            const novoVetor = new Vetor(this.hashArquivo, linhaOriginal, novasDimensoes);
             return novoVetor;
         } 
             
@@ -238,10 +238,11 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
                         for (let identificador of dadosVariaveis.identificadores) {
                             if (this.tiposConhecidos.includes(simboloTipo.lexema)) {
+                                const tipoInferido = `${simboloTipo.lexema}[]`;
                                 inicializacoes.push(
                                     new Var(
                                         identificador,
-                                        this.criarVetorNDimensional(dimensoes, new Chamada(
+                                        this.criarVetorNDimensional(simboloAtual.linha, dimensoes, new Chamada(
                                             this.hashArquivo, 
                                             new Constante(
                                                 this.hashArquivo, 
@@ -256,19 +257,20 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                             undefined, 
                                             []
                                         )),
-                                        `${simboloTipo.lexema}[]` as any
+                                        tipoInferido as any
                                     )
                                 );
                             } else {
+                                const tipoInferido = `${simboloTipo.lexema}[]`;
                                 inicializacoes.push(
                                     new Var(
                                         identificador,
                                         new Literal(
                                             this.hashArquivo,
                                             Number(dadosVariaveis.simbolo.linha),
-                                            this.criarVetorNDimensional(dimensoes)
+                                            this.criarVetorNDimensional(simboloAtual.linha, dimensoes)
                                         ),
-                                        `${simboloTipo.lexema}[]` as TipoDadosElementar
+                                        tipoInferido as TipoDadosElementar
                                     )
                                 );
                             }

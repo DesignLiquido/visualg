@@ -150,6 +150,49 @@ export async function atribuirVariavel(
         return;
     }
 
+    if (expressao instanceof AcessoElementoMatriz) {
+        const promises = await Promise.all([
+            avaliar(interpretador, expressao.indicePrimario),
+            avaliar(interpretador, expressao.indiceSecundario),
+            avaliar(interpretador, expressao.entidadeChamada),
+        ]);
+    
+        let indicePrimario = promises[0];
+        let indiceSecundario = promises[1];
+        let entidadeChamada = promises[2];
+    
+        entidadeChamada = entidadeChamada.hasOwnProperty('valor') ? entidadeChamada.valor : entidadeChamada;
+        indicePrimario = indicePrimario.hasOwnProperty('valor') ? indicePrimario.valor : indicePrimario;
+        indiceSecundario = indiceSecundario.hasOwnProperty('valor') ? indiceSecundario.valor : indiceSecundario;
+    
+        if (Array.isArray(entidadeChamada)) {
+            if (indicePrimario < 0 && entidadeChamada.length !== 0) {
+                while (indicePrimario < 0) {
+                    indicePrimario += entidadeChamada.length;
+                }
+            }
+            if (indiceSecundario < 0 && entidadeChamada.length !== 0) {
+                while (indiceSecundario < 0) {
+                    indiceSecundario += entidadeChamada.length;
+                }
+            }
+    
+            while (entidadeChamada.length < indicePrimario || entidadeChamada.length < indiceSecundario) {
+                entidadeChamada.push(null);
+            }
+    
+            entidadeChamada[indicePrimario][indiceSecundario] = valor;
+            return Promise.resolve();
+        }
+    
+        if (entidadeChamada instanceof Vetor) {
+            const primeiraDimensao = entidadeChamada.valores[indicePrimario];
+            const tipoElementar = primeiraDimensao.tipo.replace('[]', '');
+            primeiraDimensao.valores[indiceSecundario] = converterValor(valor, tipoElementar);
+            return Promise.resolve();
+        }
+    }
+
     if (expressao instanceof AcessoIndiceVariavel) {
         const promises = await Promise.all([
             interpretador.avaliar(expressao.entidadeChamada),
@@ -260,12 +303,13 @@ function verificarOperandosNumeros(
     throw new ErroEmTempoDeExecucao(operador, 'Operadores precisam ser números.', operador.linha);
 }
 
-function inicializacaoVetorOuMatriz(valores: any[], valorPadrao: any) {
-    for (let i = 0; i < (valores as any).valores.length; i++) {
-        if ((valores as any).valores[i] instanceof Vetor) {
-            inicializacaoVetorOuMatriz((valores as any).valores[i], valorPadrao);
+function inicializacaoVetorOuMatriz(vetor: Vetor, valorPadrao: any, tipoVetor: string) {
+    vetor.tipo = tipoVetor;
+    for (let i = 0; i < vetor.valores.length; i++) {
+        if (vetor.valores[i] instanceof Vetor) {
+            inicializacaoVetorOuMatriz((vetor as any).valores[i], valorPadrao, tipoVetor);
         } else {
-            (valores as any).valores[i] = valorPadrao;
+            vetor.valores[i] = valorPadrao;
         }
     }
 }
@@ -280,21 +324,23 @@ export async function visitarDeclaracaoVar(
     declaracao: Var
 ): Promise<any> {
     let valorFinal: any = await interpretador.avaliacaoDeclaracaoVarOuConst(declaracao);
+    const tipoInferido: string = declaracao.tipo;
 
     if (String(declaracao.tipo).includes('[]')) {
-        switch (declaracao.tipo) {
+        switch (declaracao.tipo as any) {
             case 'caracter[]':
+            case 'caractere[]': // TODO: Reduzir para 'caracter' na análise sintática.
             case 'texto[]':
-                inicializacaoVetorOuMatriz(valorFinal, '');
+                inicializacaoVetorOuMatriz(valorFinal, '', tipoInferido);
                 break;
             case 'inteiro[]':
             case 'real[]':
-                inicializacaoVetorOuMatriz(valorFinal, 0);
+                inicializacaoVetorOuMatriz(valorFinal, 0, tipoInferido);
                 break;
         }
     }
 
-    interpretador.pilhaEscoposExecucao.definirVariavel(declaracao.simbolo.lexema, valorFinal, declaracao.tipo);
+    interpretador.pilhaEscoposExecucao.definirVariavel(declaracao.simbolo.lexema, valorFinal, tipoInferido);
 
     return null;
 }
@@ -753,7 +799,9 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
     }
 
     if (objeto instanceof Vetor) {
-        objeto.valores[indicePrimario][indiceSecundario] = valor;
+        const primeiraDimensao = objeto.valores[indicePrimario];
+        const tipoElementar = primeiraDimensao.tipo.replace('[]', '');
+        primeiraDimensao.valores[indiceSecundario] = converterValor(valor, tipoElementar);
         return Promise.resolve();
     }
 
@@ -847,7 +895,7 @@ export async function visitarExpressaoFormatacaoEscrita(
     const conteudo: VariavelInterface | any = await interpretador.avaliar(declaracao.expressao);
 
     const valorConteudo: any = conteudo?.hasOwnProperty('valor') ? conteudo.valor : conteudo;
-    const tipoConteudo: string = conteudo.hasOwnProperty('tipo') ? conteudo.tipo : typeof conteudo;
+    const tipoConteudo: string = conteudo?.hasOwnProperty('tipo') ? conteudo.tipo : typeof conteudo;
 
     resultado = valorConteudo;
     if (['real', 'inteiro'].includes(tipoConteudo) && declaracao.casasDecimais > 0) {

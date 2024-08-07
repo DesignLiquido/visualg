@@ -527,7 +527,6 @@ describe('Interpretador', () => {
                               'q <- q + 1',
                               't <- t + 1',
                            'fimpara',
-    
                            'Escreval("      | ", jogoMatriz[1,1], " | ", jogoMatriz[1,2], " | ", jogoMatriz[1,3], " |")',
                            'Escreval("      +---+---+---+")',
                            'Escreval("      | ", jogoMatriz[2,1], " | ", jogoMatriz[2,2], " | ", jogoMatriz[2,3], " |")',

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 import { AcessoElementoMatriz, AcessoIndiceVariavel, AtribuicaoPorIndice, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
-import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma, Classe } from '@designliquido/delegua/declaracoes';
+import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma, Classe, Var } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 
@@ -110,6 +110,10 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
             !(retornoExecucao instanceof Quebra) &&
             !this.eVerdadeiro(await this.avaliar(declaracao.condicaoEnquanto))
         );
+    }
+
+    override async visitarDeclaracaoVar(declaracao: Var): Promise<any> {
+        return comum.visitarDeclaracaoVar(this, declaracao);
     }
 
     /**

@@ -23,6 +23,7 @@ import {
     InicioAlgoritmo,
     Leia,
     Para,
+    Var,
 } from '@designliquido/delegua/declaracoes';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
@@ -30,7 +31,12 @@ import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/inte
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
-import { DeleguaClasse, DeleguaFuncao, FuncaoPadrao, ObjetoDeleguaClasse } from '@designliquido/delegua/estruturas';
+import {
+    DescritorTipoClasse,
+    DeleguaFuncao,
+    FuncaoPadrao,
+    ObjetoDeleguaClasse,
+} from '@designliquido/delegua/estruturas';
 
 import { inferirTipoVariavel } from './inferenciador';
 import { InterpretadorVisuAlgInterface } from '../interfaces';
@@ -89,7 +95,7 @@ export async function visitarDeclaracaoCabecalhoPrograma(
  * @returns Sempre retorna nulo, por ser requerido pelo contrato de visita.
  */
 export async function visitarDeclaracaoClasse(
-    interpretador: InterpretadorVisuAlgInterface, 
+    interpretador: InterpretadorVisuAlgInterface,
     declaracao: Classe
 ): Promise<any> {
     const metodos = {};
@@ -99,9 +105,14 @@ export async function visitarDeclaracaoClasse(
         metodos['construtor'] = funcao;
     }
 
-    const deleguaClasse: DeleguaClasse = new DeleguaClasse(declaracao.simbolo, undefined, metodos, declaracao.propriedades);
+    const descritorTipoClasse: DescritorTipoClasse = new DescritorTipoClasse(
+        declaracao.simbolo,
+        undefined,
+        metodos,
+        declaracao.propriedades
+    );
 
-    interpretador.pilhaEscoposExecucao.definirConstante(declaracao.simbolo.lexema, deleguaClasse);
+    interpretador.pilhaEscoposExecucao.definirConstante(declaracao.simbolo.lexema, descritorTipoClasse);
     interpretador.tiposConhecidos.push(declaracao.simbolo.lexema);
     return null;
 }
@@ -192,14 +203,23 @@ export async function atribuirVariavel(
         // `AcessoMetodoOuPropriedade` é se o `objeto` é um registro.
         // Portanto, temos que pesquisar aqui o tipo da propriedade.
         const tipoRelacionado = interpretador.pilhaEscoposExecucao.obterVariavelPorNome(tipoBaseVariavel);
-        const valorTipoRelacionado: DeleguaClasse = tipoRelacionado.hasOwnProperty('valor') ? tipoRelacionado.valor : tipoRelacionado;
-        const propriedadeRelacionada = valorTipoRelacionado.propriedades.find(p => p.nome.lexema === expressao.simbolo.lexema);
+        const descritorTipoRelacionado: DescritorTipoClasse = tipoRelacionado.hasOwnProperty('valor')
+            ? tipoRelacionado.valor
+            : tipoRelacionado;
+        const propriedadeRelacionada = descritorTipoRelacionado.propriedades.find(
+            (p) => p.nome.lexema === expressao.simbolo.lexema
+        );
         if (!propriedadeRelacionada) {
-            throw new ErroEmTempoDeExecucao(expressao.simbolo, `Propriedade "${expressao.simbolo.lexema}" não existe no tipo ${valorTipoRelacionado.simboloOriginal.lexema}.`);
+            throw new ErroEmTempoDeExecucao(
+                expressao.simbolo,
+                `Propriedade "${expressao.simbolo.lexema}" não existe no tipo ${descritorTipoRelacionado.simboloOriginal.lexema}.`
+            );
         }
 
         let variavelObjeto: VariavelInterface = await interpretador.avaliar(expressao.objeto);
-        const valorVariavelObjeto: ObjetoDeleguaClasse = variavelObjeto.hasOwnProperty('valor') ? variavelObjeto.valor : variavelObjeto;
+        const valorVariavelObjeto: ObjetoDeleguaClasse = variavelObjeto.hasOwnProperty('valor')
+            ? variavelObjeto.valor
+            : variavelObjeto;
         let valorConvertido = converterValor(valor, propriedadeRelacionada.tipo);
         valorVariavelObjeto.definir(expressao.simbolo, valorConvertido);
     }
@@ -240,13 +260,53 @@ function verificarOperandosNumeros(
     throw new ErroEmTempoDeExecucao(operador, 'Operadores precisam ser números.', operador.linha);
 }
 
+function inicializacaoVetorOuMatriz(valores: any[], valorPadrao: any) {
+    for (let i = 0; i < (valores as any).valores.length; i++) {
+        if ((valores as any).valores[i] instanceof Vetor) {
+            inicializacaoVetorOuMatriz((valores as any).valores[i], valorPadrao);
+        } else {
+            (valores as any).valores[i] = valorPadrao;
+        }
+    }
+}
+
+/**
+ * Executa expressão de definição de variável.
+ * @param declaracao A declaração Var
+ * @returns Sempre retorna nulo.
+ */
+export async function visitarDeclaracaoVar(
+    interpretador: InterpretadorVisuAlgInterface,
+    declaracao: Var
+): Promise<any> {
+    let valorFinal: any = await interpretador.avaliacaoDeclaracaoVarOuConst(declaracao);
+
+    if (String(declaracao.tipo).includes('[]')) {
+        switch (declaracao.tipo) {
+            case 'caracter[]':
+            case 'texto[]':
+                inicializacaoVetorOuMatriz(valorFinal, '');
+                break;
+            case 'inteiro[]':
+            case 'real[]':
+                inicializacaoVetorOuMatriz(valorFinal, 0);
+                break;
+        }
+    }
+
+    interpretador.pilhaEscoposExecucao.definirVariavel(declaracao.simbolo.lexema, valorFinal, declaracao.tipo);
+
+    return null;
+}
+
+
 export async function visitarExpressaoAcessoIndiceVariavel(
     interpretador: InterpretadorVisuAlgInterface,
     expressao: AcessoIndiceVariavel | any
 ): Promise<any> {
     const promises = await Promise.all([
-        interpretador.avaliar(expressao.entidadeChamada), 
-        interpretador.avaliar(expressao.indice)
+        interpretador.avaliar(expressao.entidadeChamada),
+        interpretador.avaliar(expressao.indice),
     ]);
 
     const variavelObjeto: VariavelInterface = promises[0];
@@ -283,21 +343,21 @@ export async function visitarExpressaoAcessoIndiceVariavel(
         }
 
         return objeto[valorIndice];
-    } 
+    }
 
     if (objeto instanceof Vetor) {
         return objeto.valores[valorIndice];
     }
-    
+
     if (
         objeto.constructor === Object ||
         objeto instanceof ObjetoDeleguaClasse ||
         objeto instanceof DeleguaFuncao ||
-        objeto instanceof DeleguaClasse
+        objeto instanceof DescritorTipoClasse
     ) {
         return objeto[valorIndice] || null;
-    } 
-    
+    }
+
     if (typeof objeto === 'string') {
         if (!Number.isInteger(valorIndice)) {
             return Promise.reject(
@@ -368,7 +428,7 @@ export async function visitarExpressaoAtribuicaoPorIndice(
         objeto.constructor === Object ||
         objeto instanceof ObjetoDeleguaClasse ||
         objeto instanceof DeleguaFuncao ||
-        objeto instanceof DeleguaClasse
+        objeto instanceof DescritorTipoClasse
     ) {
         objeto[indice] = valor;
     } else {
@@ -494,7 +554,10 @@ export async function visitarExpressaoBinaria(
     }
 }
 
-export async function visitarExpressaoLogica(interpretador: InterpretadorVisuAlgInterface, expressao: Logico): Promise<any> {
+export async function visitarExpressaoLogica(
+    interpretador: InterpretadorVisuAlgInterface,
+    expressao: Logico
+): Promise<any> {
     const esquerda = await avaliar(interpretador, expressao.esquerda);
 
     // se um estado for verdadeiro, retorna verdadeiro
@@ -523,7 +586,7 @@ export async function visitarExpressaoLogica(interpretador: InterpretadorVisuAlg
  * passo são considerados indefinidos aqui.
  */
 export async function resolverIncrementoPara(
-    interpretador: InterpretadorVisuAlgInterface, 
+    interpretador: InterpretadorVisuAlgInterface,
     declaracao: Para
 ): Promise<any> {
     if (declaracao.resolverIncrementoEmExecucao) {
@@ -636,7 +699,8 @@ export async function visitarExpressaoAcessoElementoMatriz(
     }
 
     if (objeto instanceof Vetor) {
-        return objeto.valores[valorIndicePrimario][valorIndiceSecundario];
+        const vetorPrimario = objeto.valores[valorIndicePrimario];
+        return vetorPrimario.valores[valorIndiceSecundario];
     }
 
     return Promise.reject(
@@ -742,7 +806,7 @@ function palavraAleatoriaCom5Digitos(): string {
 }
 
 export async function visitarDeclaracaoAleatorio(
-    interpretador: InterpretadorVisuAlgInterface, 
+    interpretador: InterpretadorVisuAlgInterface,
     expressao: Aleatorio
 ): Promise<any> {
     let retornoExecucao: any;
@@ -798,7 +862,7 @@ export async function visitarExpressaoFormatacaoEscrita(
 }
 
 /**
- * Customização da leitura de dados de entrada. 
+ * Customização da leitura de dados de entrada.
  * A interrupção da execução para leitura de dados do usuário
  * ocorre quando o modo aleatório não está habilitado.
  * @param interpretador A instância do interpretador.
@@ -817,7 +881,7 @@ export async function visitarExpressaoLeia(
             const promessaLeitura: Function = () =>
                 new Promise((resolucao) =>
                     interpretador.interfaceEntradaSaida.question(
-                        interpretador.deveEscreverPrompt ? mensagemPrompt : '', 
+                        interpretador.deveEscreverPrompt ? mensagemPrompt : '',
                         (resposta: any) => {
                             mensagemPrompt = '> ';
                             resolucao(resposta);

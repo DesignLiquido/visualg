@@ -87,10 +87,8 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         if (dimensoes.length > 0) {
             const dimensao = dimensoes[0] + 1;
             const resto = dimensoes.slice(1);
-            // const novoVetor = Array(dimensao);
             const novasDimensoes = [];
             for (let i = 0; i <= dimensao; i++) {
-                // novoVetor[i] = this.criarVetorNDimensional(resto, construtoInicializacao);
                 novasDimensoes.push(this.criarVetorNDimensional(resto, construtoInicializacao));
             }
 

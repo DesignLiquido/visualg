@@ -3,7 +3,7 @@ import { PilhaEscoposExecucaoInterface } from "@designliquido/delegua/interfaces
 import { SimboloInterface, VariavelInterface } from "@designliquido/delegua/interfaces";
 import { Simbolo } from "@designliquido/delegua/lexador";
 import { ErroEmTempoDeExecucao } from "@designliquido/delegua/excecoes";
-import { DeleguaClasse, DeleguaFuncao } from "@designliquido/delegua/estruturas";
+import { DescritorTipoClasse, DeleguaFuncao } from "@designliquido/delegua/estruturas";
 import { EspacoVariaveis } from "@designliquido/delegua/espaco-variaveis";
 
 import { TipoInferencia, inferirTipoVariavel } from "./inferenciador";
@@ -233,7 +233,7 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
         const ambiente = this.pilha[this.pilha.length - 1].ambiente;
         for (const [nome, corpo] of Object.entries(ambiente.valores)) {
             const corpoValor = corpo.hasOwnProperty('valor') ? corpo.valor : corpo;
-            if (corpoValor instanceof DeleguaClasse) {
+            if (corpoValor instanceof DescritorTipoClasse) {
                 retorno[nome] = corpoValor;
             }
         }

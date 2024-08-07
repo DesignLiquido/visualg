@@ -1,5 +1,5 @@
 import { AcessoElementoMatriz, AcessoIndiceVariavel, AtribuicaoPorIndice, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
-import { Aleatorio, CabecalhoPrograma, Classe, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para } from '@designliquido/delegua/declaracoes';
+import { Aleatorio, CabecalhoPrograma, Classe, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para, Var } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 
@@ -162,12 +162,10 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
 
     async visitarExpressaoFimPara(declaracao: FimPara): Promise<any> {
         if (!this.eVerdadeiro(await this.avaliar(declaracao.condicaoPara))) {
-            const escopoPara = this.pilhaEscoposExecucao.pilha[this.pilhaEscoposExecucao.pilha.length - 2];
-            // TODO: Verificar se ainda precisa ser desse jeito aqui. 
-            // Há situações em que o interpretador está pulando comandos.
-            escopoPara.declaracaoAtual++;
-
-            escopoPara.emLacoRepeticao = false;
+            // TODO: Código marcado para depreciação. Avaliar situações que ainda precisem dele.
+            // const escopoPara = this.pilhaEscoposExecucao.pilha[this.pilhaEscoposExecucao.pilha.length - 2];
+            // escopoPara.declaracaoAtual++;
+            // escopoPara.emLacoRepeticao = false;
             return new SustarQuebra();
         }
 
@@ -229,6 +227,10 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
         }
 
         return retornoExecucao;
+    }
+
+    override async visitarDeclaracaoVar(declaracao: Var): Promise<any> {
+        return comum.visitarDeclaracaoVar(this, declaracao);
     }
 
     override async visitarExpressaoBinaria(expressao: Binario | any): Promise<any> {

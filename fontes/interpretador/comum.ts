@@ -899,7 +899,7 @@ export async function visitarExpressaoFormatacaoEscrita(
 
     resultado = valorConteudo;
     if (['real', 'inteiro'].includes(tipoConteudo) && declaracao.casasDecimais > 0) {
-        resultado = valorConteudo.toLocaleString('pt', { minimumFractionDigits: declaracao.casasDecimais });
+        resultado = valorConteudo.toLocaleString('pt', { minimumFractionDigits: declaracao.casasDecimais, maximumFractionDigits: declaracao.casasDecimais });
     }
 
     if (declaracao.espacos > 0) {

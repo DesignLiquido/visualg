@@ -259,72 +259,74 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('"Repita Até" com acento', async () => {
-                const saidasMensagens = ['1 - Dizer olá!', '2 – Dizer oi! ', '0 - Sair do programa']
-                const respostas = ["0"];
-                (interpretador as any).interfaceEntradaSaida = {
-                    question: (mensagem: string, callback: Function) => {
-                        callback(respostas.shift());
+            describe('Repita', () => {
+                it('"Repita Até" com acento', async () => {
+                    const saidasMensagens = ['1 - Dizer olá!', '2 – Dizer oi! ', '0 - Sair do programa']
+                    const respostas = ["0"];
+                    (interpretador as any).interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.shift());
+                        }
+                    };
+    
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "Repita Até"',
+                            'var',
+                            'opcao: inteiro',
+                        'inicio',
+                            'repita',
+                                'escreval("1 - Dizer olá!")',
+                                'escreval("2 – Dizer oi! ")',
+                                'escreval("0 - Sair do programa")',
+                                'leia(opcao)',
+                                'se (opcao = 1) entao',
+                                    'escreval("Olá!")',
+                                'fimse',
+                                'se (opcao = 2) entao',
+                                    'escreval("Oi!")',
+                                'fimse',
+                            'até (opcao = 0)',
+                        'fimalgoritmo'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        expect(saidasMensagens.includes(saida)).toBeTruthy()
                     }
-                };
-
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "Repita Até"',
-                        'var',
-                        'opcao: inteiro',
-                    'inicio',
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
+    
+                it('Repita Até com interrupção', async () => {
+                    let _saidas = '';
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "Números de 1 a 10 (com interrompa)"',
+                        'var x: inteiro',
+                        'inicio',
+                        'x <- 0',
                         'repita',
-                            'escreval("1 - Dizer olá!")',
-                            'escreval("2 – Dizer oi! ")',
-                            'escreval("0 - Sair do programa")',
-                            'leia(opcao)',
-                            'se (opcao = 1) entao',
-                                'escreval("Olá!")',
-                            'fimse',
-                            'se (opcao = 2) entao',
-                                'escreval("Oi!")',
-                            'fimse',
-                        'até (opcao = 0)',
-                    'fimalgoritmo'
-                ], -1);
-
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                interpretador.funcaoDeRetorno = (saida: any) => {
-                    expect(saidasMensagens.includes(saida)).toBeTruthy()
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
-            });
-
-            it('Repita Até com interrupção', async () => {
-                let _saidas = '';
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "Números de 1 a 10 (com interrompa)"',
-                    'var x: inteiro',
-                    'inicio',
-                    'x <- 0',
-                    'repita',
-                    '   x <- x + 1',
-                    '   escreva (x)',
-                    '   se x = 10 entao',
-                    '      interrompa',
-                    '   fimse',
-                    'ate falso',
-                    'fimalgoritmo'
-                ], -1);
-
-                interpretador.funcaoDeRetorno = (saida: any) => {
-                    _saidas += saida;
-                }
-
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
+                        '   x <- x + 1',
+                        '   escreva (x)',
+                        '   se x = 10 entao',
+                        '      interrompa',
+                        '   fimse',
+                        'ate falso',
+                        'fimalgoritmo'
+                    ], -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        _saidas += saida;
+                    }
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
             });
 
             it('IMC', async () => {
@@ -364,72 +366,6 @@ describe('Interpretador', () => {
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetornoMesmaLinha = (saida: any) => {
-                    expect(saidasMensagens.includes(saida)).toBeTruthy()
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
-            });
-
-            it("Média de Vetor", async () => {
-                const saidasMensagens = [
-                    'Digite o par de notas do 1º Aluno', 
-                    'Digite o par de notas do 2º Aluno', 
-                    'Digite o par de notas do 3º Aluno', 
-                    'Digite o par de notas do 4º Aluno', 
-                    'Digite o par de notas do 5º Aluno', 
-                    'Digite o par de notas do 6º Aluno', 
-                    'Digite o par de notas do 7º Aluno', 
-                    'Digite o par de notas do 8º Aluno', 
-                    'Digite o par de notas do 9º Aluno', 
-                    'Digite o par de notas do 10º Aluno', 
-                    '-', 
-                    'Media do 1º aluno: 90.5', 
-                    'Media do 2º aluno: 83.5', 
-                    'Media do 3º aluno: 71.5', 
-                    'Media do 4º aluno: 94.5', 
-                    'Media do 5º aluno: 76.5', 
-                    'Media do 6º aluno: 90', 
-                    'Media do 7º aluno: 80', 
-                    'Media do 8º aluno: 65', 
-                    'Media do 9º aluno: 75', 
-                    'Media do 10º aluno: 85'
-                ];
-
-                // Aqui vamos simular a resposta para diversas variáveis de `leia()`.
-                const respostas = [
-                    "90", "80", "50", "100", "60", "70", "75", "85", "89", "91",
-                    "74", "79", "99", "90", "65", "78", "100", "67", "93", "88"
-                ];
-                (interpretador as any).interfaceEntradaSaida = {
-                    question: (mensagem: string, callback: Function) => {
-                        callback(respostas.pop());
-                    }
-                };
-
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "media-vetor"',
-                    'var',
-                    'media:vetor[1..10] de real',
-                    'i:inteiro',
-                    'n1,n2:real',
-                    'inicio',
-                    'para i de 1 ate 10 faca',
-                    '     escreval ("Digite o par de notas do ",i,"º Aluno")',
-                    '     leia (n1,n2)',
-                    '     media[i]<-(n1+n2)/2',
-                    'fimpara',
-                    'escreval ("-")',
-                    'para i de 1 ate 10 faça',
-                    '       escreval ("Media do ",i,"º aluno: ", media[i])',
-                    'fimpara',
-                    'fimalgoritmo'
-                ], -1);
-
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                interpretador.funcaoDeRetorno = (saida: any) => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
                 }
 
@@ -687,6 +623,72 @@ describe('Interpretador', () => {
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas).toBe('11, 12, 13, 21, 22, 23, 31, 32, 33, ');
                 });
+
+                it("Média de Vetor", async () => {
+                    const saidasMensagens = [
+                        'Digite o par de notas do 1º Aluno', 
+                        'Digite o par de notas do 2º Aluno', 
+                        'Digite o par de notas do 3º Aluno', 
+                        'Digite o par de notas do 4º Aluno', 
+                        'Digite o par de notas do 5º Aluno', 
+                        'Digite o par de notas do 6º Aluno', 
+                        'Digite o par de notas do 7º Aluno', 
+                        'Digite o par de notas do 8º Aluno', 
+                        'Digite o par de notas do 9º Aluno', 
+                        'Digite o par de notas do 10º Aluno', 
+                        '-', 
+                        'Media do 1º aluno: 90.5', 
+                        'Media do 2º aluno: 83.5', 
+                        'Media do 3º aluno: 71.5', 
+                        'Media do 4º aluno: 94.5', 
+                        'Media do 5º aluno: 76.5', 
+                        'Media do 6º aluno: 90', 
+                        'Media do 7º aluno: 80', 
+                        'Media do 8º aluno: 65', 
+                        'Media do 9º aluno: 75', 
+                        'Media do 10º aluno: 85'
+                    ];
+    
+                    // Aqui vamos simular a resposta para diversas variáveis de `leia()`.
+                    const respostas = [
+                        "90", "80", "50", "100", "60", "70", "75", "85", "89", "91",
+                        "74", "79", "99", "90", "65", "78", "100", "67", "93", "88"
+                    ];
+                    (interpretador as any).interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.pop());
+                        }
+                    };
+    
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "media-vetor"',
+                        'var',
+                        'media:vetor[1..10] de real',
+                        'i:inteiro',
+                        'n1,n2:real',
+                        'inicio',
+                        'para i de 1 ate 10 faca',
+                        '     escreval ("Digite o par de notas do ",i,"º Aluno")',
+                        '     leia (n1,n2)',
+                        '     media[i]<-(n1+n2)/2',
+                        'fimpara',
+                        'escreval ("-")',
+                        'para i de 1 ate 10 faça',
+                        '       escreval ("Media do ",i,"º aluno: ", media[i])',
+                        'fimpara',
+                        'fimalgoritmo'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        expect(saidasMensagens.includes(saida)).toBeTruthy()
+                    }
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
             });
 
             it('Procedimento', async () => {
@@ -818,30 +820,77 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Impressão de resultados formatados', async () => {
-                let _saidas = '';
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "X SOMA"',
-                    'var',
-                    '    x, SOMA: inteiro',
-                    'inicio',
-                    '    x <- 0',
-                    '    SOMA <- 0',
-                    '    para x de 1 ate 6 faca',
-                    '        SOMA <- x + 1',
-                    '    fimpara',
-                    '    escreval("x: ", x:10:1, "  SOMA:", soma)',
-                    'fimalgoritmo'
-                ], -1);
+            describe('Impressão de resultados formatados', () => {
+                it('Uma casa decimal, dez espaços à frente', async () => {
+                    let _saidas = '';
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "X SOMA"',
+                        'var',
+                        '    x, SOMA: inteiro',
+                        'inicio',
+                        '    x <- 0',
+                        '    SOMA <- 0',
+                        '    para x de 1 ate 6 faca',
+                        '        SOMA <- x + 1',
+                        '    fimpara',
+                        '    escreval("x: ", x:10:1, "  SOMA:", soma)',
+                        'fimalgoritmo'
+                    ], -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        _saidas += saida;
+                    }
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toContain('x:          6,0');
+                });
 
-                interpretador.funcaoDeRetorno = (saida: any) => {
-                    _saidas += saida;
-                }
+                it('Duas ou mais casas decimais', async () => {
+                    let _saidas = '';
+                    // Aqui vamos simular a resposta para duas variáveis de `leia()`.
+                    const respostas = [
+                        "2", "50", "65"
+                    ];
+                    (interpretador as any).interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.shift());
+                        }
+                    };
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "conversor"',
+                        'var',
+                        '    mre, dol : real',
+                        '    cont, num : inteiro',
+                        'inicio',
+                        '    cont <- 1',
+                        '    escreval("Quantas vezes você quer converter: ")',
+                        '    leia(num)',
+                        '    enquanto (cont <= num) faca',
+                        '        escreval("Qual o valor em R$: ")',
+                        '        leia(mre)',
+                        '        dol <- mre / 5.47',
+                        '        escreval("Você tem US$",dol:5:2, " dólares")',
+                        '        cont <- cont + 1',
+                        '    fimenquanto',
+                        '    escreval("Conversão Finalizada!")',
+                        'fimalgoritmo'
+                    ], -1);
 
-                expect(retornoInterpretador.erros).toHaveLength(0);
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        _saidas += saida;
+                    }
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toContain('9,14');
+                    expect(_saidas).toContain('11,88');
+                });
             });
 
             it('Sucesso - Registro', async () => {

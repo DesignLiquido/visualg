@@ -1,4 +1,4 @@
-import { Declaracao } from "@designliquido/delegua";
+import { Declaracao } from '@designliquido/delegua';
 
 export interface EscopoFormatacao {
     declaracoes: Declaracao[];

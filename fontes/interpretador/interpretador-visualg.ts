@@ -1,12 +1,31 @@
-import { AcessoElementoMatriz, AcessoIndiceVariavel, AtribuicaoPorIndice, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
-import { Aleatorio, CabecalhoPrograma, Classe, Const, Escreva, EscrevaMesmaLinha, Fazer, Leia, Para, Var } from '@designliquido/delegua/declaracoes';
+import {
+    AcessoElementoMatriz,
+    AcessoIndiceVariavel,
+    AtribuicaoPorIndice,
+    AtribuicaoPorIndicesMatriz,
+    Binario,
+    Construto,
+    FimPara,
+    FormatacaoEscrita,
+    Logico,
+    Variavel,
+} from '@designliquido/delegua/construtos';
+import {
+    Aleatorio,
+    CabecalhoPrograma,
+    Classe,
+    Const,
+    Escreva,
+    EscrevaMesmaLinha,
+    Fazer,
+    Leia,
+    Para,
+    Var,
+} from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 
-import {
-    carregarBibliotecaGlobalCaracter,
-    carregarBibliotecaGlobalNumerica,
-} from './comum';
+import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
@@ -20,7 +39,9 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
     mensagemPrompt: string;
     tiposConhecidos: string[];
     deveEscreverPrompt: boolean;
-    funcaoLimpaTela: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
+    funcaoLimpaTela: Function = () => {
+        console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.');
+    };
 
     constructor(
         diretorioBase: string,
@@ -37,7 +58,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
 
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
-        // Por padrão, a escrita de prompt fica desabilitada. 
+        // Por padrão, a escrita de prompt fica desabilitada.
         // Se precisar escrever no prompt (por exemplo, em uma aplicação web usando `window.prompt`),
         // basta reabilitar este parâmetro.
         this.deveEscreverPrompt = false;
@@ -185,7 +206,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
     override async visitarExpressaoLeia(expressao: Leia): Promise<any> {
         return comum.visitarExpressaoLeia(this, expressao, this.mensagemPrompt);
     }
-    
+
     override async visitarDeclaracaoClasse(declaracao: Classe): Promise<any> {
         return comum.visitarDeclaracaoClasse(this, declaracao);
     }
@@ -244,7 +265,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
     override async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
         return comum.visitarDeclaracaoAleatorio(this, declaracao);
     }
-    
+
     override async visitarExpressaoFormatacaoEscrita(declaracao: FormatacaoEscrita): Promise<string> {
         return comum.visitarExpressaoFormatacaoEscrita(this, declaracao);
     }

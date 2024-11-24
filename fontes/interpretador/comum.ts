@@ -156,15 +156,15 @@ export async function atribuirVariavel(
             avaliar(interpretador, expressao.indiceSecundario),
             avaliar(interpretador, expressao.entidadeChamada),
         ]);
-    
+
         let indicePrimario = promises[0];
         let indiceSecundario = promises[1];
         let entidadeChamada = promises[2];
-    
+
         entidadeChamada = entidadeChamada.hasOwnProperty('valor') ? entidadeChamada.valor : entidadeChamada;
         indicePrimario = indicePrimario.hasOwnProperty('valor') ? indicePrimario.valor : indicePrimario;
         indiceSecundario = indiceSecundario.hasOwnProperty('valor') ? indiceSecundario.valor : indiceSecundario;
-    
+
         if (Array.isArray(entidadeChamada)) {
             if (indicePrimario < 0 && entidadeChamada.length !== 0) {
                 while (indicePrimario < 0) {
@@ -176,15 +176,15 @@ export async function atribuirVariavel(
                     indiceSecundario += entidadeChamada.length;
                 }
             }
-    
+
             while (entidadeChamada.length < indicePrimario || entidadeChamada.length < indiceSecundario) {
                 entidadeChamada.push(null);
             }
-    
+
             entidadeChamada[indicePrimario][indiceSecundario] = valor;
             return Promise.resolve();
         }
-    
+
         if (entidadeChamada instanceof Vetor) {
             const primeiraDimensao = entidadeChamada.valores[indicePrimario];
             const tipoElementar = primeiraDimensao.tipo.replace('[]', '');
@@ -344,7 +344,6 @@ export async function visitarDeclaracaoVar(
 
     return null;
 }
-
 
 export async function visitarExpressaoAcessoIndiceVariavel(
     interpretador: InterpretadorVisuAlgInterface,
@@ -899,7 +898,10 @@ export async function visitarExpressaoFormatacaoEscrita(
 
     resultado = valorConteudo;
     if (['real', 'inteiro'].includes(tipoConteudo) && declaracao.casasDecimais > 0) {
-        resultado = valorConteudo.toLocaleString('pt', { minimumFractionDigits: declaracao.casasDecimais, maximumFractionDigits: declaracao.casasDecimais });
+        resultado = valorConteudo.toLocaleString('pt', {
+            minimumFractionDigits: declaracao.casasDecimais,
+            maximumFractionDigits: declaracao.casasDecimais,
+        });
     }
 
     if (declaracao.espacos > 0) {

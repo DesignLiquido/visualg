@@ -1,6 +1,19 @@
-export type TipoInferencia = "texto" | "número" | "longo" | "vetor" | "dicionário" | "nulo" | "lógico" | "função" | "símbolo" | "objeto" | "módulo";
+export type TipoInferencia =
+    | 'texto'
+    | 'número'
+    | 'longo'
+    | 'vetor'
+    | 'dicionário'
+    | 'nulo'
+    | 'lógico'
+    | 'função'
+    | 'símbolo'
+    | 'objeto'
+    | 'módulo';
 
-export function inferirTipoVariavel(variavel: string | number | Array<any> | boolean | null | undefined): TipoInferencia {
+export function inferirTipoVariavel(
+    variavel: string | number | Array<any> | boolean | null | undefined
+): TipoInferencia {
     const tipo = typeof variavel;
     switch (tipo) {
         case 'string':

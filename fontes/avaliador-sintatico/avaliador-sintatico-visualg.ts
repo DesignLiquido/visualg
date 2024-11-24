@@ -83,7 +83,11 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return descricaoAlgoritmo;
     }
 
-    private criarVetorNDimensional(linhaOriginal: number, dimensoes: number[], construtoInicializacao: any = undefined) {
+    private criarVetorNDimensional(
+        linhaOriginal: number,
+        dimensoes: number[],
+        construtoInicializacao: any = undefined
+    ) {
         if (dimensoes.length > 0) {
             const dimensao = dimensoes[0] + 1;
             const resto = dimensoes.slice(1);
@@ -94,8 +98,8 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
             const novoVetor = new Vetor(this.hashArquivo, linhaOriginal, novasDimensoes);
             return novoVetor;
-        } 
-            
+        }
+
         return construtoInicializacao;
     }
 
@@ -141,8 +145,9 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 tiposDeSimbolos.INTEIRO,
                 tiposDeSimbolos.LOGICO,
                 tiposDeSimbolos.REAL,
-                tiposDeSimbolos.VETOR
-            ].includes(this.simbolos[this.atual].tipo) && !this.tiposConhecidos.includes(this.simbolos[this.atual].lexema)
+                tiposDeSimbolos.VETOR,
+            ].includes(this.simbolos[this.atual].tipo) &&
+            !this.tiposConhecidos.includes(this.simbolos[this.atual].lexema)
         ) {
             throw this.erro(
                 this.simbolos[this.atual],
@@ -231,9 +236,13 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                 tiposDeSimbolos.LOGICO,
                                 tiposDeSimbolos.REAL,
                                 tiposDeSimbolos.VETOR,
-                            ].includes(simboloTipo.tipo) && !this.tiposConhecidos.includes(simboloTipo.lexema)
+                            ].includes(simboloTipo.tipo) &&
+                            !this.tiposConhecidos.includes(simboloTipo.lexema)
                         ) {
-                            throw this.erro(simboloTipo, 'Tipo de variável ou registro não conhecido para inicialização de vetor.');
+                            throw this.erro(
+                                simboloTipo,
+                                'Tipo de variável ou registro não conhecido para inicialização de vetor.'
+                            );
                         }
 
                         for (let identificador of dadosVariaveis.identificadores) {
@@ -242,21 +251,25 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                 inicializacoes.push(
                                     new Var(
                                         identificador,
-                                        this.criarVetorNDimensional(simboloAtual.linha, dimensoes, new Chamada(
-                                            this.hashArquivo, 
-                                            new Constante(
-                                                this.hashArquivo, 
-                                                new Simbolo(
-                                                    tiposDeSimbolos.IDENTIFICADOR, 
-                                                    simboloTipo.lexema, 
-                                                    simboloTipo.lexema, 
-                                                    identificador.linha, 
-                                                    this.hashArquivo
-                                                )
-                                            ),
-                                            undefined, 
-                                            []
-                                        )),
+                                        this.criarVetorNDimensional(
+                                            simboloAtual.linha,
+                                            dimensoes,
+                                            new Chamada(
+                                                this.hashArquivo,
+                                                new Constante(
+                                                    this.hashArquivo,
+                                                    new Simbolo(
+                                                        tiposDeSimbolos.IDENTIFICADOR,
+                                                        simboloTipo.lexema,
+                                                        simboloTipo.lexema,
+                                                        identificador.linha,
+                                                        this.hashArquivo
+                                                    )
+                                                ),
+                                                undefined,
+                                                []
+                                            )
+                                        ),
                                         tipoInferido as any
                                     )
                                 );
@@ -313,7 +326,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                     // Neste caso, o tipo pode ser um registro.
                                     // Se for, verificamos aqui.
                                     if (!this.tiposConhecidos.includes(dadosVariaveis.tipo)) {
-                                        throw this.erro(identificador, `Tipo ${dadosVariaveis.tipo} não parece ser de um tipo conhecido ou registro.`);
+                                        throw this.erro(
+                                            identificador,
+                                            `Tipo ${dadosVariaveis.tipo} não parece ser de um tipo conhecido ou registro.`
+                                        );
                                     }
 
                                     inicializacoes.push(
@@ -322,18 +338,18 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                             // A inicialização de um registro é uma chamada ao
                                             // construtor de classe.
                                             new Chamada(
-                                                this.hashArquivo, 
+                                                this.hashArquivo,
                                                 new Constante(
-                                                    this.hashArquivo, 
+                                                    this.hashArquivo,
                                                     new Simbolo(
-                                                        tiposDeSimbolos.IDENTIFICADOR, 
-                                                        dadosVariaveis.tipo, 
-                                                        dadosVariaveis.tipo, 
-                                                        identificador.linha, 
+                                                        tiposDeSimbolos.IDENTIFICADOR,
+                                                        dadosVariaveis.tipo,
+                                                        dadosVariaveis.tipo,
+                                                        identificador.linha,
                                                         this.hashArquivo
                                                     )
                                                 ),
-                                                undefined, 
+                                                undefined,
                                                 []
                                             ),
                                             dadosVariaveis.tipo as any
@@ -499,7 +515,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
      * @param entidadeChamada Um construto. Normalmente uma `Chamada`.
      * @returns Ou a entidade chamada enriquecida, ou uma nova `Chamada`.
      */
-    override finalizarChamada(entidadeChamada: Construto): Construto {
+    override finalizarChamada(entidadeChamada: Construto): Chamada {
         const argumentos: Array<Construto> = [];
 
         if (!this.verificarTipoSimboloAtual(tiposDeSimbolos.PARENTESE_DIREITO)) {
@@ -626,12 +642,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
     declaracaoComentario(): Comentario {
         const simboloComentario = this.avancarEDevolverAnterior();
-        return new Comentario(
-            simboloComentario.hashArquivo, 
-            simboloComentario.linha, 
-            simboloComentario.literal, 
-            false
-        );
+        return new Comentario(simboloComentario.hashArquivo, simboloComentario.linha, simboloComentario.literal, false);
     }
 
     declaracaoEnquanto(): Enquanto {
@@ -804,7 +815,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
         this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após os valores em escreva.");
 
-        // A linha pode simplesmente terminar com um comentário. Neste caso, 
+        // A linha pode simplesmente terminar com um comentário. Neste caso,
         // não verificamos a quebra de linha.
         if (this.simbolos[this.atual].tipo !== tiposDeSimbolos.COMENTARIO) {
             this.consumir(
@@ -1230,7 +1241,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         );
     }
 
-    private gerarConstrutorParaTipo(simboloTipo: SimboloInterface, propriedades: PropriedadeClasse[]): FuncaoDeclaracao {
+    private gerarConstrutorParaTipo(
+        simboloTipo: SimboloInterface,
+        propriedades: PropriedadeClasse[]
+    ): FuncaoDeclaracao {
         const instrucoesConstrutor = [];
         for (let propriedade of propriedades) {
             let valorInicializacao: any;
@@ -1257,13 +1271,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                         new Isto(
                             propriedade.hashArquivo,
                             propriedade.linha,
-                            new Simbolo(
-                                'ISTO',
-                                'isto',
-                                undefined,
-                                simboloTipo.linha,
-                                simboloTipo.hashArquivo
-                            )
+                            new Simbolo('ISTO', 'isto', undefined, simboloTipo.linha, simboloTipo.hashArquivo)
                         ),
                         propriedade.nome,
                         new Literal(propriedade.hashArquivo, propriedade.linha, valorInicializacao)
@@ -1280,19 +1288,13 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                     ({
                         abrangencia: 'padrao',
                         nome: p.nome,
-                    } as ParametroInterface)
+                    }) as ParametroInterface
             ),
             instrucoesConstrutor
         );
 
         const construtor = new FuncaoDeclaracao(
-            new Simbolo(
-                'CONSTRUTOR',
-                'construtor',
-                undefined,
-                simboloTipo.hashArquivo,
-                simboloTipo.linha
-            ),
+            new Simbolo('CONSTRUTOR', 'construtor', undefined, simboloTipo.hashArquivo, simboloTipo.linha),
             construtorConstruto,
             undefined
         );
@@ -1302,37 +1304,54 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
     /**
      * No VisuAlg não existe o conceito de classe, mas existe o conceito de registro,
-     * que é como se fosse uma classe sem métodos. 
+     * que é como se fosse uma classe sem métodos.
      * Por isso aqui retornamos `Classe`
      * @returns {Classe} Uma declaração de Classe, que serve como um tipo.
      */
     declaracaoTipo(): Classe {
         this.avancarEDevolverAnterior(); // 'tipo'
         const nomeTipo: SimboloInterface = this.consumir(
-            tiposDeSimbolos.IDENTIFICADOR, 
+            tiposDeSimbolos.IDENTIFICADOR,
             'Esperado identificador com o nome do tipo a ser declarado.'
         );
 
         this.consumir(tiposDeSimbolos.IGUAL, 'Esperado símbolo de igual após nome do tipo.');
-        this.consumir(tiposDeSimbolos.REGISTRO, 'Esperado expressão "registro" após sinal de igual em declaração de tipo.');
+        this.consumir(
+            tiposDeSimbolos.REGISTRO,
+            'Esperado expressão "registro" após sinal de igual em declaração de tipo.'
+        );
         this.consumir(tiposDeSimbolos.QUEBRA_LINHA, 'Esperado quebra de linha após palavra reservada "registro".');
 
         let propriedades: PropriedadeClasse[] = [];
         while (this.simbolos[this.atual].tipo !== tiposDeSimbolos.FIM_REGISTRO) {
-            const nomePropriedade = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador como nome de propriedade em especificação de registro.');
-            this.consumir(tiposDeSimbolos.DOIS_PONTOS, 'Esperado dois-pontos após nome de propriedade em especificação de registro.');
-            if (!this.verificarSeSimboloAtualEIgualA(
-                tiposDeSimbolos.INTEIRO, 
-                tiposDeSimbolos.CARACTERE, 
-                tiposDeSimbolos.REAL, 
-                tiposDeSimbolos.LOGICO
-            )) {
-                throw this.erro(this.simbolos[this.atual], `Esperado um tipo válido de propriedade em especificação de registro. Atual: ${this.simbolos[this.atual].lexema}.`);
+            const nomePropriedade = this.consumir(
+                tiposDeSimbolos.IDENTIFICADOR,
+                'Esperado identificador como nome de propriedade em especificação de registro.'
+            );
+            this.consumir(
+                tiposDeSimbolos.DOIS_PONTOS,
+                'Esperado dois-pontos após nome de propriedade em especificação de registro.'
+            );
+            if (
+                !this.verificarSeSimboloAtualEIgualA(
+                    tiposDeSimbolos.INTEIRO,
+                    tiposDeSimbolos.CARACTERE,
+                    tiposDeSimbolos.REAL,
+                    tiposDeSimbolos.LOGICO
+                )
+            ) {
+                throw this.erro(
+                    this.simbolos[this.atual],
+                    `Esperado um tipo válido de propriedade em especificação de registro. Atual: ${this.simbolos[this.atual].lexema}.`
+                );
             }
 
             const tipoPropriedade = this.simboloAnterior();
-            this.consumir(tiposDeSimbolos.QUEBRA_LINHA, 'Esperado quebra de linha após tipo de propriedade em especificação de registro.');
-            propriedades.push(new PropriedadeClasse(nomePropriedade, tipoPropriedade.lexema))
+            this.consumir(
+                tiposDeSimbolos.QUEBRA_LINHA,
+                'Esperado quebra de linha após tipo de propriedade em especificação de registro.'
+            );
+            propriedades.push(new PropriedadeClasse(nomePropriedade, tipoPropriedade.lexema));
         }
 
         this.consumir(tiposDeSimbolos.FIM_REGISTRO, 'Não deve ocorrer erro aqui.');

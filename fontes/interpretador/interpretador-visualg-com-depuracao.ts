@@ -1,14 +1,34 @@
 import * as _ from 'lodash';
 
-import { AcessoElementoMatriz, AcessoIndiceVariavel, AtribuicaoPorIndice, AtribuicaoPorIndicesMatriz, Binario, Construto, FimPara, FormatacaoEscrita, Logico, Variavel } from '@designliquido/delegua/construtos';
-import { EscrevaMesmaLinha, Escreva, Fazer, Leia, Const, Para, Bloco, Aleatorio, CabecalhoPrograma, Classe, Var } from '@designliquido/delegua/declaracoes';
+import {
+    AcessoElementoMatriz,
+    AcessoIndiceVariavel,
+    AtribuicaoPorIndice,
+    AtribuicaoPorIndicesMatriz,
+    Binario,
+    Construto,
+    FimPara,
+    FormatacaoEscrita,
+    Logico,
+    Variavel,
+} from '@designliquido/delegua/construtos';
+import {
+    EscrevaMesmaLinha,
+    Escreva,
+    Fazer,
+    Leia,
+    Const,
+    Para,
+    Bloco,
+    Aleatorio,
+    CabecalhoPrograma,
+    Classe,
+    Var,
+} from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 
-import {
-    carregarBibliotecaGlobalCaracter,
-    carregarBibliotecaGlobalNumerica,
-} from './comum';
+import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 import { InterpretadorVisuAlgInterface, VisitanteVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
@@ -18,13 +38,23 @@ import * as comum from './comum';
 /**
  * Interpretador com depuração para o dialeto VisuAlg.
  */
-export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao implements InterpretadorVisuAlgInterface {
+export class InterpretadorVisuAlgComDepuracao
+    extends InterpretadorComDepuracao
+    implements InterpretadorVisuAlgInterface
+{
     mensagemPrompt: string;
     tiposConhecidos: string[];
     deveEscreverPrompt: boolean;
-    funcaoLimpaTela: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
+    funcaoLimpaTela: Function = () => {
+        console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.');
+    };
 
-    constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null, funcaoLimpaTela: Function = null) {
+    constructor(
+        diretorioBase: string,
+        funcaoDeRetorno: Function = null,
+        funcaoDeRetornoMesmaLinha: Function = null,
+        funcaoLimpaTela: Function = null
+    ) {
         super(diretorioBase, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
 
         if (funcaoLimpaTela !== null) {
@@ -33,7 +63,7 @@ export class InterpretadorVisuAlgComDepuracao extends InterpretadorComDepuracao 
 
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoVisuAlg();
         this.mensagemPrompt = '> ';
-        // Por padrão, a escrita de prompt fica desabilitada. 
+        // Por padrão, a escrita de prompt fica desabilitada.
         // Se precisar escrever no prompt (por exemplo, em uma aplicação web usando `window.prompt`),
         // basta reabilitar este parâmetro.
         this.deveEscreverPrompt = false;

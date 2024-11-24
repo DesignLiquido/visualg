@@ -1,6 +1,6 @@
-import { Declaracao, PilhaInterface } from "@designliquido/delegua";
+import { Declaracao, PilhaInterface } from '@designliquido/delegua';
 
-import { EscopoFormatacao } from "./escopo-formatacao";
+import { EscopoFormatacao } from './escopo-formatacao';
 
 export class PilhaEscoposFormatacao implements PilhaInterface<EscopoFormatacao> {
     pilha: EscopoFormatacao[];
@@ -16,8 +16,8 @@ export class PilhaEscoposFormatacao implements PilhaInterface<EscopoFormatacao> 
     empilharDeclaracoes(declaracoes: Declaracao[]) {
         const escopoFormatacao = {
             declaracoes: declaracoes,
-            declaracaoAtual: 0
-        }
+            declaracaoAtual: 0,
+        };
 
         this.empilhar(escopoFormatacao);
     }

@@ -1,6 +1,6 @@
-import { Construto } from "@designliquido/delegua";
+import { Construto } from '@designliquido/delegua';
 
-import { VisitanteVisuAlgInterface } from "../interfaces";
+import { VisitanteVisuAlgInterface } from '../interfaces';
 
 export class LimpaTela implements Construto {
     linha: number;

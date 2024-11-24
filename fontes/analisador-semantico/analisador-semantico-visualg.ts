@@ -45,8 +45,8 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     }
 
     adicionarDiagnostico(
-        simbolo: SimboloInterface, 
-        mensagem: string, 
+        simbolo: SimboloInterface,
+        mensagem: string,
         severidade: DiagnosticoSeveridade = DiagnosticoSeveridade.ERRO
     ): void {
         this.diagnosticos.push({
@@ -68,11 +68,17 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
         if (variavel.tipo) {
             if (valor instanceof Literal && variavel.tipo.includes('[]')) {
-                this.adicionarDiagnostico(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
+                this.adicionarDiagnostico(
+                    simbolo,
+                    `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
+                );
                 return Promise.resolve();
             }
             if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
-                this.adicionarDiagnostico(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
+                this.adicionarDiagnostico(
+                    simbolo,
+                    `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
+                );
                 return Promise.resolve();
             }
 
@@ -172,7 +178,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                         ? declaracao.inicializador.valor
                         : declaracao.inicializador
                     : undefined,
-            valorDefinido: true
+            valorDefinido: true,
         };
         return Promise.resolve();
     }
@@ -196,7 +202,10 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
         for (let parametro of declaracao.funcao.parametros) {
             if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado.tipo) {
-                this.adicionarDiagnostico(declaracao.simbolo, `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`);
+                this.adicionarDiagnostico(
+                    declaracao.simbolo,
+                    `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`
+                );
             }
         }
 
@@ -210,7 +219,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
         // TODO: Ao inspecionar corpo da função, verificar se todas as
         // declarações `Retorna` retornam um tipo diferente do tipo da função
-        // (se for função). 
+        // (se for função).
 
         return Promise.resolve();
     }
@@ -264,8 +273,8 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
                 if (argumento instanceof Variavel) {
                     const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
-                    const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();    
-    
+                    const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
+
                     if (tipoVariavelCorrespondente !== tipoDadoParametro) {
                         this.adicionarDiagnostico(
                             variavel.simbolo,
@@ -281,7 +290,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                                 this.adicionarDiagnostico(
                                     variavel.simbolo,
                                     `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (inteiro ou real) é diferente do esperado pela função (${tipoDadoParametro}).`
-                                );      
+                                );
                             }
                             break;
                         // TODO: Finalizar.
@@ -299,7 +308,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
             // TODO: Reabilitar na próxima versão do núcleo de Delégua.
             // this.variaveis[argumentoComoVariavel.simbolo.lexema].valorDefinido = true;
         }
-        
+
         return Promise.resolve();
     }
 

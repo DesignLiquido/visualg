@@ -125,7 +125,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         }
 
         this.codigoFormatado += `// `;
-        this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, " ");
+        this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, ' ');
         this.codigoFormatado += `${this.quebraLinha}`;
     }
 
@@ -251,7 +251,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
 
     /**
      * A expressão `Escreva` traduz no VisuAlg como `escreval()`.
-     * @param {Escreva} declaracao Uma declaração do tipo `Escreva`. 
+     * @param {Escreva} declaracao Uma declaração do tipo `Escreva`.
      */
     visitarDeclaracaoEscreva(declaracao: Escreva) {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}escreval(`;

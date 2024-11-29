@@ -479,7 +479,7 @@ export async function visitarExpressaoAtribuicaoPorIndice(
     } else {
         return Promise.reject(
             new ErroEmTempoDeExecucao(
-                expressao.objeto.nome,
+                (expressao.objeto as any).nome,
                 'Somente listas, dicionários, classes e objetos podem ser mudados por sobrescrita.',
                 expressao.linha
             )

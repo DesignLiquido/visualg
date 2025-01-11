@@ -989,6 +989,81 @@ describe('Interpretador', () => {
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
+
+            it('Cobaias', async () => {
+                // Aqui vamos simular a resposta para cinco variáveis de `leia()`.
+                const respostas = [
+                    "2", "10", "C", "15", "R"
+                ];
+                (interpretador as any).interfaceEntradaSaida = {
+                    question: (mensagem: string, callback: Function) => {
+                        callback(respostas.shift());
+                    }
+                };
+
+                let _saidas = '';
+                const retornoLexador = lexador.mapear(
+                    [
+                        `Algoritmo "experiencias"
+                        Var
+
+                            x, i, n, rato, sapo, coelho, totalQ, quantidade : inteiro
+                            pRato, pCoelho, pSapo : real
+                            animal : caractere
+
+                        Inicio
+
+                            escreva("Quantos casos de teste serao digitados? ")
+                            leia(n)
+
+                            para i de 1 ate n faca
+                                escreva("Quantidade de cobaias: ")
+                                leia(quantidade)
+                                totalQ <- totalQ + quantidade
+
+                                escreva("Tipo de cobaia: ")
+                                leia(animal)
+
+                                escolha animal
+                                caso "C"
+                                    coelho <- coelho + quantidade
+                                caso "S"
+                                    sapo <- sapo + quantidade
+                                caso "R"
+                                    rato <- rato + quantidade
+                                outrocaso
+                                    escreval("Opção Inválida")
+                                fimescolha
+
+                            fimpara
+
+                            pCoelho <- coelho / totalQ * 100
+                            pSapo <- sapo / totalQ * 100
+                            pRato <- rato / totalQ * 100
+
+                            escreval()
+                            escreval("RELATÓRIO FINAL:")
+                            escreval("Total: ", totalQ)
+                            escreval("Total de Coelhos: ", coelho)
+                            escreval("Total de Ratos: ", rato)
+                            escreval("Total de Sapos: ", sapo)
+                            escreval()
+                            escreval("Percentual de Coelhos: ", pCoelho:4:2,"%")
+                            escreval("Percentual de Sapos: ", pSapo:4:2,"%")
+                            escreval("Percentual de Ratos: ", pRato:4:2,"%")
+
+                        Fimalgoritmo`
+                    ], -1);
+
+                interpretador.funcaoDeRetorno = (saida: any) => {
+                    _saidas += saida;
+                }
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+            });
         });
     });
 });

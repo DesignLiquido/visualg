@@ -937,6 +937,58 @@ describe('Interpretador', () => {
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
+
+            it('Números Primos', async () => {
+                // Aqui vamos simular a resposta para uma variável de `leia()`.
+                const respostas = [
+                    "50"
+                ];
+                (interpretador as any).interfaceEntradaSaida = {
+                    question: (mensagem: string, callback: Function) => {
+                        callback(respostas.shift());
+                    }
+                };
+
+                let _saidas = '';
+                const retornoLexador = lexador.mapear(
+                    [
+                        `Algoritmo "NumerosPrimos"
+                        Var
+                            Fatorial,Numero,Primo,Resposta : Inteiro
+                            Flag : Logico
+                        inicio
+                            Limpatela
+                            Escreva("Deseja até que número primo: ")
+                            leia(Numero)
+                            Escreval(" ")
+                            Escreva(" 1")   // montagem
+                            Para Primo de 2 ate Numero faca
+                                Fatorial<- 2
+                                Flag <- Falso
+                                enquanto (Primo<>fatorial) faca
+                                    Resposta <- Primo MOD Fatorial
+                                    Fatorial <- Fatorial + 1
+                                    se Resposta = 0 entao
+                                        Flag <- Verdadeiro
+                                    fimse
+                                fimenquanto
+                                se (Nao Flag) entao
+                                    escreva(" , ",Primo)
+                                fimse
+                            fimpara
+                            Escreval(" ")
+                        Fimalgoritmo`
+                    ], -1);
+
+                interpretador.funcaoDeRetorno = (saida: any) => {
+                    _saidas += saida;
+                }
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+            });
         });
     });
 });

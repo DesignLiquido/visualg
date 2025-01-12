@@ -478,7 +478,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 );
             }
 
-            this.erro(setaAtribuicao, 'Tarefa de atribuição inválida');
+            throw this.erro(setaAtribuicao, 'Tarefa de atribuição inválida');
         }
 
         return expressao;
@@ -503,7 +503,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
         // Se chegou até aqui, simplesmente consome o símbolo.
         this.avancarEDevolverAnterior();
-        // this.consumir(tiposDeSimbolos.FIM_FUNCAO, "Esperado palavra-chave 'fimfuncao' após o bloco.");
         return declaracoes;
     }
 
@@ -518,6 +517,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     override finalizarChamada(entidadeChamada: Construto): Chamada {
         const argumentos: Array<Construto> = [];
 
+        let parenteseDireito: SimboloInterface<string>;
         if (!this.verificarTipoSimboloAtual(tiposDeSimbolos.PARENTESE_DIREITO)) {
             do {
                 if (argumentos.length >= 255) {
@@ -525,9 +525,9 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 }
                 argumentos.push(this.expressao());
             } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
-        }
 
-        const parenteseDireito = this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após os argumentos.");
+            parenteseDireito = this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após os argumentos.");
+        }
 
         if (entidadeChamada instanceof Chamada) {
             entidadeChamada.argumentos = argumentos;
@@ -556,6 +556,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                     tiposDeSimbolos.COLCHETE_DIREITO,
                     "Esperado ']' após escrita do indice."
                 );
+
                 if (!indices[1]) {
                     expressao = new AcessoIndiceVariavel(this.hashArquivo, expressao, indices[0], simboloFechamento);
                 } else {
@@ -766,13 +767,14 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return new Escolha(identificador, caminhos, caminhoPadrao);
     }
 
-    private logicaComumEscreva(): FormatacaoEscrita[] {
-        const simboloParenteses = this.consumir(
-            tiposDeSimbolos.PARENTESE_ESQUERDO,
-            "Esperado '(' antes dos valores em escreva."
-        );
+    private logicaComumArgumentosEscreva(): FormatacaoEscrita[] {
         const argumentos: FormatacaoEscrita[] = [];
+        if (!this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARENTESE_ESQUERDO)) {
+            return argumentos;
+        }
 
+        const simboloParenteses = this.simbolos[this.atual - 1];
+        
         // Sem não houver parâmetros, retorna vetor com literal vazio.
         if (this.simbolos[this.atual].tipo === tiposDeSimbolos.PARENTESE_DIREITO) {
             this.avancarEDevolverAnterior();
@@ -830,7 +832,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     declaracaoEscreva(): Escreva {
         const simboloAtual = this.avancarEDevolverAnterior();
 
-        const argumentos = this.logicaComumEscreva();
+        const argumentos = this.logicaComumArgumentosEscreva();
 
         return new Escreva(Number(simboloAtual.linha), this.hashArquivo, argumentos);
     }
@@ -838,7 +840,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     declaracaoEscrevaMesmaLinha(): EscrevaMesmaLinha {
         const simboloAtual = this.avancarEDevolverAnterior();
 
-        const argumentos = this.logicaComumEscreva();
+        const argumentos = this.logicaComumArgumentosEscreva();
 
         return new EscrevaMesmaLinha(Number(simboloAtual.linha), this.hashArquivo, argumentos);
     }
@@ -893,7 +895,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
         // TODO: Contar blocos para colocar esta condição de erro.
         /* if (this.blocos < 1) {
-            this.erro(this.simbolos[this.atual - 1], "'interrompa' deve estar dentro de um laço de repetição.");
+            throw this.erro(this.simbolos[this.atual - 1], "'interrompa' deve estar dentro de um laço de repetição.");
         } */
 
         return new Sustar(simboloAtual);

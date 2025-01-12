@@ -121,26 +121,19 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
     }
 
     /**
-     * No VisuAlg, o bloco de condição executa se falso.
-     * Por isso a reimplementação aqui.
-     * @param declaracao A declaração `Fazer`
-     * @returns Só retorna em caso de erro na execução, e neste caso, o erro.
+     * Execução de uma escrita na saída configurada, que pode ser `console` (padrão) ou
+     * alguma função para escrever numa página Web.
+     * @param declaracao A declaração.
+     * @returns Sempre nulo, por convenção de visita.
      */
-    override async visitarDeclaracaoFazer(declaracao: Fazer): Promise<any> {
-        let retornoExecucao: any;
-        do {
-            try {
-                retornoExecucao = await this.executar(declaracao.caminhoFazer);
-                if (retornoExecucao instanceof ContinuarQuebra) {
-                    retornoExecucao = null;
-                }
-            } catch (erro: any) {
-                return Promise.reject(erro);
-            }
-        } while (
-            !(retornoExecucao instanceof Quebra) &&
-            !this.eVerdadeiro(await this.avaliar(declaracao.condicaoEnquanto))
-        );
+    override async visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any> {
+        try {
+            const formatoTexto: string = await this.avaliarArgumentosEscrevaVisuAlg(declaracao.argumentos);
+            this.funcaoDeRetorno(formatoTexto);
+            return null;
+        } catch (erro: any) {
+            this.erros.push(erro);
+        }
     }
 
     /**
@@ -166,19 +159,26 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
     }
 
     /**
-     * Execução de uma escrita na saída configurada, que pode ser `console` (padrão) ou
-     * alguma função para escrever numa página Web.
-     * @param declaracao A declaração.
-     * @returns Sempre nulo, por convenção de visita.
+     * No VisuAlg, o bloco de condição executa se falso.
+     * Por isso a reimplementação aqui.
+     * @param declaracao A declaração `Fazer`
+     * @returns Só retorna em caso de erro na execução, e neste caso, o erro.
      */
-    override async visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any> {
-        try {
-            const formatoTexto: string = await this.avaliarArgumentosEscrevaVisuAlg(declaracao.argumentos);
-            this.funcaoDeRetorno(formatoTexto);
-            return null;
-        } catch (erro: any) {
-            this.erros.push(erro);
-        }
+    override async visitarDeclaracaoFazer(declaracao: Fazer): Promise<any> {
+        let retornoExecucao: any;
+        do {
+            try {
+                retornoExecucao = await this.executar(declaracao.caminhoFazer);
+                if (retornoExecucao instanceof ContinuarQuebra) {
+                    retornoExecucao = null;
+                }
+            } catch (erro: any) {
+                return Promise.reject(erro);
+            }
+        } while (
+            !(retornoExecucao instanceof Quebra) &&
+            !this.eVerdadeiro(await this.avaliar(declaracao.condicaoEnquanto))
+        );
     }
 
     async visitarExpressaoFimPara(declaracao: FimPara): Promise<any> {

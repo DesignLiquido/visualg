@@ -15,7 +15,7 @@ describe('Avaliador sintático', () => {
         });
 
         describe('Cenário de sucesso', () => {
-            it('Sucesso - Olá Mundo', () => {
+            it('Olá Mundo', () => {
                 const retornoLexador = lexador.mapear(
                     ['algoritmo "olá-mundo"', 'inicio', 'escreva("Olá mundo")', 'fimalgoritmo'],
                     -1
@@ -26,7 +26,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(3);
             });
 
-            it('Sucesso - Atribuição', () => {
+            it('Atribuição', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Atribuição"',
@@ -48,7 +48,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(8);
             });
 
-            it('Sucesso - Enquanto', () => {
+            it('Enquanto', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Números de 1 a 10 (com enquanto...faca)"',
@@ -69,7 +69,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
             });
 
-            it('Sucesso - Escolha', () => {
+            it('Escolha', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Times"',
@@ -94,7 +94,26 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico).toBeTruthy();
             });
 
-            it('Sucesso - Função', () => {
+            it('escreva e escreval', () => {
+                const retornoLexador = lexador.mapear(
+                    [
+                        'Algoritmo "escreva-escreval"',
+                        'Inicio',
+                        '    escreva("Teste com parâmetro.")',
+                        '    escreva',
+                        '    escreval',
+                        '    escreval("Teste com parâmetro.")',
+                        'Fimalgoritmo',
+                    ],
+                    -1
+                );
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(6);
+            });
+
+            it('Função', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'Algoritmo "exemplo-funcoes"',
@@ -123,7 +142,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(10);
             });
 
-            it('Sucesso - Interrompa', () => {
+            it('Interrompa', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Números de 1 a 10 (com interrompa)"',
@@ -147,7 +166,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
             });
 
-            it('Sucesso - Leia', () => {
+            it('Leia', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'Algoritmo "Soma 5"',
@@ -167,7 +186,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
             });
 
-            it('Sucesso - Para', () => {
+            it('Para', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Numeros de 1 a 10"',
@@ -186,7 +205,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
             });
 
-            it('Sucesso - Para (usando seta de ateribuiÇão)', () => {
+            it('Para (usando seta de ateribuiÇão)', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Numeros de 1 a 10"',
@@ -205,7 +224,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
             });
 
-            it('Sucesso - Procedimento', () => {
+            it('Procedimento', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "semnome"',
@@ -234,7 +253,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(8);
             });
 
-            it('Sucesso - Registro', () => {
+            it('Registro', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         `algoritmo "EXEMPLO_METALNOVO"`,
@@ -357,7 +376,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(32);
             });
 
-            it('Sucesso - Repita', () => {
+            it('Repita', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Números de 1 a 10 (com repita)"',
@@ -378,7 +397,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
             });
 
-            it('Sucesso - Xou', () => {
+            it('Xou', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Exemplo Xou"',
@@ -411,7 +430,7 @@ describe('Avaliador sintático', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(24);
             });
 
-            it('Sucesso - Aleatorio - Números', () => {
+            it('Aleatorio - Números', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'algoritmo "Exemplo Xou"',
@@ -527,7 +546,6 @@ describe('Avaliador sintático', () => {
                     -1
                 );
 
-                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrowError();
                 expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrow(
                     expect.objectContaining({
                         name: 'Error',
@@ -557,7 +575,6 @@ describe('Avaliador sintático', () => {
                     -1
                 );
 
-                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrowError();
                 expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrow(
                     expect.objectContaining({
                         name: 'Error',
@@ -586,7 +603,6 @@ describe('Avaliador sintático', () => {
                     -1
                 );
 
-                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrowError();
                 expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrow(
                     expect.objectContaining({
                         name: 'Error',

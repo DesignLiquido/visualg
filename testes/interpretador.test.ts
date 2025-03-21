@@ -8,10 +8,16 @@ describe('Interpretador', () => {
         let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
         let interpretador: InterpretadorVisuAlg;
 
+        let _saidas: string[] = [];
+        const funcaoSaida = (texto: string) => {
+            _saidas.push(texto);
+        }
+
         beforeEach(() => {
+            _saidas = [];
             lexador = new LexadorVisuAlg();
             avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
-            interpretador = new InterpretadorVisuAlg(process.cwd(), false, console.log, console.log);
+            interpretador = new InterpretadorVisuAlg(process.cwd(), false, funcaoSaida, funcaoSaida);
         });
 
         describe('Cenários de sucesso', () => {

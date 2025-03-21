@@ -1,6 +1,7 @@
 import {
     AcessoIndiceVariavel,
     AcessoMetodoOuPropriedade,
+    AcessoPropriedade,
     Agrupamento,
     AtribuicaoPorIndice,
     Atribuir,
@@ -73,7 +74,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     devePularLinha: boolean;
     deveIndentar: boolean;
     contadorDeclaracaoVar: number;
-    retornoFuncaoAtual: SimboloInterface;
+    retornoFuncaoAtual: string;
 
     constructor(quebraLinha: string, tamanhoIndentacao: number = 4) {
         this.quebraLinha = quebraLinha;
@@ -86,6 +87,14 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.deveIndentar = true;
         this.contadorDeclaracaoVar = 0;
         this.retornoFuncaoAtual = undefined;
+    }
+
+    visitarExpressaoAcessoMetodoOuPropriedade(expressao: AcessoMetodoOuPropriedade): Promise<any> | void {
+        throw new Error('Método não implementado.');
+    }
+
+    visitarExpressaoAcessoPropriedade(expressao: AcessoPropriedade): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     visitarExpressaoLimpaTela(expressao: LimpaTela): void | Promise<any> {
@@ -161,7 +170,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     }
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
-        this.codigoFormatado += `${expressao.simbolo.lexema} <- `;
+        this.codigoFormatado += `${this.formatarDeclaracaoOuConstruto(expressao.alvo)} <- `;
         this.formatarDeclaracaoOuConstruto(expressao.valor);
 
         if (this.devePularLinha) {
@@ -654,9 +663,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         if (expressao.parametros.length > 0) {
             this.codigoFormatado += `(`;
             for (let argumento of expressao.parametros) {
-                this.codigoFormatado += `${argumento.nome.lexema}${
-                    argumento.tipoDado && argumento.tipoDado.tipo ? `: ${argumento.tipoDado.tipo}, ` : ', '
-                }`;
+                this.codigoFormatado += `${argumento.nome.lexema}${argumento.tipoDado || ''}, `;
             }
             this.codigoFormatado = this.codigoFormatado.slice(0, -2);
             this.codigoFormatado += `) `;

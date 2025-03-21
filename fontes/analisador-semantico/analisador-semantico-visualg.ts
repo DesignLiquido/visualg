@@ -27,6 +27,7 @@ import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/v
 import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 import { PilhaVariaveis } from './pilha-variaveis';
+import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
@@ -59,24 +60,27 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     }
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
-        const { simbolo, valor } = expressao;
-        let variavel = this.variaveis[simbolo.lexema];
+        const { alvo, valor } = expressao;
+        // Provavelmente o alvo é sempre `Variavel`
+        const alvoVariavel: Variavel = alvo as Variavel;
+
+        let variavel = this.variaveis[alvoVariavel.simbolo.lexema];
         if (!variavel) {
-            this.adicionarDiagnostico(simbolo, `Variável ${simbolo.lexema} ainda não foi declarada.`);
+            this.adicionarDiagnostico(alvoVariavel.simbolo, `Variável ${alvoVariavel.simbolo.lexema} ainda não foi declarada.`);
             return Promise.resolve();
         }
 
         if (variavel.tipo) {
             if (valor instanceof Literal && variavel.tipo.includes('[]')) {
                 this.adicionarDiagnostico(
-                    simbolo,
+                    alvoVariavel.simbolo,
                     `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
                 );
                 return Promise.resolve();
             }
             if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
                 this.adicionarDiagnostico(
-                    simbolo,
+                    alvoVariavel.simbolo,
                     `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
                 );
                 return Promise.resolve();
@@ -87,13 +91,13 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 if (!['qualquer'].includes(variavel.tipo)) {
                     if (valorLiteral === 'string') {
                         if (variavel.tipo.toLowerCase() != 'caractere') {
-                            this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
+                            this.adicionarDiagnostico(alvoVariavel.simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
                             return Promise.resolve();
                         }
                     }
                     if (valorLiteral === 'number') {
                         if (!['inteiro', 'real'].includes(variavel.tipo.toLowerCase())) {
-                            this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
+                            this.adicionarDiagnostico(alvoVariavel.simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
                             return Promise.resolve();
                         }
                     }
@@ -102,7 +106,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         }
 
         if (variavel) {
-            this.variaveis[simbolo.lexema].valor = valor;
+            this.variaveis[alvoVariavel.simbolo.lexema].valor = valor;
         }
     }
 
@@ -171,7 +175,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarDeclaracaoVar(declaracao: Var): Promise<any> {
         this.variaveis[declaracao.simbolo.lexema] = {
             imutavel: false,
-            tipo: declaracao.tipo,
+            tipo: declaracao.tipo as TipoDadosElementar,
             valor:
                 declaracao.inicializador !== null
                     ? declaracao.inicializador.valor !== undefined
@@ -201,10 +205,10 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
         for (let parametro of declaracao.funcao.parametros) {
-            if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado.tipo) {
+            if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado) {
                 this.adicionarDiagnostico(
                     declaracao.simbolo,
-                    `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`
+                    `O tipo '${parametro.tipoDado}' não é valido`
                 );
             }
         }
@@ -269,7 +273,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
             for (let [indice, argumento] of expressao.argumentos.entries()) {
                 const parametroCorrespondente = funcao.parametros[indice];
-                const tipoDadoParametro = parametroCorrespondente.tipoDado.tipo.toLowerCase();
+                const tipoDadoParametro = parametroCorrespondente.tipoDado.toLowerCase();
 
                 if (argumento instanceof Variavel) {
                     const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;

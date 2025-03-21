@@ -374,6 +374,7 @@ describe('Avaliador sintático', () => {
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(32);
+                expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
             });
 
             it('Repita', () => {

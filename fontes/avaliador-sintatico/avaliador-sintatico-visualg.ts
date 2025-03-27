@@ -266,7 +266,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                                         this.hashArquivo
                                                     )
                                                 ),
-                                                undefined,
                                                 []
                                             )
                                         ),
@@ -349,7 +348,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                                         this.hashArquivo
                                                     )
                                                 ),
-                                                undefined,
                                                 []
                                             ),
                                             dadosVariaveis.tipo as any
@@ -394,7 +392,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             const variavel = new Variavel(this.hashArquivo, simboloIdentificadorOuMetodo);
             // Chamada de função ou procedimento sem parâmetros.
             if (this.funcoesProcedimentosConhecidos.includes(simboloIdentificadorOuMetodo.lexema)) {
-                return new Chamada(this.hashArquivo, variavel, undefined, []);
+                return new Chamada(this.hashArquivo, variavel, []);
             }
 
             return variavel;
@@ -456,29 +454,40 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             const setaAtribuicao = this.simbolos[this.atual - 1];
             const valor = this.atribuir();
 
-            if (expressao instanceof Variavel) {
-                const simbolo = expressao.simbolo;
-                return new Atribuir(this.hashArquivo, simbolo, valor);
-            } else if (expressao instanceof AcessoIndiceVariavel) {
-                return new AtribuicaoPorIndice(
-                    this.hashArquivo,
-                    expressao.linha,
-                    expressao.entidadeChamada,
-                    expressao.indice,
-                    valor
-                );
-            } else if (expressao instanceof AcessoElementoMatriz) {
-                return new AtribuicaoPorIndicesMatriz(
-                    this.hashArquivo,
-                    expressao.linha,
-                    expressao.entidadeChamada,
-                    expressao.indicePrimario,
-                    expressao.indiceSecundario,
-                    valor
-                );
+            switch (expressao.constructor.name) {
+                case 'Variavel':
+                    return new Atribuir(this.hashArquivo, expressao, valor);
+                case 'AcessoIndiceVariavel':
+                    const expressaoAcessoIndiceVariavel = expressao as AcessoIndiceVariavel;
+                    return new AtribuicaoPorIndice(
+                        this.hashArquivo,
+                        expressaoAcessoIndiceVariavel.linha,
+                        expressaoAcessoIndiceVariavel.entidadeChamada,
+                        expressaoAcessoIndiceVariavel.indice,
+                        valor
+                    );
+                case 'AcessoElementoMatriz':
+                    const expressaoAcessoElementoMatriz = expressao as AcessoElementoMatriz;
+                    return new AtribuicaoPorIndicesMatriz(
+                        this.hashArquivo,
+                        expressaoAcessoElementoMatriz.linha,
+                        expressaoAcessoElementoMatriz.entidadeChamada,
+                        expressaoAcessoElementoMatriz.indicePrimario,
+                        expressaoAcessoElementoMatriz.indiceSecundario,
+                        valor
+                    );
+                case 'AcessoMetodoOuPropriedade':
+                    const expressaAcessoMetodoOuPropriedade = expressao as AcessoMetodoOuPropriedade;
+                    return new DefinirValor(
+                        expressaAcessoMetodoOuPropriedade.hashArquivo,
+                        expressaAcessoMetodoOuPropriedade.linha,
+                        expressaAcessoMetodoOuPropriedade.objeto,
+                        expressaAcessoMetodoOuPropriedade.simbolo,
+                        valor
+                    );
+                default:
+                    throw this.erro(setaAtribuicao, 'Tarefa de atribuição inválida');
             }
-
-            throw this.erro(setaAtribuicao, 'Tarefa de atribuição inválida');
         }
 
         return expressao;
@@ -517,16 +526,13 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     override finalizarChamada(entidadeChamada: Construto): Chamada {
         const argumentos: Array<Construto> = [];
 
-        let parenteseDireito: SimboloInterface<string>;
-        if (!this.verificarTipoSimboloAtual(tiposDeSimbolos.PARENTESE_DIREITO)) {
-            do {
-                if (argumentos.length >= 255) {
-                    throw this.erro(this.simbolos[this.atual], 'Não pode haver mais de 255 argumentos.');
-                }
-                argumentos.push(this.expressao());
-            } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
+        while (!this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARENTESE_DIREITO)) {
+            if (argumentos.length >= 255) {
+                throw this.erro(this.simbolos[this.atual], 'Não pode haver mais de 255 argumentos.');
+            }
 
-            parenteseDireito = this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após os argumentos.");
+            argumentos.push(this.expressao());
+            this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA);
         }
 
         if (entidadeChamada instanceof Chamada) {
@@ -534,7 +540,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             return entidadeChamada;
         }
 
-        return new Chamada(this.hashArquivo, entidadeChamada, parenteseDireito, argumentos);
+        return new Chamada(this.hashArquivo, entidadeChamada, argumentos);
     }
 
     chamar(): Construto {
@@ -951,15 +957,15 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
         let operadorCondicao = new Simbolo(
             tiposDeSimbolos.MENOR_IGUAL,
-            '',
-            '',
+            '<=',
+            null,
             Number(simboloPara.linha),
             this.hashArquivo
         );
         let operadorCondicaoIncremento = new Simbolo(
             tiposDeSimbolos.MENOR,
-            '',
-            '',
+            '<',
+            null,
             Number(simboloPara.linha),
             this.hashArquivo
         );
@@ -1023,7 +1029,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 }
             } else {
                 // Passo e operador de condição precisam ser resolvidos em tempo de execução.
-                passo = undefined;
+                passo = new Literal(this.hashArquivo, Number(simboloPara.linha), 1);
                 operadorCondicao = undefined;
                 operadorCondicaoIncremento = undefined;
                 resolverIncrementoEmExecucao = true;
@@ -1062,11 +1068,15 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             this.hashArquivo,
             Number(simboloPara.linha),
             // Inicialização.
-            new Atribuir(this.hashArquivo, variavelIteracao, literalOuVariavelInicio),
+            new Atribuir(
+                this.hashArquivo, 
+                new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'), 
+                literalOuVariavelInicio
+            ),
             // Condição.
             new Binario(
                 this.hashArquivo,
-                new Variavel(this.hashArquivo, variavelIteracao),
+                new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
                 operadorCondicao,
                 literalOuVariavelFim
             ),
@@ -1076,18 +1086,18 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 Number(simboloPara.linha),
                 new Binario(
                     this.hashArquivo,
-                    new Variavel(this.hashArquivo, variavelIteracao),
+                    new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
                     operadorCondicaoIncremento,
                     literalOuVariavelFim
                 ),
                 new Expressao(
                     new Atribuir(
                         this.hashArquivo,
-                        variavelIteracao,
+                        new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
                         new Binario(
                             this.hashArquivo,
-                            new Variavel(this.hashArquivo, variavelIteracao),
-                            new Simbolo(tiposDeSimbolos.ADICAO, '', null, Number(simboloPara.linha), this.hashArquivo),
+                            new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
+                            new Simbolo(tiposDeSimbolos.ADICAO, '+', null, Number(simboloPara.linha), this.hashArquivo),
                             passo
                         )
                     )
@@ -1105,21 +1115,13 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARENTESE_ESQUERDO)) {
             while (!this.verificarTipoSimboloAtual(tiposDeSimbolos.PARENTESE_DIREITO)) {
                 const dadosParametros = this.logicaComumParametroVisuAlg();
-                const tipoDadoParametro = {
-                    nome: dadosParametros.simbolo.lexema,
-                    tipo: dadosParametros.tipo as TipoDadosElementar,
-                    // TODO: Remover isso. O máximo que o avaliador sintático
-                    // deveria olhar é o símbolo anterior, não dois
-                    // símbolos para trás.
-                    tipoInvalido: !dadosParametros.tipo ? this.simbolos[this.atual - 2].lexema : null,
-                };
 
                 for (let parametro of dadosParametros.identificadores) {
                     parametros.push({
                         abrangencia: 'padrao',
                         nome: parametro,
                         referencia: dadosParametros.referencia,
-                        tipoDado: tipoDadoParametro,
+                        tipoDado: dadosParametros.tipo as TipoDadosElementar,
                     });
                 }
             }

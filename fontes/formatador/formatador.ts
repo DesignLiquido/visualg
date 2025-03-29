@@ -47,7 +47,6 @@ import {
     Continua,
     EscrevaMesmaLinha,
     Leia,
-    LeiaMultiplo,
     Retorna,
     Sustar,
     Declaracao,
@@ -557,10 +556,6 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         }
 
         this.codigoFormatado += `)${this.quebraLinha}`;
-    }
-
-    visitarExpressaoLeiaMultiplo(expressao: LeiaMultiplo): any {
-        return Promise.resolve();
     }
 
     visitarExpressaoLiteral(expressao: any): any {

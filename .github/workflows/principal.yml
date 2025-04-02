@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2-beta
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '16'
+        node-version: '20'
     # Maneira tradicional de build, sem cobertura.
     - name: NPM - Dependências
       run: |
@@ -27,8 +27,7 @@ jobs:
     - name: Cobertura de Código
       uses: MishaKav/jest-coverage-comment@main
     # Os pacotes abaixo continuam dando o seguinte problema:
-    # https://github.com/ArtiomTr/jest-coverage-report-action/issues/233
-    # A solução dada pelo autor não resolve o problema.
+    # Error: Error: EACCES: permission denied, rmdir 'node_modules/.bin'
     # - uses: ArtiomTr/jest-coverage-report-action@v2
     #   id: coverage
     #   with:

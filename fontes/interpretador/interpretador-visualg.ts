@@ -7,8 +7,7 @@ import {
     Construto,
     FimPara,
     FormatacaoEscrita,
-    Logico,
-    Variavel,
+    Logico
 } from '@designliquido/delegua/construtos';
 import {
     Aleatorio,

@@ -697,82 +697,118 @@ describe('Interpretador', () => {
                 });
             });
 
-            it('Procedimento', async () => {
-                const saidasMensagens = ['Digite dois valores: ', 'A variavel escolhida é 3']
-                // Aqui vamos simular a resposta para duas variáveis de `leia()`.
-                const respostas = [
-                    "2", "3"
-                ];
-                (interpretador as any).interfaceEntradaSaida = {
-                    question: (mensagem: string, callback: Function) => {
-                        callback(respostas.pop());
+            describe('Procedimentos', () => {
+                it('Sem parâmetros', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "DetectorPesado"',
+                        'var',
+                        '    I: inteiro',
+                        '    N, Pesado: caractere',
+                        '    P, Mai: real',
+                        'procedimento Topo',
+                        'inicio',
+                        '    LimpaTela',
+                        '    EscrevaL("-----------------------------------")',
+                        '    EscrevaL("D E T E C T O R   D E   P E S A D O")',
+                        '    EscrevaL("-----------------------------------")',
+                        'fimprocedimento',
+                        'inicio',
+                        '    Topo',
+                        'fimalgoritmo'
+                    ], -1);
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    let chamadasLimpaTela = 0;
+                    interpretador.funcaoLimpaTela = () => {
+                        chamadasLimpaTela++;
                     }
-                };
 
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "semnome"',
-                    '// Função :',
-                    '// Autor :',
-                    '// Data : 27/02/2014',
-                    '// Seção de Declarações ',
-                    'var',
-                    'a,b:inteiro',
-                    'procedimento mostranumero (a:inteiro;b:inteiro)',
-                    '',
-                    'inicio',
-                    '',
-                    'se a > b entao',
-                    '     escreval ("A variavel escolhida é ",a)',
-                    'senao',
-                    '     escreval ("A variavel escolhida é ",b)',
-                    'fimse',
-                    'fimprocedimento',
-                    '',
-                    'inicio',
-                    'escreval ("Digite dois valores: ")',
-                    'leia (a,b)',
-                    'mostranumero (a,b)',
-                    '',
-                    'fimalgoritmo'
-                ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const _saidas: string[] = [];
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        _saidas.push(saida);
+                    }
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(chamadasLimpaTela).toBe(1);
+                    expect(_saidas).toHaveLength(3);
+                });
 
-                interpretador.funcaoDeRetorno = (saida: any) => {
-                    expect(saidasMensagens.includes(saida)).toBeTruthy()
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
+                it('Com parâmetros', async () => {
+                    const saidasMensagens = ['Digite dois valores: ', 'A variavel escolhida é 3']
+                    // Aqui vamos simular a resposta para duas variáveis de `leia()`.
+                    const respostas = [
+                        "2", "3"
+                    ];
+                    (interpretador as any).interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.pop());
+                        }
+                    };
+    
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "semnome"',
+                        '// Função :',
+                        '// Autor :',
+                        '// Data : 27/02/2014',
+                        '// Seção de Declarações ',
+                        'var',
+                        'a,b:inteiro',
+                        'procedimento mostranumero (a:inteiro;b:inteiro)',
+                        'inicio',
+                        '    se a > b entao',
+                        '        escreval ("A variavel escolhida é ",a)',
+                        '    senao',
+                        '        escreval ("A variavel escolhida é ",b)',
+                        '    fimse',
+                        'fimprocedimento',
+                        'inicio',
+                        'escreval ("Digite dois valores: ")',
+                        'leia (a,b)',
+                        'mostranumero (a,b)',
+                        '',
+                        'fimalgoritmo'
+                    ], -1);
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        expect(saidasMensagens.includes(saida)).toBeTruthy()
+                    }
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
+    
+                it('Procedimento com passagem por referência', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'algoritmo "Exemplo Parametros Referencia"',
+                        'var',
+                        '   m,n,res: inteiro',
+                        '   procedimento soma (x,y: inteiro; var result: inteiro)',
+                        '   inicio',
+                        '       result <- x + y',
+                        '   fimprocedimento',
+                        'inicio',
+                        '   n <- 4',
+                        '   m <- -9',
+                        '   soma(n,m,res)',
+                        '   escreva(res)',
+                        'fimalgoritmo'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        expect(saida).toEqual("-5")
+                    }
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
             });
-
-            it('Procedimento com passagem por referência', async () => {
-                const retornoLexador = lexador.mapear([
-                    'algoritmo "Exemplo Parametros Referencia"',
-                    'var',
-                    '   m,n,res: inteiro',
-                    '   procedimento soma (x,y: inteiro; var result: inteiro)',
-                    '   inicio',
-                    '       result <- x + y',
-                    '   fimprocedimento',
-                    'inicio',
-                    '   n <- 4',
-                    '   m <- -9',
-                    '   soma(n,m,res)',
-                    '   escreva(res)',
-                    'fimalgoritmo'
-                ], -1);
-
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
-                    expect(saida).toEqual("-5")
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
-            })
 
             it('Operadores Lógicos', async () => {
                 const saidasMensagens = ['A verdadeiro', 'A falso', 'A falso', 'A verdadeiro', 'B falso', 'C verdadeiro']

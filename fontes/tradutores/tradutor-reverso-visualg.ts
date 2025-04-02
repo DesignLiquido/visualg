@@ -58,7 +58,8 @@ export class TradutorReversoVisuAlg {
     }
 
     traduzirConstrutoAtribuir(atribuir: Atribuir): string {
-        let resultado = atribuir.simbolo.lexema;
+        const alvo = atribuir.alvo as Variavel;
+        let resultado = alvo.simbolo.lexema;
         resultado += ' = ' + this.dicionarioConstrutos[atribuir.valor.constructor.name](atribuir.valor);
         return resultado;
     }
@@ -86,7 +87,8 @@ export class TradutorReversoVisuAlg {
 
         const expressao = fimPara.incremento as Expressao;
         const atribuir = expressao.expressao as Atribuir;
-        const variavel = atribuir.simbolo.lexema;
+        const alvo = atribuir.alvo as Variavel;
+        const variavel = alvo.simbolo.lexema;
         return `${variavel}++`;
     }
 

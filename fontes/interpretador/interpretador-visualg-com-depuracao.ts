@@ -9,8 +9,7 @@ import {
     Construto,
     FimPara,
     FormatacaoEscrita,
-    Logico,
-    Variavel,
+    Logico
 } from '@designliquido/delegua/construtos';
 import {
     EscrevaMesmaLinha,
@@ -24,16 +23,18 @@ import {
     CabecalhoPrograma,
     Classe,
     Var,
+    FuncaoDeclaracao,
 } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 
 import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
-import { InterpretadorVisuAlgInterface, VisitanteVisuAlgInterface } from '../interfaces';
+import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
 
 import * as comum from './comum';
+import { TipoEscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 
 /**
  * Interpretador com depuração para o dialeto VisuAlg.
@@ -42,6 +43,7 @@ export class InterpretadorVisuAlgComDepuracao
     extends InterpretadorComDepuracao
     implements InterpretadorVisuAlgInterface
 {
+    proximoEscopo?: TipoEscopoExecucao;
     mensagemPrompt: string;
     tiposConhecidos: string[];
     deveEscreverPrompt: boolean;
@@ -96,6 +98,10 @@ export class InterpretadorVisuAlgComDepuracao
      */
     visitarDeclaracaoConst(declaracao: Const): Promise<any> {
         throw new Error('Método não implementado.');
+    }
+
+    override async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<void> {
+        return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);   
     }
 
     async visitarExpressaoAcessoElementoMatriz(expressao: AcessoElementoMatriz): Promise<any> {

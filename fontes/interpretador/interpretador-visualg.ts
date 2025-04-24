@@ -17,12 +17,14 @@ import {
     Escreva,
     EscrevaMesmaLinha,
     Fazer,
+    FuncaoDeclaracao,
     Leia,
     Para,
     Var,
 } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
+import { TipoEscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 
 import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
@@ -35,6 +37,7 @@ import * as comum from './comum';
  * Interpretador do VisuAlg, baseado no interpretador de Delégua.
  */
 export class InterpretadorVisuAlg extends InterpretadorBase implements InterpretadorVisuAlgInterface {
+    proximoEscopo?: TipoEscopoExecucao;
     mensagemPrompt: string;
     tiposConhecidos: string[];
     deveEscreverPrompt: boolean;
@@ -208,6 +211,10 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
 
     override async visitarDeclaracaoClasse(declaracao: Classe): Promise<any> {
         return comum.visitarDeclaracaoClasse(this, declaracao);
+    }
+
+    override async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<void> {
+        return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);   
     }
 
     override async visitarDeclaracaoPara(declaracao: Para): Promise<any> {

@@ -800,13 +800,15 @@ describe('Interpretador', () => {
     
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
     
+                    let _saidas = "";
                     interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
-                        expect(saida).toEqual("-5")
+                        _saidas = String(saida);
                     }
     
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toBe("-5");
                 });
             });
 

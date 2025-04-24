@@ -20,6 +20,7 @@ import {
     Classe,
     Declaracao,
     Expressao,
+    FuncaoDeclaracao,
     InicioAlgoritmo,
     Leia,
     Para,
@@ -33,7 +34,6 @@ import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpre
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 import {
     DescritorTipoClasse,
-    DeleguaFuncao,
     FuncaoPadrao,
     ObjetoDeleguaClasse,
 } from '@designliquido/delegua/estruturas';
@@ -45,6 +45,7 @@ import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 import * as bibliotecaCaracteres from '../bibliotecas/caracteres';
 import * as bibliotecaNumerica from '../bibliotecas/numerica';
+import { VisuAlgFuncao } from './estruturas';
 
 export function carregarBibliotecaGlobalCaracter(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
     pilhaEscoposExecucao.definirVariavel('asc', new FuncaoPadrao(1, bibliotecaCaracteres.asc));
@@ -101,7 +102,7 @@ export async function visitarDeclaracaoClasse(
     const metodos = {};
     if (declaracao.metodos.length > 0) {
         const declaracaoConstrutor = declaracao.metodos[0];
-        const funcao = new DeleguaFuncao('construtor', declaracaoConstrutor.funcao, undefined, true);
+        const funcao = new VisuAlgFuncao('construtor', declaracaoConstrutor.funcao, undefined, true);
         metodos['construtor'] = funcao;
     }
 
@@ -115,6 +116,14 @@ export async function visitarDeclaracaoClasse(
     interpretador.pilhaEscoposExecucao.definirConstante(declaracao.simbolo.lexema, descritorTipoClasse);
     interpretador.tiposConhecidos.push(declaracao.simbolo.lexema);
     return null;
+}
+
+export async function visitarDeclaracaoDefinicaoFuncao(
+    interpretador: InterpretadorVisuAlgInterface,
+    declaracao: FuncaoDeclaracao
+) {
+    const funcao = new VisuAlgFuncao(declaracao.simbolo.lexema, declaracao.funcao);
+    interpretador.pilhaEscoposExecucao.definirVariavel(declaracao.simbolo.lexema, funcao);
 }
 
 export async function visitarDeclaracaoInicioAlgoritmo(
@@ -397,7 +406,7 @@ export async function visitarExpressaoAcessoIndiceVariavel(
     if (
         objeto.constructor === Object ||
         objeto instanceof ObjetoDeleguaClasse ||
-        objeto instanceof DeleguaFuncao ||
+        objeto instanceof VisuAlgFuncao ||
         objeto instanceof DescritorTipoClasse
     ) {
         return objeto[valorIndice] || null;
@@ -472,7 +481,7 @@ export async function visitarExpressaoAtribuicaoPorIndice(
     } else if (
         objeto.constructor === Object ||
         objeto instanceof ObjetoDeleguaClasse ||
-        objeto instanceof DeleguaFuncao ||
+        objeto instanceof VisuAlgFuncao ||
         objeto instanceof DescritorTipoClasse
     ) {
         objeto[indice] = valor;

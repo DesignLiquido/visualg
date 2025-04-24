@@ -3,10 +3,11 @@ import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
-import { DescritorTipoClasse, DeleguaFuncao } from '@designliquido/delegua/estruturas';
+import { DescritorTipoClasse } from '@designliquido/delegua/estruturas';
 import { EspacoVariaveis } from '@designliquido/delegua/espaco-variaveis';
 
 import { TipoInferencia, inferirTipoVariavel } from './inferenciador';
+import { VisuAlgFuncao } from './estruturas';
 
 export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterface {
     pilha: EscopoExecucao[];
@@ -22,6 +23,18 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
             emLacoRepeticao: false,
         };
         this.empilhar(escopoExecucao);
+    }
+
+    obterTodasDeclaracoesClasse() {
+        throw new Error('Método não implementado.');
+    }
+
+    obterReferenciaFuncao(idFuncao: string): VisuAlgFuncao {
+        throw new Error('Método não implementado.');
+    }
+
+    registrarReferenciaFuncao(idFuncao: string, funcao: VisuAlgFuncao): void {
+        throw new Error('Método não implementado.');
     }
 
     empilhar(item: EscopoExecucao): void {
@@ -213,12 +226,12 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
      * Obtém todas as funções declaradas ou por código-fonte, ou pelo desenvolvedor
      * em console, do último escopo.
      */
-    obterTodasDeleguaFuncao(): { [nome: string]: DeleguaFuncao } {
+    obterTodasDeleguaFuncao(): { [nome: string]: VisuAlgFuncao } {
         const retorno = {};
         const ambiente = this.pilha[this.pilha.length - 1].ambiente;
         for (const [nome, corpo] of Object.entries(ambiente.valores)) {
             const corpoValor = corpo.hasOwnProperty('valor') ? corpo.valor : corpo;
-            if (corpoValor instanceof DeleguaFuncao) {
+            if (corpoValor instanceof VisuAlgFuncao) {
                 retorno[nome] = corpoValor;
             }
         }

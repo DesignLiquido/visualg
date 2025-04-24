@@ -3,6 +3,7 @@ import {
     AcessoMetodoOuPropriedade,
     AcessoPropriedade,
     Agrupamento,
+    ArgumentoReferenciaFuncao,
     AtribuicaoPorIndice,
     Atribuir,
     Binario,
@@ -18,6 +19,7 @@ import {
     Isto,
     Literal,
     Logico,
+    ReferenciaFuncao,
     Super,
     TipoDe,
     Tupla,
@@ -55,7 +57,6 @@ import {
     TendoComo,
 } from '@designliquido/delegua/declaracoes';
 import { InicioAlgoritmo } from '@designliquido/delegua/declaracoes/inicio-algoritmo';
-import { SimboloInterface } from '@designliquido/delegua/interfaces';
 import { ContinuarQuebra } from '@designliquido/delegua/quebras';
 
 import { PilhaEscoposFormatacao } from './pilha-escopos-formatacao';
@@ -86,6 +87,14 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.deveIndentar = true;
         this.contadorDeclaracaoVar = 0;
         this.retornoFuncaoAtual = undefined;
+    }
+
+    visitarExpressaoArgumentoReferenciaFuncao(expressao: ArgumentoReferenciaFuncao): Promise<any> | void {
+        throw new Error('Método não implementado.');
+    }
+
+    visitarExpressaoReferenciaFuncao(expressao: ReferenciaFuncao): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     visitarExpressaoAcessoMetodoOuPropriedade(expressao: AcessoMetodoOuPropriedade): Promise<any> | void {
@@ -183,7 +192,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     }
 
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
-        this.retornoFuncaoAtual = declaracao.tipoRetorno;
+        this.retornoFuncaoAtual = declaracao.tipo;
         this.contadorDeclaracaoVar = 2;
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}funcao `;
         if (declaracao.simbolo) {

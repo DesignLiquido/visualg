@@ -780,7 +780,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         }
 
         const simboloParenteses = this.simbolos[this.atual - 1];
-        
+
         // Sem não houver parâmetros, retorna vetor com literal vazio.
         if (this.simbolos[this.atual].tipo === tiposDeSimbolos.PARENTESE_DIREITO) {
             this.avancarEDevolverAnterior();
@@ -1069,8 +1069,8 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             Number(simboloPara.linha),
             // Inicialização.
             new Atribuir(
-                this.hashArquivo, 
-                new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'), 
+                this.hashArquivo,
+                new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
                 literalOuVariavelInicio
             ),
             // Condição.
@@ -1209,6 +1209,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         do {
             declaracoes.push(this.resolverDeclaracaoForaDeBloco());
         } while (
+            !this.estaNoFinal() &&
             ![tiposDeSimbolos.SENAO, tiposDeSimbolos.SENÃO, tiposDeSimbolos.FIM_SE].includes(
                 this.simbolos[this.atual].tipo
             )

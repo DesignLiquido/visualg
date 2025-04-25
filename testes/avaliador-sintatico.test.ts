@@ -611,6 +611,36 @@ describe('Avaliador sintático', () => {
                     })
                 );
             });
+
+            it('Falha - Se sem fimse', () => {
+                const retornoLexador = lexador.mapear(
+                    [
+                        'algoritmo "Comandos de Decisão"',
+                        'var',
+                        '    num1, num2: real',
+                        'inicio',
+                        '    escreval("Digite o primeiro número: ")',
+                        '    leia(num1)',
+                        '    escreval("Digite o segundo número: ")',
+                        '    leia(num2)',
+                        '    se (num1 > num2) então ',
+                        '        escreva ("O primeiro número é maior!")',
+                        '    se (num1 < num2) então ',
+                        '        escreva ("O segundo número é maior!")',
+                        '    fimse',
+                        '',
+                        'fimalgoritmo',
+                    ],
+                    -1
+                );
+
+                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrow(
+                    expect.objectContaining({
+                        name: 'Error',
+                        message: "Esperado palavra-chave 'fimse' para fechamento de declaração 'se'.",
+                    })
+                );
+            });
         });
     });
 });

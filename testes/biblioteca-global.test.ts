@@ -1,4 +1,4 @@
-import { DeleguaFuncao } from '@designliquido/delegua/estruturas';
+import { DeleguaFuncao } from '@designliquido/delegua/interpretador/estruturas';
 import { InterpretadorInterface, SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';

@@ -9,13 +9,13 @@ import {
     Construto,
     FimPara,
     FormatacaoEscrita,
+    Leia,
     Logico
 } from '@designliquido/delegua/construtos';
 import {
     EscrevaMesmaLinha,
     Escreva,
     Fazer,
-    Leia,
     Const,
     Para,
     Bloco,

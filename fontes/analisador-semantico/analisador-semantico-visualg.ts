@@ -3,6 +3,7 @@ import {
     Chamada,
     FormatacaoEscrita,
     FuncaoConstruto,
+    Leia,
     Literal,
     Variavel,
     Vetor,
@@ -13,7 +14,6 @@ import {
     EscrevaMesmaLinha,
     Expressao,
     FuncaoDeclaracao,
-    Leia,
     Retorna,
     Var,
 } from '@designliquido/delegua/declaracoes';

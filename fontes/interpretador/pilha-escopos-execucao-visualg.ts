@@ -3,7 +3,7 @@ import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
-import { DescritorTipoClasse } from '@designliquido/delegua/estruturas';
+import { DescritorTipoClasse } from '@designliquido/delegua/interpretador/estruturas';
 import { EspacoVariaveis } from '@designliquido/delegua/espaco-variaveis';
 
 import { TipoInferencia, inferirTipoVariavel } from './inferenciador';

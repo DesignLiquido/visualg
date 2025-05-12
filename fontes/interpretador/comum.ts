@@ -8,6 +8,7 @@ import {
     Construto,
     FimPara,
     FormatacaoEscrita,
+    Leia,
     Literal,
     Logico,
     Unario,
@@ -22,7 +23,6 @@ import {
     Expressao,
     FuncaoDeclaracao,
     InicioAlgoritmo,
-    Leia,
     Para,
     Var,
 } from '@designliquido/delegua/declaracoes';
@@ -36,7 +36,7 @@ import {
     DescritorTipoClasse,
     FuncaoPadrao,
     ObjetoDeleguaClasse,
-} from '@designliquido/delegua/estruturas';
+} from '@designliquido/delegua/interpretador/estruturas';
 
 import { inferirTipoVariavel } from './inferenciador';
 import { InterpretadorVisuAlgInterface } from '../interfaces';

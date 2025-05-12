@@ -7,6 +7,7 @@ import {
     Construto,
     FimPara,
     FormatacaoEscrita,
+    Leia,
     Logico
 } from '@designliquido/delegua/construtos';
 import {
@@ -18,7 +19,6 @@ import {
     EscrevaMesmaLinha,
     Fazer,
     FuncaoDeclaracao,
-    Leia,
     Para,
     Var,
 } from '@designliquido/delegua/declaracoes';

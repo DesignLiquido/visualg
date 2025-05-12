@@ -5,6 +5,7 @@ import {
     Bloco,
     CabecalhoPrograma,
     Classe,
+    Comentario,
     Declaracao,
     Enquanto,
     Escolha,
@@ -14,7 +15,6 @@ import {
     Fazer,
     FuncaoDeclaracao,
     InicioAlgoritmo,
-    Leia,
     Para,
     PropriedadeClasse,
     Retorna,
@@ -39,12 +39,12 @@ import {
     Logico,
     Unario,
     Variavel,
-    Comentario,
     AcessoMetodoOuPropriedade,
     DefinirValor,
     Isto,
     Constante,
     Vetor,
+    Leia,
 } from '@designliquido/delegua/construtos';
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
@@ -494,7 +494,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     }
 
     expressao(): Construto {
-        if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.LEIA)) return this.declaracaoLeia();
+        if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.LEIA)) return this.expressaoLeia();
         return this.atribuir();
     }
 
@@ -911,7 +911,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
      * Análise de uma declaração `leia()`. No VisuAlg, `leia()` aceita 1..N argumentos.
      * @returns Uma declaração `Leia`.
      */
-    declaracaoLeia(): Leia {
+    expressaoLeia(): Leia {
         const simboloLeia = this.avancarEDevolverAnterior();
 
         this.consumir(tiposDeSimbolos.PARENTESE_ESQUERDO, "Esperado '(' antes do argumento em instrução `leia`.");
@@ -1458,7 +1458,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.INTERROMPA:
                 return this.declaracaoInterrompa();
             case tiposDeSimbolos.LEIA:
-                return this.declaracaoLeia();
+                return this.expressaoLeia();
             case tiposDeSimbolos.LIMPA_TELA:
                 return this.expressaoLimpaTela();
             case tiposDeSimbolos.PARA:

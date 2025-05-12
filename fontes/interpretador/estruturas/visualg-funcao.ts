@@ -1,4 +1,4 @@
-import { DeleguaFuncao, ObjetoDeleguaClasse } from "@designliquido/delegua/estruturas";
+import { DeleguaFuncao, ObjetoDeleguaClasse } from "@designliquido/delegua/interpretador/estruturas";
 import { ArgumentoInterface } from "@designliquido/delegua/interpretador/argumento-interface";
 import { RetornoQuebra } from "@designliquido/delegua/quebras";
 import { PilhaEscoposExecucaoInterface } from "@designliquido/delegua/interfaces/pilha-escopos-execucao-interface";

@@ -8,7 +8,6 @@ import {
     Atribuir,
     Binario,
     Chamada,
-    Comentario,
     Construto,
     DefinirValor,
     Dicionario,
@@ -17,6 +16,7 @@ import {
     FormatacaoEscrita,
     FuncaoConstruto,
     Isto,
+    Leia,
     Literal,
     Logico,
     ReferenciaFuncao,
@@ -48,13 +48,13 @@ import {
     Bloco,
     Continua,
     EscrevaMesmaLinha,
-    Leia,
     Retorna,
     Sustar,
     Declaracao,
     Falhar,
     CabecalhoPrograma,
     TendoComo,
+    Comentario,
 } from '@designliquido/delegua/declaracoes';
 import { InicioAlgoritmo } from '@designliquido/delegua/declaracoes/inicio-algoritmo';
 import { ContinuarQuebra } from '@designliquido/delegua/quebras';

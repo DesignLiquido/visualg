@@ -1,7 +1,7 @@
 {
     "name": "@designliquido/visualg",
     "description": "Dialeto de VisuAlg baseado em Delégua e TypeScript",
-    "version": "0.3.11",
+    "version": "0.3.12",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/DesignLiquido/visualg/issues"

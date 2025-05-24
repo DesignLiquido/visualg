@@ -62,6 +62,7 @@ import { ContinuarQuebra } from '@designliquido/delegua/quebras';
 import { PilhaEscoposFormatacao } from './pilha-escopos-formatacao';
 import { VisitanteVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
+import { ProcedimentoDeclaracao } from '../declaracoes';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
@@ -71,9 +72,9 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     quebraLinha: string;
     tamanhoIndentacao: number;
     codigoFormatado: string;
+    deveEscreverRetorno: boolean;
     devePularLinha: boolean;
     deveIndentar: boolean;
-    contadorDeclaracaoVar: number;
     retornoFuncaoAtual: string;
 
     constructor(quebraLinha: string, tamanhoIndentacao: number = 4) {
@@ -83,9 +84,9 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.pilhaEscoposFormatacao = new PilhaEscoposFormatacao();
         this.indentacaoAtual = 0;
         this.codigoFormatado = '';
+        this.deveEscreverRetorno = false;
         this.devePularLinha = false;
         this.deveIndentar = true;
-        this.contadorDeclaracaoVar = 0;
         this.retornoFuncaoAtual = undefined;
     }
 
@@ -178,7 +179,8 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     }
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
-        this.codigoFormatado += `${this.formatarDeclaracaoOuConstruto(expressao.alvo)} <- `;
+        this.formatarDeclaracaoOuConstruto(expressao.alvo);
+        this.codigoFormatado += ` <- `;
         this.formatarDeclaracaoOuConstruto(expressao.valor);
 
         if (this.devePularLinha) {
@@ -193,36 +195,13 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
 
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
         this.retornoFuncaoAtual = declaracao.tipo;
-        this.contadorDeclaracaoVar = 2;
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}funcao `;
         if (declaracao.simbolo) {
             this.codigoFormatado += `${declaracao.simbolo.lexema}`;
         }
 
-        let primeiraOcorrenciaVar = declaracao.funcao.corpo.findIndex((item) => item instanceof Var);
-        var ultimaOcorrenciaIndex = declaracao.funcao.corpo
-            .slice()
-            .reverse()
-            .findIndex((item) => item instanceof Var);
-        var ultimaOcorrenciaPosicao =
-            ultimaOcorrenciaIndex >= 0 ? declaracao.funcao.corpo.length - 1 - ultimaOcorrenciaIndex : -1;
-
-        let indiceParaRemover = [];
-        if (primeiraOcorrenciaVar > -1 && ultimaOcorrenciaPosicao > -1) {
-            this.codigoFormatado += this.quebraLinha;
-            for (let i = primeiraOcorrenciaVar; i <= ultimaOcorrenciaPosicao; i++) {
-                this.formatarDeclaracaoOuConstruto(declaracao.funcao.corpo[i]);
-                indiceParaRemover.push(i);
-            }
-        }
-
-        for (let posicao of indiceParaRemover) {
-            declaracao.funcao.corpo.splice(posicao, 1);
-        }
-        this.codigoFormatado += this.quebraLinha;
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}inicio${this.quebraLinha}`;
-
-        this.formatarDeclaracaoOuConstruto(declaracao.funcao);
+        this.deveEscreverRetorno = true;
+        this.visitarExpressaoFuncaoConstruto(declaracao.funcao);
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimfuncao${this.quebraLinha}`;
     }
 
@@ -344,10 +323,21 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         throw new Error('Método não implementado.');
     }
 
+    visitarDeclaracaoProcedimento(declaracao: ProcedimentoDeclaracao): void {
+        this.retornoFuncaoAtual = declaracao.tipo;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}procedimento `;
+        if (declaracao.simbolo) {
+            this.codigoFormatado += `${declaracao.simbolo.lexema}`;
+        }
+
+        this.visitarExpressaoFuncaoConstruto(declaracao.funcao);
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimprocedimento${this.quebraLinha}`;
+    }
+
     visitarDeclaracaoSe(declaracao: Se) {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}se ( `;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}se `;
         this.formatarDeclaracaoOuConstruto(declaracao.condicao);
-        this.codigoFormatado += ` ) entao${this.quebraLinha}`;
+        this.codigoFormatado += ` entao${this.quebraLinha}`;
 
         this.indentacaoAtual += this.tamanhoIndentacao;
         for (let declaracaoBloco of (declaracao.caminhoEntao as Bloco).declaracoes) {
@@ -356,11 +346,11 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
 
         this.indentacaoAtual -= this.tamanhoIndentacao;
         if (declaracao.caminhoSenao) {
-            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}} senao `;
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)} senao${this.quebraLinha}`;
             this.formatarDeclaracaoOuConstruto(declaracao.caminhoSenao);
-        } else {
-            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimse${this.quebraLinha}`;
         }
+
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimse${this.quebraLinha}`;
     }
 
     visitarDeclaracaoTente(declaracao: Tente) {
@@ -368,37 +358,11 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     }
 
     visitarDeclaracaoVar(declaracao: Var): any {
-        switch (this.contadorDeclaracaoVar) {
-            case 0:
-                this.codigoFormatado += `var${this.quebraLinha}`;
-                this.contadorDeclaracaoVar++;
-                break;
-            case 2:
-                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}var${this.quebraLinha}`;
-                this.contadorDeclaracaoVar++;
-                break;
-        }
-
-        if (this.contadorDeclaracaoVar > 2) {
-            this.indentacaoAtual += this.tamanhoIndentacao;
-        }
-
-        if (this.deveIndentar) {
-            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual + 4)}`;
-        }
-
-        this.codigoFormatado += `${declaracao.simbolo.lexema}`;
-
-        if (declaracao.inicializador) {
-            this.codigoFormatado += `: ${declaracao.tipo.toLowerCase()}`;
-        }
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}${declaracao.simbolo.lexema}`;
+        this.codigoFormatado += `: ${declaracao.tipo.toLowerCase()}`;
 
         if (this.devePularLinha) {
             this.codigoFormatado += this.quebraLinha;
-        }
-
-        if (this.contadorDeclaracaoVar > 2) {
-            this.indentacaoAtual -= this.tamanhoIndentacao;
         }
     }
 
@@ -663,17 +627,43 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         }
     }
 
-    visitarExpressaoFuncaoConstruto(expressao: FuncaoConstruto) {
-        if (expressao.parametros.length > 0) {
+    /**
+     * `visitarExpressaoFuncaoConstruto` formata o corpo, parâmetros e variáveis, tanto de procedimentos quanto de funções.
+     * @param {FuncaoConstruto} funcaoConstruto O construto do procedimento ou função.
+     */
+    visitarExpressaoFuncaoConstruto(funcaoConstruto: FuncaoConstruto) {
+        if (funcaoConstruto.parametros.length > 0) {
             this.codigoFormatado += `(`;
-            for (let argumento of expressao.parametros) {
-                this.codigoFormatado += `${argumento.nome.lexema}${argumento.tipoDado || ''}, `;
+            for (let argumento of funcaoConstruto.parametros) {
+                this.codigoFormatado += `${argumento.nome.lexema}: ${(argumento.tipoDado || '').toLowerCase()}, `;
             }
             this.codigoFormatado = this.codigoFormatado.slice(0, -2);
-            this.codigoFormatado += `) `;
+            this.codigoFormatado += `)`;
         }
-        this.codigoFormatado += ` : ${this.retornoFuncaoAtual}${this.quebraLinha}`;
-        this.formatarBlocoOuVetorDeclaracoes(expressao.corpo);
+
+        if (this.deveEscreverRetorno) {
+            this.codigoFormatado += `: ${this.retornoFuncaoAtual}`;
+            this.deveEscreverRetorno = false;
+        }
+
+        this.codigoFormatado += this.quebraLinha;
+
+        // Se há variáveis, escrevemos elas agora.
+        const declaracoesVar = funcaoConstruto.corpo.filter(d => d.constructor.name === 'Var');
+        if (declaracoesVar.length > 0) {
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}var${this.quebraLinha}`;
+            this.indentacaoAtual += this.tamanhoIndentacao;
+
+            for (const declaracaoVar of declaracoesVar) {
+                this.visitarDeclaracaoVar(declaracaoVar as Var);
+            }
+
+            this.indentacaoAtual -= this.tamanhoIndentacao;
+        }
+
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}inicio${this.quebraLinha}`;
+        const outrasDeclaracoes = funcaoConstruto.corpo.filter(d => d.constructor.name !== 'Var');
+        this.formatarBlocoOuVetorDeclaracoes(outrasDeclaracoes);
     }
 
     visitarExpressaoVetor(expressao: any) {
@@ -786,6 +776,9 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
                 break;
             case 'ParaCada':
                 this.visitarDeclaracaoParaCada(declaracaoOuConstruto as ParaCada);
+                break;
+            case 'ProcedimentoDeclaracao':
+                this.visitarDeclaracaoProcedimento(declaracaoOuConstruto as ProcedimentoDeclaracao);
                 break;
             case 'Retorna':
                 this.visitarExpressaoRetornar(declaracaoOuConstruto as Retorna);

@@ -83,10 +83,6 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
         return comum.visitarDeclaracaoCabecalhoPrograma(this, declaracao);
     }
 
-    visitarDeclaracaoConst(declaracao: Const): Promise<any> {
-        throw new Error('Método não implementado.');
-    }
-
     override async visitarExpressaoAcessoElementoMatriz(expressao: AcessoElementoMatriz): Promise<any> {
         return await comum.visitarExpressaoAcessoElementoMatriz(this, expressao);
     }

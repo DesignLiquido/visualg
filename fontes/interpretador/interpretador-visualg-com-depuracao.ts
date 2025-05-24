@@ -92,14 +92,6 @@ export class InterpretadorVisuAlgComDepuracao
         return comum.visitarDeclaracaoClasse(this, declaracao);
     }
 
-    /**
-     * VisuAlg não tem o conceito de declaração de constantes.
-     * @param declaracao Uma declaração Const.
-     */
-    visitarDeclaracaoConst(declaracao: Const): Promise<any> {
-        throw new Error('Método não implementado.');
-    }
-
     override async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<void> {
         return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);   
     }

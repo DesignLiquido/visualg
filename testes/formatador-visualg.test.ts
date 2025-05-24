@@ -45,7 +45,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
-        expect(linhasResultado).toHaveLength(12)
+        expect(linhasResultado).toHaveLength(11)
     })
 
     it('Atribuição', () => {
@@ -144,12 +144,13 @@ describe('Formatador', () => {
             ],
             -1
         );
+
         const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
-        const linhasResultado = resultado.split(sistemaOperacional.EOL)
-        expect(linhasResultado).toHaveLength(21)
+        expect(linhasResultado).toHaveLength(19);
+        expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
 
     it('Interrompa', () => {
@@ -225,7 +226,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
     });
 
-    /* it('Procedimento', () => {
+    it('Procedimento', () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "semnome"',
@@ -249,13 +250,14 @@ describe('Formatador', () => {
             -1
         );
         const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-        const resultado = formatadorVisualG.formatar(retornoAvaliadorSintatico.declaracoes)
-        const linhasResultado = resultado.split(sistemaOperacional.EOL)
-        console.log(resultado);
+        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
+        expect(linhasResultado).toHaveLength(16);
         expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(2);
-    }); */
+        expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(8);
+        expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
+    });
 
     it('Repita', () => {
         const retornoLexador = lexador.mapear(
@@ -273,12 +275,12 @@ describe('Formatador', () => {
             -1
         );
         const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
-        const linhasResultado = resultado.split(sistemaOperacional.EOL)
+        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
-        expect(linhasResultado).toHaveLength(9);
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
+        expect(linhasResultado).toHaveLength(9);
     });
 
     it('XOU', () => {

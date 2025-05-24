@@ -1,0 +1,1 @@
+export * from './procedimento-declaracao';

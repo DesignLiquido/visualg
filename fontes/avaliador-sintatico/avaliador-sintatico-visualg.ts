@@ -53,6 +53,7 @@ import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar'
 
 import { ParametroVisuAlg } from './parametro-visualg';
 import { LimpaTela } from '../construtos/limpa-tela';
+import { ProcedimentoDeclaracao } from '../declaracoes';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
@@ -1156,7 +1157,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         const corpo: any[] = (inicializacoes as any[]).concat(this.blocoEscopo());
         this.funcoesProcedimentosConhecidos.push(nomeProcedimento.lexema);
 
-        return new FuncaoDeclaracao(
+        return new ProcedimentoDeclaracao(
             nomeProcedimento,
             new FuncaoConstruto(
                 this.hashArquivo,

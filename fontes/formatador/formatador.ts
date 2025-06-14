@@ -73,6 +73,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     tamanhoIndentacao: number;
     codigoFormatado: string;
     deveEscreverRetorno: boolean;
+    deveEscreverVar: boolean;
     devePularLinha: boolean;
     deveIndentar: boolean;
     retornoFuncaoAtual: string;
@@ -85,6 +86,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.indentacaoAtual = 0;
         this.codigoFormatado = '';
         this.deveEscreverRetorno = false;
+        this.deveEscreverVar = true;
         this.devePularLinha = false;
         this.deveIndentar = true;
         this.retornoFuncaoAtual = undefined;
@@ -200,6 +202,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
             this.codigoFormatado += `${declaracao.simbolo.lexema}`;
         }
 
+        this.deveEscreverVar = true;
         this.deveEscreverRetorno = true;
         this.visitarExpressaoFuncaoConstruto(declaracao.funcao);
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimfuncao${this.quebraLinha}`;
@@ -330,6 +333,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
             this.codigoFormatado += `${declaracao.simbolo.lexema}`;
         }
 
+        this.deveEscreverVar = true;
         this.visitarExpressaoFuncaoConstruto(declaracao.funcao);
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimprocedimento${this.quebraLinha}`;
     }
@@ -358,7 +362,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     }
 
     visitarDeclaracaoVar(declaracao: Var): any {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}${declaracao.simbolo.lexema}`;
+        if (this.deveEscreverVar) {
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}var${this.quebraLinha}`;
+            this.deveEscreverVar = false;
+        }
+
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual + 4)}${declaracao.simbolo.lexema}`;
         this.codigoFormatado += `: ${declaracao.tipo.toLowerCase()}`;
 
         if (this.devePularLinha) {
@@ -833,6 +842,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado = '';
         this.devePularLinha = true;
         this.deveIndentar = true;
+        this.deveEscreverVar = true;
 
         for (let declaracao of declaracoes) {
             this.formatarDeclaracaoOuConstruto(declaracao);

@@ -22,8 +22,50 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
-        expect(linhasResultado).toHaveLength(5)
-    })
+        expect(linhasResultado).toHaveLength(5);
+    });
+
+    it('Variáveis', () => {
+        const retornoLexador = lexador.mapear([
+            'algoritmo "teste"',
+            'var',
+            'numero: inteiro',
+            'inicio',
+            '    escreval("Aline")',
+            'fimalgoritmo'
+        ], -1);
+
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
+
+        expect(linhasResultado).toHaveLength(7);
+    });
+
+    it('Aleatorio - Números', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'algoritmo "Exemplo Xou"',
+                'var',
+                'numero: inteiro',
+                'inicio',
+                'aleatorio 1, 6',
+                'leia(numero)',
+                'fimalgoritmo',
+            ],
+            -1
+        );
+
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
+        const linhasResultado = resultado.split(sistemaOperacional.EOL)
+
+        expect(linhasResultado).toHaveLength(8);
+        expect(retornoAvaliadorSintatico).toBeTruthy();
+        expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
+    });
 
     it('Lendo variaveis', () => {
         const retornoLexador = lexador.mapear([
@@ -45,7 +87,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
-        expect(linhasResultado).toHaveLength(11)
+        expect(linhasResultado).toHaveLength(12);
     })
 
     it('Atribuição', () => {
@@ -68,7 +110,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
-        expect(linhasResultado).toHaveLength(10)
+        expect(linhasResultado).toHaveLength(11);
     })
 
     it('Enquanto', () => {
@@ -91,7 +133,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
-        expect(linhasResultado).toHaveLength(10)
+        expect(linhasResultado).toHaveLength(11);
     })
 
     it('Escolha', () => {
@@ -118,7 +160,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
-        expect(linhasResultado).toHaveLength(15)
+        expect(linhasResultado).toHaveLength(16);
     });
 
     it('Função', () => {
@@ -149,7 +191,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
-        expect(linhasResultado).toHaveLength(19);
+        expect(linhasResultado).toHaveLength(21);
         expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
 
@@ -175,7 +217,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
-        expect(linhasResultado).toHaveLength(12)
+        expect(linhasResultado).toHaveLength(13);
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
     });
@@ -198,7 +240,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
-        expect(linhasResultado).toHaveLength(11)
+        expect(linhasResultado).toHaveLength(12);
 
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
@@ -221,7 +263,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
-        expect(linhasResultado).toHaveLength(8)
+        expect(linhasResultado).toHaveLength(9);
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
     });
@@ -253,7 +295,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
-        expect(linhasResultado).toHaveLength(16);
+        expect(linhasResultado).toHaveLength(17);
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(8);
         expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
@@ -280,7 +322,7 @@ describe('Formatador', () => {
 
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
-        expect(linhasResultado).toHaveLength(9);
+        expect(linhasResultado).toHaveLength(10);
     });
 
     it('XOU', () => {
@@ -316,30 +358,5 @@ describe('Formatador', () => {
         expect(linhasResultado.length).toBeGreaterThanOrEqual(20);
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(24);
-    });
-
-    it('Sucesso - Aleatorio - Números', () => {
-        const retornoLexador = lexador.mapear(
-            [
-                'algoritmo "Exemplo Xou"',
-                'var',
-                'numero: inteiro',
-                'inicio',
-                'aleatorio 1, 6',
-                'leia(numero)',
-                'fimalgoritmo',
-            ],
-            -1
-        );
-
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-
-        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
-        const linhasResultado = resultado.split(sistemaOperacional.EOL)
-
-        expect(linhasResultado).toHaveLength(7);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
     });
 });

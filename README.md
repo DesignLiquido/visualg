@@ -1,6 +1,21 @@
 # visualg
 
-Nossa implementação do dialeto Portugol VisuAlg, usando TypeScript.
+Nossa implementação do dialeto Portugol VisuAlg, usando TypeScript, tendo como base o núcleo de [Delégua](https://github.com/DesignLiquido/delegua). 
+
+  <p align="center">
+    <img src="./recursos/imagens/badge-statements.svg" />
+    <img src="./recursos/imagens/badge-lines.svg" />
+    <img src="./recursos/imagens/badge-functions.svg" />
+    <img src="./recursos/imagens/badge-branches.svg" />
+    <a href="https://github.com/DesignLiquido/visualg/issues" target="_blank">
+      <img src="https://img.shields.io/github/issues/Designliquido/visualg" />
+    </a>
+    <a href="https://www.npmjs.com/package/@designliquido/visualg" target="_blank">
+      <img src="https://img.shields.io/npm/v/@designliquido/visualg" />
+    </a>
+    <img src="https://img.shields.io/npm/dw/@designliquido/visualg" />
+    <img src="https://img.shields.io/github/license/Designliquido/visualg" />
+  </p>
 
 ## Sobre este dialeto
 

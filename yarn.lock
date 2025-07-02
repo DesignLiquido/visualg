@@ -277,10 +277,10 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@designliquido/delegua@^0.43.0":
-  version "0.43.0"
-  resolved "https://registry.yarnpkg.com/@designliquido/delegua/-/delegua-0.43.0.tgz#93124fb21598e24f978dddb029d2d6751fa85d98"
-  integrity sha512-FlzavU3ccGnha+NX/eX7I9iBgZhqC7e9FJQmTyC4MWuj9NV8ck0mFn0E98R4w2xAuTNElyX24JHd5GnCablTCg==
+"@designliquido/delegua@^0.43.1":
+  version "0.43.1"
+  resolved "https://registry.yarnpkg.com/@designliquido/delegua/-/delegua-0.43.1.tgz#d7f3b462310e4243b46e5baf892105d8f97e54a9"
+  integrity sha512-HrTBpZJItidfZtwbU2bOSuYVA5+En+Q+AypSADl3PnyD+Bvx97L8rktSshVDfZufZZbJlAK7FU9yfG73kVxCLg==
   dependencies:
     antlr4ts "^0.5.0-alpha.4"
     browser-process-hrtime "^1.0.0"

@@ -16,7 +16,6 @@ import {
     EscrevaMesmaLinha,
     Escreva,
     Fazer,
-    Const,
     Para,
     Bloco,
     Aleatorio,
@@ -26,7 +25,8 @@ import {
     FuncaoDeclaracao,
 } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
-import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
+import { InterpretadorBaseComDepuracao } from '@designliquido/delegua/interpretador/depuracao/interpretador-base-com-depuracao';
+import { TipoEscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 
 import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } from './comum';
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
@@ -34,13 +34,12 @@ import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
 
 import * as comum from './comum';
-import { TipoEscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 
 /**
  * Interpretador com depuração para o dialeto VisuAlg.
  */
 export class InterpretadorVisuAlgComDepuracao
-    extends InterpretadorComDepuracao
+    extends InterpretadorBaseComDepuracao
     implements InterpretadorVisuAlgInterface
 {
     proximoEscopo?: TipoEscopoExecucao;

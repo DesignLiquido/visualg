@@ -71,22 +71,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.funcoesProcedimentosConhecidos = [];
     }
 
-    // TODO: Remover após versão 0.44.2.
-    override consumir(tipo: string, mensagemDeErro: string): SimboloInterface {
-        if (this.verificarTipoSimboloAtual(tipo)) return this.avancarEDevolverAnterior();
-        let simboloErro: SimboloInterface = this.simbolos[this.atual];
-        if (this.simbolos.length === 0) {
-            simboloErro = {
-                hashArquivo: this.hashArquivo,
-                linha: 1
-            } as SimboloInterface;
-        } else if (this.atual >= this.simbolos.length) {
-            simboloErro = this.simbolos[this.simbolos.length - 1];
-        }
-
-        throw this.erro(simboloErro, mensagemDeErro);
-    }
-
     private validarSegmentoAlgoritmo(): SimboloInterface {
         this.consumir(tiposDeSimbolos.ALGORITMO, "Esperada expressão 'algoritmo' para inicializar programa.");
 

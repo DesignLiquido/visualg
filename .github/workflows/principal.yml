@@ -26,8 +26,6 @@ jobs:
     #     sudo npm run testes-unitarios
     # - name: Cobertura de Código
     #   uses: MishaKav/jest-coverage-comment@main
-    # Os pacotes abaixo continuam dando o seguinte problema:
-    # Error: Error: EACCES: permission denied, rmdir 'node_modules/.bin'
     - uses: ArtiomTr/jest-coverage-report-action@v2
       id: coverage
       with:

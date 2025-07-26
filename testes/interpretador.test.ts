@@ -282,7 +282,7 @@ describe('Interpretador', () => {
                         'inicio',
                             'repita',
                                 'escreval("1 - Dizer olá!")',
-                                'escreval("2 – Dizer oi! ")',
+                                'escreval("2 - Dizer oi! ")',
                                 'escreval("0 - Sair do programa")',
                                 'leia(opcao)',
                                 'se (opcao = 1) entao',

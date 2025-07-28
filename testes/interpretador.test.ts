@@ -18,6 +18,7 @@ describe('Interpretador', () => {
             lexador = new LexadorVisuAlg();
             avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
             interpretador = new InterpretadorVisuAlg(process.cwd(), false, funcaoSaida, funcaoSaida);
+            interpretador.funcaoLimpaTela = jest.fn();
         });
 
         describe('Cenários de sucesso', () => {
@@ -267,7 +268,7 @@ describe('Interpretador', () => {
 
             describe('Repita', () => {
                 it('"Repita Até" com acento', async () => {
-                    const saidasMensagens = ['1 - Dizer olá!', '2 – Dizer oi! ', '0 - Sair do programa']
+                    const saidasMensagens = ['1 - Dizer olá!', '2 - Dizer oi! ', '0 - Sair do programa']
                     const respostas = ["0"];
                     (interpretador as any).interfaceEntradaSaida = {
                         question: (mensagem: string, callback: Function) => {

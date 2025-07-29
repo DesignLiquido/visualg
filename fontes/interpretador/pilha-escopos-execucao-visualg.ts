@@ -4,7 +4,7 @@ import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/inte
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { DescritorTipoClasse } from '@designliquido/delegua/interpretador/estruturas';
-import { EspacoVariaveis } from '@designliquido/delegua/espaco-variaveis';
+import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
 
 import { TipoInferencia, inferirTipoVariavel } from './inferenciador';
 import { VisuAlgFuncao } from './estruturas';
@@ -17,12 +17,16 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
         const escopoExecucao: EscopoExecucao = {
             declaracoes: [],
             declaracaoAtual: 0,
-            ambiente: new EspacoVariaveis(),
+            espacoMemoria: new EspacoMemoria(),
             finalizado: false,
             tipo: 'outro',
             emLacoRepeticao: false,
         };
         this.empilhar(escopoExecucao);
+    }
+    
+    registrarReferenciaMontao(endereco: string): void {
+        throw new Error('Método não implementado.');
     }
 
     obterTodasDeclaracoesClasse() {
@@ -79,7 +83,7 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
     }
 
     definirConstante(nomeConstante: string, valor: any, tipo?: string): void {
-        const constante = this.pilha[this.pilha.length - 1].ambiente.valores[nomeConstante];
+        const constante = this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeConstante];
 
         let tipoConstante;
         if (constante && constante.hasOwnProperty('tipo')) {
@@ -97,11 +101,11 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
             imutavel: true,
         };
 
-        this.pilha[this.pilha.length - 1].ambiente.valores[nomeConstante] = elementoAlvo;
+        this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeConstante] = elementoAlvo;
     }
 
     definirVariavel(nomeVariavel: string, valor: any, tipo?: string) {
-        const variavel = this.pilha[this.pilha.length - 1].ambiente.valores[nomeVariavel];
+        const variavel = this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeVariavel];
 
         let tipoVariavel;
         if (variavel && variavel.hasOwnProperty('tipo')) {
@@ -119,15 +123,15 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
             imutavel: false,
         };
 
-        this.pilha[this.pilha.length - 1].ambiente.valores[nomeVariavel] = elementoAlvo;
+        this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeVariavel] = elementoAlvo;
     }
 
     atribuirVariavelEm(distancia: number, simbolo: any, valor: any): void {
-        const ambienteAncestral = this.pilha[this.pilha.length - distancia].ambiente;
-        if (ambienteAncestral.valores[simbolo.lexema].imutavel) {
+        const espacoMemoriaAncestral = this.pilha[this.pilha.length - distancia].espacoMemoria;
+        if (espacoMemoriaAncestral.valores[simbolo.lexema].imutavel) {
             throw new ErroEmTempoDeExecucao(simbolo, `Constante '${simbolo.lexema}' não pode receber novos valores.`);
         }
-        ambienteAncestral.valores[simbolo.lexema] = {
+        espacoMemoriaAncestral.valores[simbolo.lexema] = {
             valor,
             tipo: inferirTipoVariavel(valor),
             imutavel: false,
@@ -136,9 +140,9 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
 
     atribuirVariavel(simbolo: SimboloInterface, valor: any) {
         for (let i = 1; i <= this.pilha.length; i++) {
-            const ambiente = this.pilha[this.pilha.length - i].ambiente;
-            if (ambiente.valores[simbolo.lexema] !== undefined) {
-                const variavel = ambiente.valores[simbolo.lexema];
+            const espacoMemoria = this.pilha[this.pilha.length - i].espacoMemoria;
+            if (espacoMemoria.valores[simbolo.lexema] !== undefined) {
+                const variavel = espacoMemoria.valores[simbolo.lexema];
                 if (variavel.imutavel) {
                     throw new ErroEmTempoDeExecucao(
                         simbolo,
@@ -150,7 +154,7 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
                 ).toLowerCase() as TipoInferencia;
 
                 const valorResolvido = this.converterValor(tipo, valor);
-                ambiente.valores[simbolo.lexema] = {
+                espacoMemoria.valores[simbolo.lexema] = {
                     valor: valorResolvido,
                     tipo,
                     imutavel: false,
@@ -174,15 +178,15 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
     }
 
     obterVariavelEm(distancia: number, nome: string): VariavelInterface {
-        const ambienteAncestral = this.pilha[this.pilha.length - distancia].ambiente;
-        return ambienteAncestral.valores[nome];
+        const espacoMemoriaAncestral = this.pilha[this.pilha.length - distancia].espacoMemoria;
+        return espacoMemoriaAncestral.valores[nome];
     }
 
     obterValorVariavel(simbolo: SimboloInterface): VariavelInterface {
         for (let i = 1; i <= this.pilha.length; i++) {
-            const ambiente = this.pilha[this.pilha.length - i].ambiente;
-            if (ambiente.valores[simbolo.lexema] !== undefined) {
-                return ambiente.valores[simbolo.lexema];
+            const espacoMemoria = this.pilha[this.pilha.length - i].espacoMemoria;
+            if (espacoMemoria.valores[simbolo.lexema] !== undefined) {
+                return espacoMemoria.valores[simbolo.lexema];
             }
         }
 
@@ -191,9 +195,9 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
 
     obterVariavelPorNome(nome: string): VariavelInterface {
         for (let i = 1; i <= this.pilha.length; i++) {
-            const ambiente = this.pilha[this.pilha.length - i].ambiente;
-            if (ambiente.valores[nome] !== undefined) {
-                return ambiente.valores[nome];
+            const espacoMemoria = this.pilha[this.pilha.length - i].espacoMemoria;
+            if (espacoMemoria.valores[nome] !== undefined) {
+                return espacoMemoria.valores[nome];
             }
         }
 
@@ -208,7 +212,7 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
      */
     obterTodasVariaveis(todasVariaveis: VariavelInterface[] = []): any[] {
         for (let i = 1; i <= this.pilha.length - 1; i++) {
-            const valoresAmbiente = this.pilha[this.pilha.length - i].ambiente.valores;
+            const valoresAmbiente = this.pilha[this.pilha.length - i].espacoMemoria.valores;
 
             const vetorObjeto: VariavelInterface[] = Object.entries(valoresAmbiente).map((chaveEValor, indice) => ({
                 nome: chaveEValor[0],
@@ -228,8 +232,8 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
      */
     obterTodasDeleguaFuncao(): { [nome: string]: VisuAlgFuncao } {
         const retorno = {};
-        const ambiente = this.pilha[this.pilha.length - 1].ambiente;
-        for (const [nome, corpo] of Object.entries(ambiente.valores)) {
+        const espacoMemoria = this.pilha[this.pilha.length - 1].espacoMemoria;
+        for (const [nome, corpo] of Object.entries(espacoMemoria.valores)) {
             const corpoValor = corpo.hasOwnProperty('valor') ? corpo.valor : corpo;
             if (corpoValor instanceof VisuAlgFuncao) {
                 retorno[nome] = corpoValor;
@@ -245,8 +249,8 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
      */
     obterTodasDeclaracaoClasse(): any {
         const retorno = {};
-        const ambiente = this.pilha[this.pilha.length - 1].ambiente;
-        for (const [nome, corpo] of Object.entries(ambiente.valores)) {
+        const espacoMemoria = this.pilha[this.pilha.length - 1].espacoMemoria;
+        for (const [nome, corpo] of Object.entries(espacoMemoria.valores)) {
             const corpoValor = corpo.hasOwnProperty('valor') ? corpo.valor : corpo;
             if (corpoValor instanceof DescritorTipoClasse) {
                 retorno[nome] = corpoValor;

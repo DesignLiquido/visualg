@@ -24,6 +24,10 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
         };
         this.empilhar(escopoExecucao);
     }
+
+    migrarReferenciaMontaoParaEscopoDeVariavel(nomeVariavel: string, enderecoMontao: string): void {
+        throw new Error('Método não implementado.');
+    }
     
     registrarReferenciaMontao(endereco: string): void {
         throw new Error('Método não implementado.');

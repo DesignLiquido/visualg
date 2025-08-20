@@ -25,7 +25,8 @@ export function copia(
     inicio: number,
     fim: number
 ): Promise<string> {
-    return Promise.resolve(valor.substring(inicio, inicio + fim));
+    const resultadoCopia = valor.substring(inicio - 1, (inicio - 1) + fim);
+    return Promise.resolve(resultadoCopia);
 }
 
 export function maiusc(interpretador: InterpretadorInterface, valor: any): Promise<string> {

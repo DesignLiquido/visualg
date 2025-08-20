@@ -275,9 +275,16 @@ describe('Biblioteca de caracteres', () => {
             expect(await funcaoCompr({} as InterpretadorInterface, 'a')).toBe(1);
         });
 
-        it('copia', async () => {
-            const funcaoCopia = funcoes['copia'].funcao;
-            expect(await funcaoCopia({} as InterpretadorInterface, 'Uma cadeia de caracteres', 4, 6)).toBe('cadeia');
+        describe('copia', () => {
+            it('Trivial', async () => {
+                const funcaoCopia = funcoes['copia'].funcao;
+                expect(await funcaoCopia({} as InterpretadorInterface, 'Uma cadeia de caracteres', 5, 6)).toBe('cadeia');
+            });
+
+            it('Com início e fim iguais', async () => {
+                const funcaoCopia = funcoes['copia'].funcao;
+                expect(await funcaoCopia({} as InterpretadorInterface, 'Uma cadeia de caracteres', 1, 1)).toBe('U');
+            });
         });
 
         it('maiusc', async () => {

@@ -474,7 +474,6 @@ describe('Avaliador sintático', () => {
         describe('Cenário de falha', () => {
             it('Falha - Programa vazio', () => {
                 const retornoLexador = lexador.mapear([''], 1);
-                expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrowError();
                 expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrow(
                     expect.objectContaining({
                         name: 'Error',
@@ -485,7 +484,6 @@ describe('Avaliador sintático', () => {
 
             it('Falha - Programa sem algoritmo', () => {
                 const retornoLexador = lexador.mapear(['inicio'], 1);
-                expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrowError();
                 expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrow(
                     expect.objectContaining({
                         name: 'Error',
@@ -496,7 +494,6 @@ describe('Avaliador sintático', () => {
 
             it("Falha - Programa sem palavra chave após 'algoritmo'", () => {
                 const retornoLexador = lexador.mapear(['algoritmo'], 1);
-                expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrowError();
                 expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrow(
                     expect.objectContaining({
                         name: 'Error',
@@ -507,7 +504,6 @@ describe('Avaliador sintático', () => {
 
             it("Falha - Esperado quebra de linha para definição do segmento 'algoritmo'", () => {
                 const retornoLexador = lexador.mapear(['algoritmo "Falha"'], 1);
-                expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrowError();
                 expect(() => avaliadorSintatico.analisar(retornoLexador, 1)).toThrow(
                     expect.objectContaining({
                         name: 'Error',
@@ -522,7 +518,7 @@ describe('Avaliador sintático', () => {
                     -1
                 );
 
-                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrowError();
+                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrow();
                 // expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrow(
                 //     expect.objectContaining({
                 //         name: 'TypeError',
@@ -587,7 +583,7 @@ describe('Avaliador sintático', () => {
             it(`Falha - Programa não terminado por 'fimalgoritmo'`, () => {
                 const retornoLexador = lexador.mapear(['algoritmo "Falha"', 'inicio'], -1);
 
-                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrowError();
+                expect(() => avaliadorSintatico.analisar(retornoLexador, -1)).toThrow();
             });
 
             it('Falha - Aleatorio', () => {

@@ -8,6 +8,7 @@ import {
     Atribuir,
     Binario,
     Chamada,
+    ComentarioComoConstruto,
     Construto,
     DefinirValor,
     Dicionario,
@@ -20,6 +21,7 @@ import {
     Literal,
     Logico,
     ReferenciaFuncao,
+    Separador,
     Super,
     TipoDe,
     Tupla,
@@ -90,6 +92,14 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.devePularLinha = false;
         this.deveIndentar = true;
         this.retornoFuncaoAtual = undefined;
+    }
+
+    visitarExpressaoComentario(expressao: ComentarioComoConstruto): Promise<any> | void {
+        throw new Error('Método não implementado.');
+    }
+
+    visitarExpressaoSeparador(expressao: Separador): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     visitarExpressaoArgumentoReferenciaFuncao(expressao: ArgumentoReferenciaFuncao): Promise<any> | void {

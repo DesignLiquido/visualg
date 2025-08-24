@@ -195,7 +195,7 @@ export async function atribuirVariavel(
         }
 
         if (entidadeChamada instanceof Vetor) {
-            const primeiraDimensao = entidadeChamada.valores[indicePrimario];
+            const primeiraDimensao = entidadeChamada.valores[indicePrimario] as any; // TODO: O que exatamente tem aqui?
             const tipoElementar = primeiraDimensao.tipo.replace('[]', '');
             primeiraDimensao.valores[indiceSecundario] = converterValor(valor, tipoElementar);
             return Promise.resolve();
@@ -753,7 +753,7 @@ export async function visitarExpressaoAcessoElementoMatriz(
     }
 
     if (objeto instanceof Vetor) {
-        const vetorPrimario = objeto.valores[valorIndicePrimario];
+        const vetorPrimario = objeto.valores[valorIndicePrimario] as any; // TODO: O que exatamente tem aqui?
         return vetorPrimario.valores[valorIndiceSecundario];
     }
 
@@ -807,7 +807,7 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
     }
 
     if (objeto instanceof Vetor) {
-        const primeiraDimensao = objeto.valores[indicePrimario];
+        const primeiraDimensao = objeto.valores[indicePrimario] as any; // TODO: O que exatamente tem aqui?
         const tipoElementar = primeiraDimensao.tipo.replace('[]', '');
         primeiraDimensao.valores[indiceSecundario] = converterValor(valor, tipoElementar);
         return Promise.resolve();

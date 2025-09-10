@@ -23,6 +23,7 @@ import {
     Classe,
     Var,
     FuncaoDeclaracao,
+    Expressao,
 } from '@designliquido/delegua/declaracoes';
 import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { InterpretadorBaseComDepuracao } from '@designliquido/delegua/interpretador/depuracao/interpretador-base-com-depuracao';
@@ -233,7 +234,7 @@ export class InterpretadorVisuAlgComDepuracao
         // O incremento vai ao final do bloco de escopo.
         if (cloneDeclaracao.incrementar !== null) {
             await comum.resolverIncrementoPara(this, cloneDeclaracao);
-            corpoExecucao.declaracoes.push(cloneDeclaracao.incrementar);
+            corpoExecucao.declaracoes.push(new Expressao(cloneDeclaracao.incrementar));
         }
 
         const escopoAtual = this.pilhaEscoposExecucao.topoDaPilha();

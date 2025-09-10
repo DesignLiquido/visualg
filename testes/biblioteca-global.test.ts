@@ -85,66 +85,70 @@ const mockPilha: PilhaEscoposExecucaoInterface | any = {
 };
 
 describe('Biblioteca Numérica', () => {
-    let interpretador: InterpretadorVisuAlg;
-
     beforeAll(() => {
         carregarBibliotecaGlobalNumerica(mockPilha);
     });
 
     describe('Testes triviais', () => {
+        let interpretador: InterpretadorVisuAlg;
+
+        beforeEach(() => {
+            interpretador = new InterpretadorVisuAlg('', false, () => {}, () => {});
+        });
+
         it('abs', async () => {
             const funcaoAbs = funcoes['abs'].funcao;
-            expect(await funcaoAbs({} as InterpretadorInterface, -5)).toBe(5);
+            expect(await funcaoAbs(interpretador, -5)).toBe(5);
         });
 
         it('arcCos', async () => {
             const funcaoArcCos = funcoes['arccos'].funcao;
-            expect(await funcaoArcCos({} as InterpretadorInterface, 0)).toBe(1.5707963267948966);
+            expect(await funcaoArcCos(interpretador, 0)).toBe(1.5707963267948966);
         });
 
         it('arcSen', async () => {
             const funcaoArcSen = funcoes['arcsen'].funcao;
-            expect(await funcaoArcSen({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoArcSen(interpretador, 0)).toBe(0);
         });
 
         it('arcTan', async () => {
             const funcaoArcTan = funcoes['arctan'].funcao;
-            expect(await funcaoArcTan({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoArcTan(interpretador, 0)).toBe(0);
         });
 
         it('cos', async () => {
             const funcaoCos = funcoes['cos'].funcao;
-            expect(await funcaoCos({} as InterpretadorInterface, 0)).toBe(1);
+            expect(await funcaoCos(interpretador, 0)).toBe(1);
         });
 
         it('cotan', async () => {
             const funcaoCoTan = funcoes['cotan'].funcao;
-            expect(await funcaoCoTan({} as InterpretadorInterface, 1)).toBe(0.6420926159343306);
+            expect(await funcaoCoTan(interpretador, 1)).toBe(0.6420926159343306);
         });
 
         it('exp', async () => {
             const funcaoExp = funcoes['exp'].funcao;
-            expect(await funcaoExp({} as InterpretadorInterface, 10, 2)).toBe(100);
+            expect(await funcaoExp(interpretador, 10, 2)).toBe(100);
         });
 
         it('grauprad', async () => {
             const funcaoGrauPRad = funcoes['grauprad'].funcao;
-            expect(await funcaoGrauPRad({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoGrauPRad(interpretador, 0)).toBe(0);
         });
 
         it('int', async () => {
             const funcaoInt = funcoes['int'].funcao;
-            expect(await funcaoInt({} as InterpretadorInterface, '0')).toBe(0);
+            expect(await funcaoInt(interpretador, '0')).toBe(0);
         });
 
         it('log', async () => {
             const funcaoLog = funcoes['log'].funcao;
-            expect(await funcaoLog({} as InterpretadorInterface, 100)).toBe(2);
+            expect(await funcaoLog(interpretador, 100)).toBe(2);
         });
 
         it('logn', async () => {
             const funcaoLogN = funcoes['logn'].funcao;
-            expect(await funcaoLogN({} as InterpretadorInterface, Math.E)).toBe(1);
+            expect(await funcaoLogN(interpretador, Math.E)).toBe(1);
         });
 
         it('pi', async () => {
@@ -154,17 +158,17 @@ describe('Biblioteca Numérica', () => {
 
         it('quad', async () => {
             const funcaoQuad = funcoes['quad'].funcao;
-            expect(await funcaoQuad({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoQuad(interpretador, 0)).toBe(0);
         });
 
         it('radpgrau', async () => {
             const funcaoRadPGrau = funcoes['radpgrau'].funcao;
-            expect(await funcaoRadPGrau({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoRadPGrau(interpretador, 0)).toBe(0);
         });
 
         it('raizq', async () => {
             const funcaoRaizQ = funcoes['raizq'].funcao;
-            expect(await funcaoRaizQ({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoRaizQ(interpretador, 0)).toBe(0);
         });
 
         it('rand', async () => {
@@ -175,18 +179,18 @@ describe('Biblioteca Numérica', () => {
 
         it('randi', async () => {
             const funcaoRandI = funcoes['randi'].funcao;
-            const resultado = await funcaoRandI({} as InterpretadorInterface, 15);
+            const resultado = await funcaoRandI(interpretador, 15);
             expect(resultado).toBeGreaterThanOrEqual(0);
         });
 
         it('sen', async () => {
             const funcaoSen = funcoes['sen'].funcao;
-            expect(await funcaoSen({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoSen(interpretador, 0)).toBe(0);
         });
 
         it('tan', async () => {
             const funcaoTan = funcoes['tan'].funcao;
-            expect(await funcaoTan({} as InterpretadorInterface, 0)).toBe(0);
+            expect(await funcaoTan(interpretador, 0)).toBe(0);
         });
     });
 
@@ -195,10 +199,17 @@ describe('Biblioteca Numérica', () => {
         let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
         let interpretador: InterpretadorVisuAlg;
 
+        let _saidas: string[] = [];
+        const funcaoSaida = (texto: string) => {
+            _saidas.push(texto);
+        }
+
         beforeEach(() => {
+            _saidas = [];
             lexador = new LexadorVisuAlg();
             avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
-            interpretador = new InterpretadorVisuAlg(process.cwd());
+            interpretador = new InterpretadorVisuAlg(process.cwd(), false, funcaoSaida, funcaoSaida);
+            interpretador.funcaoLimpaTela = jest.fn();
         });
 
         it('Argumentos como variáveis', async () => {
@@ -219,6 +230,7 @@ describe('Biblioteca Numérica', () => {
             const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
             expect(retornoInterpretador.erros).toHaveLength(0);
+            expect(_saidas).toHaveLength(1);
         });
         
         it('Chamadas diversas', async () => {
@@ -243,6 +255,13 @@ describe('Biblioteca Numérica', () => {
             const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
             expect(retornoInterpretador.erros).toHaveLength(0);
+            expect(_saidas).toHaveLength(6);
+            expect(_saidas[0]).toBe('7');
+            expect(_saidas[1]).toBe('7');
+            expect(_saidas[2]).toBe('A área do circulo com raio 3 é 28.274333882308138');
+            expect(_saidas[3]).toBe('Um ângulo de 90 graus tem 1.5707963267948966 radianos');
+            expect(_saidas[4]).toBe('512');
+            expect(_saidas[5]).toBe('1');
         });
     });
 });
@@ -254,57 +273,61 @@ describe('Biblioteca de caracteres', () => {
         carregarBibliotecaGlobalCaracter(mockPilha);
     });
 
+    beforeEach(() => {
+        interpretador = new InterpretadorVisuAlg('', false, () => {}, () => {});
+    });
+
     describe('Testes triviais', () => {
         it('asc', async () => {
             const funcaoAsc = funcoes['asc'].funcao;
-            expect(await funcaoAsc({} as InterpretadorInterface, 'a')).toBe(97);
+            expect(await funcaoAsc(interpretador, 'a')).toBe(97);
         });
 
         it('carac', async () => {
             const funcaoCarac = funcoes['carac'].funcao;
-            expect(await funcaoCarac({} as InterpretadorInterface, 97)).toBe('a');
+            expect(await funcaoCarac(interpretador, 97)).toBe('a');
         });
 
         it('caracpnum', async () => {
             const funcaoCaracPNum = funcoes['caracpnum'].funcao;
-            expect(await funcaoCaracPNum({} as InterpretadorInterface, '97')).toBe(97);
+            expect(await funcaoCaracPNum(interpretador, '97')).toBe(97);
         });
 
         it('compr', async () => {
             const funcaoCompr = funcoes['compr'].funcao;
-            expect(await funcaoCompr({} as InterpretadorInterface, 'a')).toBe(1);
+            expect(await funcaoCompr(interpretador, 'a')).toBe(1);
         });
 
         describe('copia', () => {
             it('Trivial', async () => {
                 const funcaoCopia = funcoes['copia'].funcao;
-                expect(await funcaoCopia({} as InterpretadorInterface, 'Uma cadeia de caracteres', 5, 6)).toBe('cadeia');
+                expect(await funcaoCopia(interpretador, 'Uma cadeia de caracteres', 5, 6)).toBe('cadeia');
             });
 
             it('Com início e fim iguais', async () => {
                 const funcaoCopia = funcoes['copia'].funcao;
-                expect(await funcaoCopia({} as InterpretadorInterface, 'Uma cadeia de caracteres', 1, 1)).toBe('U');
+                expect(await funcaoCopia(interpretador, 'Uma cadeia de caracteres', 1, 1)).toBe('U');
             });
         });
 
         it('maiusc', async () => {
             const funcaoMaiusc = funcoes['maiusc'].funcao;
-            expect(await funcaoMaiusc({} as InterpretadorInterface, 'a')).toBe('A');
+            expect(await funcaoMaiusc(interpretador, 'a')).toBe('A');
         });
 
         it('minusc', async () => {
             const funcaoMinusc = funcoes['minusc'].funcao;
-            expect(await funcaoMinusc({} as InterpretadorInterface, 'A')).toBe('a');
+            expect(await funcaoMinusc(interpretador, 'A')).toBe('a');
         });
 
         it('numpcarac', async () => {
             const funcaoNumPCarac = funcoes['numpcarac'].funcao;
-            expect(await funcaoNumPCarac({} as InterpretadorInterface, 1)).toBe('1');
+            expect(await funcaoNumPCarac(interpretador, 1)).toBe('1');
         });
 
         it('pos', async () => {
             const funcaoPos = funcoes['pos'].funcao;
-            expect(await funcaoPos({} as InterpretadorInterface, 'a', 'a')).toBe(1);
+            expect(await funcaoPos(interpretador, 'a', 'a')).toBe(1);
         });
     });
 
@@ -313,10 +336,17 @@ describe('Biblioteca de caracteres', () => {
         let avaliadorSintatico: AvaliadorSintaticoVisuAlg;
         let interpretador: InterpretadorVisuAlg;
 
+        let _saidas: string[] = [];
+        const funcaoSaida = (texto: string) => {
+            _saidas.push(texto);
+        }
+
         beforeEach(() => {
+            _saidas = [];
             lexador = new LexadorVisuAlg();
             avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
-            interpretador = new InterpretadorVisuAlg(process.cwd());
+            interpretador = new InterpretadorVisuAlg(process.cwd(), false, funcaoSaida, funcaoSaida);
+            interpretador.funcaoLimpaTela = jest.fn();
         });
         
         it('Chamadas diversas', async () => {
@@ -346,6 +376,15 @@ describe('Biblioteca de caracteres', () => {
             const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
             expect(retornoInterpretador.erros).toHaveLength(0);
+            expect(_saidas).toHaveLength(8);
+            expect(_saidas[0]).toBe('92');
+            expect(_saidas[1]).toBe('11');
+            expect(_saidas[2]).toBe('62');
+            expect(_saidas[3]).toBe('BRASIL');
+            expect(_saidas[4]).toBe('6');
+            expect(_saidas[5]).toBe('13');
+            expect(_saidas[6]).toBe('66');
+            expect(_saidas[7]).toBe('ABC');
         });
     });
 });

@@ -515,17 +515,17 @@ export async function visitarExpressaoBinaria(
         const esquerda: VariavelInterface | any = promises[0];
         const direita: VariavelInterface | any = promises[1];
 
-        let valorEsquerdo: any = esquerda?.hasOwnProperty('valor') ? esquerda.valor : esquerda;
-        let valorDireito: any = direita?.hasOwnProperty('valor') ? direita.valor : direita;
+        let valorEsquerdo: any = interpretador.resolverValor(esquerda);
+        let valorDireito: any = interpretador.resolverValor(direita);
 
         // No VisuAlg, uma variável pode resolver para função porque funções não precisam ter parênteses.
         // Esta parte evita o problema.
         if (valorEsquerdo && valorEsquerdo.hasOwnProperty('funcao')) {
-            valorEsquerdo = valorEsquerdo.funcao();
+            valorEsquerdo = await valorEsquerdo.funcao();
         }
 
         if (valorDireito && valorDireito.hasOwnProperty('funcao')) {
-            valorDireito = valorDireito.funcao();
+            valorDireito = await valorDireito.funcao();
         }
 
         const tipoEsquerdo: string = esquerda?.hasOwnProperty('tipo') ? esquerda.tipo : inferirTipoVariavel(esquerda);
@@ -815,7 +815,7 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
 
     return Promise.reject(
         new ErroEmTempoDeExecucao(
-            expressao.objeto.nome,
+            (expressao.objeto as any).nome, // TODO: Quais tipos seriam aceitos aqui?
             'Somente listas, dicionários, classes e objetos podem ser mudados por sobrescrita.',
             expressao.linha
         )

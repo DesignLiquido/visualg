@@ -14,7 +14,6 @@ import {
     Aleatorio,
     CabecalhoPrograma,
     Classe,
-    Const,
     Escreva,
     EscrevaMesmaLinha,
     Fazer,
@@ -23,7 +22,7 @@ import {
     Var,
 } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
-import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
+import { ContinuarQuebra, Quebra, RetornoQuebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { TipoEscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 
 import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } from './comum';
@@ -70,6 +69,39 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
         carregarBibliotecaGlobalNumerica(this.pilhaEscoposExecucao);
     }
 
+    override resolverValor(objeto: any) {
+        if (objeto === null || objeto === undefined) {
+            return objeto;
+        }
+
+        if (Array.isArray(objeto)) {
+            const vetorResolvido: any[] = [];
+            for (const elemento of objeto) {
+                vetorResolvido.push(this.resolverValor(elemento));
+            }
+
+            return vetorResolvido;
+        }
+
+        if (objeto instanceof RetornoQuebra) {
+            return this.resolverValor(objeto.valor);
+        }
+
+        if (objeto.hasOwnProperty && objeto.hasOwnProperty('valorRetornado')) {
+            return this.resolverValor(objeto.valorRetornado);
+        }
+
+        if (objeto.hasOwnProperty('valor')) {
+            if (Array.isArray(objeto.valor)) {
+                return this.resolverValor(objeto.valor);
+            }
+
+            return objeto.valor;
+        }
+
+        return objeto;
+    }
+
     visitarExpressaoLimpaTela(expressao: LimpaTela): void | Promise<any> {
         this.funcaoLimpaTela();
         return Promise.resolve();
@@ -110,7 +142,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
 
         for (const argumento of argumentos) {
             const resultadoAvaliacao = await this.avaliar(argumento);
-            let valor = resultadoAvaliacao?.hasOwnProperty('valor') ? resultadoAvaliacao.valor : resultadoAvaliacao;
+            let valor = this.resolverValor(resultadoAvaliacao);
 
             formatoTexto += `${this.paraTexto(valor)}`;
         }
@@ -167,14 +199,14 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
         do {
             try {
                 retornoExecucao = await this.executar(declaracao.caminhoFazer);
-                if (retornoExecucao instanceof ContinuarQuebra) {
+                if (retornoExecucao && retornoExecucao.valorRetornado instanceof ContinuarQuebra) {
                     retornoExecucao = null;
                 }
             } catch (erro: any) {
                 return Promise.reject(erro);
             }
         } while (
-            !(retornoExecucao instanceof Quebra) &&
+            !(retornoExecucao && retornoExecucao.valorRetornado instanceof Quebra) &&
             !this.eVerdadeiro(await this.avaliar(declaracao.condicaoEnquanto))
         );
     }
@@ -221,18 +253,20 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
 
         let retornoExecucao: any;
         let retornoIncremento: any;
-        while (!(retornoExecucao instanceof Quebra) && !(retornoIncremento instanceof Quebra)) {
-            if (declaracao.condicao !== null && !this.eVerdadeiro(await this.avaliar(declaracao.condicao))) {
-                break;
+        while (!(retornoExecucao && retornoExecucao.valorRetornado instanceof Quebra) && !(retornoIncremento instanceof Quebra)) {
+            
+            if (declaracao.condicao !== null) {
+                const condicaoResolvida = await this.avaliar(declaracao.condicao);
+                if (!this.eVerdadeiro(condicaoResolvida)) break;
             }
 
             try {
                 retornoExecucao = await this.executar(declaracao.corpo);
-                if (retornoExecucao instanceof SustarQuebra) {
+                if (retornoExecucao && retornoExecucao.valorRetornado instanceof SustarQuebra) {
                     return null;
                 }
 
-                if (retornoExecucao instanceof ContinuarQuebra) {
+                if (retornoExecucao && retornoExecucao.valorRetornado instanceof ContinuarQuebra) {
                     retornoExecucao = null;
                 }
             } catch (erro: any) {

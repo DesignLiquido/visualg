@@ -25,8 +25,8 @@ export function cotan(interpretador: InterpretadorInterface, valor: number): Pro
 }
 
 export function exp(interpretador: InterpretadorInterface, base: any, expoente: any): Promise<number> {
-    const baseResolvida = base.hasOwnProperty('valor') ? base.valor : base;
-    const expoenteResolvido = base.hasOwnProperty('valor') ? expoente.valor : expoente;
+    const baseResolvida = interpretador.resolverValor(base);
+    const expoenteResolvido = interpretador.resolverValor(expoente);
     return Promise.resolve(Math.pow(baseResolvida, expoenteResolvido));
 }
 
@@ -51,7 +51,7 @@ export function pi(): Promise<number> {
 }
 
 export function quad(interpretador: InterpretadorInterface, valor: any): Promise<number> {
-    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    const valorResolvido = interpretador.resolverValor(valor);
     return Promise.resolve(valorResolvido * valorResolvido);
 }
 
@@ -60,7 +60,7 @@ export function radpgrau(interpretador: InterpretadorInterface, valor: number): 
 }
 
 export function raizq(interpretador: InterpretadorInterface, valor: any): Promise<number> {
-    const valorResolvido = valor.hasOwnProperty('valor') ? valor.valor : valor;
+    const valorResolvido = interpretador.resolverValor(valor);
     return Promise.resolve(Math.sqrt(valorResolvido));
 }
 

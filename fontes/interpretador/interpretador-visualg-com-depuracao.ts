@@ -75,6 +75,10 @@ export class InterpretadorVisuAlgComDepuracao
         carregarBibliotecaGlobalNumerica(this.pilhaEscoposExecucao);
     }
 
+    override resolverValor(objeto: any) {
+        return comum.resolverValor(objeto);
+    }
+
     async visitarExpressaoLimpaTela(expressao: LimpaTela): Promise<any> {
         this.funcaoLimpaTela();
         return Promise.resolve();

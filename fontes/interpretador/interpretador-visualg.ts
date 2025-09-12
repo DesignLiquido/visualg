@@ -70,36 +70,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
     }
 
     override resolverValor(objeto: any) {
-        if (objeto === null || objeto === undefined) {
-            return objeto;
-        }
-
-        if (Array.isArray(objeto)) {
-            const vetorResolvido: any[] = [];
-            for (const elemento of objeto) {
-                vetorResolvido.push(this.resolverValor(elemento));
-            }
-
-            return vetorResolvido;
-        }
-
-        if (objeto instanceof RetornoQuebra) {
-            return this.resolverValor(objeto.valor);
-        }
-
-        if (objeto.hasOwnProperty && objeto.hasOwnProperty('valorRetornado')) {
-            return this.resolverValor(objeto.valorRetornado);
-        }
-
-        if (objeto.hasOwnProperty('valor')) {
-            if (Array.isArray(objeto.valor)) {
-                return this.resolverValor(objeto.valor);
-            }
-
-            return objeto.valor;
-        }
-
-        return objeto;
+        return comum.resolverValor(objeto);
     }
 
     visitarExpressaoLimpaTela(expressao: LimpaTela): void | Promise<any> {

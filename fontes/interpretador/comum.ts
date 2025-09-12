@@ -40,12 +40,13 @@ import {
 
 import { inferirTipoVariavel } from './inferenciador';
 import { InterpretadorVisuAlgInterface } from '../interfaces';
+import { VisuAlgFuncao } from './estruturas';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 import * as bibliotecaCaracteres from '../bibliotecas/caracteres';
 import * as bibliotecaNumerica from '../bibliotecas/numerica';
-import { VisuAlgFuncao } from './estruturas';
+import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 export function carregarBibliotecaGlobalCaracter(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
     pilhaEscoposExecucao.definirVariavel('asc', new FuncaoPadrao(1, bibliotecaCaracteres.asc));
@@ -79,6 +80,39 @@ export function carregarBibliotecaGlobalNumerica(pilhaEscoposExecucao: PilhaEsco
     pilhaEscoposExecucao.definirVariavel('randi', new FuncaoPadrao(1, bibliotecaNumerica.randi));
     pilhaEscoposExecucao.definirVariavel('sen', new FuncaoPadrao(1, bibliotecaNumerica.sen));
     pilhaEscoposExecucao.definirVariavel('tan', new FuncaoPadrao(1, bibliotecaNumerica.tan));
+}
+
+export function resolverValor(objeto: any) {
+    if (objeto === null || objeto === undefined) {
+        return objeto;
+    }
+
+    if (Array.isArray(objeto)) {
+        const vetorResolvido: any[] = [];
+        for (const elemento of objeto) {
+            vetorResolvido.push(resolverValor(elemento));
+        }
+
+        return vetorResolvido;
+    }
+
+    if (objeto instanceof RetornoQuebra) {
+        return resolverValor(objeto.valor);
+    }
+
+    if (objeto.hasOwnProperty && objeto.hasOwnProperty('valorRetornado')) {
+        return resolverValor(objeto.valorRetornado);
+    }
+
+    if (objeto.hasOwnProperty('valor')) {
+        if (Array.isArray(objeto.valor)) {
+            return resolverValor(objeto.valor);
+        }
+
+        return objeto.valor;
+    }
+
+    return objeto;
 }
 
 export async function visitarDeclaracaoCabecalhoPrograma(

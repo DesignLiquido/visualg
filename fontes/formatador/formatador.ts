@@ -30,7 +30,6 @@ import {
     Vetor,
 } from '@designliquido/delegua/construtos';
 import {
-    Aleatorio,
     Classe,
     Const,
     ConstMultiplo,
@@ -64,7 +63,7 @@ import { ContinuarQuebra } from '@designliquido/delegua/quebras';
 import { PilhaEscoposFormatacao } from './pilha-escopos-formatacao';
 import { VisitanteVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
-import { ProcedimentoDeclaracao } from '../declaracoes';
+import { Aleatorio, ProcedimentoDeclaracao } from '../declaracoes';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 

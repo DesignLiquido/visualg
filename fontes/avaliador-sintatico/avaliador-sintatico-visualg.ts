@@ -1,7 +1,6 @@
 import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
 import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
 import {
-    Aleatorio,
     Bloco,
     CabecalhoPrograma,
     Classe,
@@ -53,7 +52,7 @@ import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar'
 
 import { ParametroVisuAlg } from './parametro-visualg';
 import { LimpaTela } from '../construtos/limpa-tela';
-import { ProcedimentoDeclaracao } from '../declaracoes';
+import { Aleatorio, ProcedimentoDeclaracao } from '../declaracoes';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 

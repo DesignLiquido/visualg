@@ -11,7 +11,6 @@ import {
     Logico
 } from '@designliquido/delegua/construtos';
 import {
-    Aleatorio,
     CabecalhoPrograma,
     Classe,
     Escreva,
@@ -31,6 +30,7 @@ import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
 
 import * as comum from './comum';
+import { Aleatorio } from 'fontes/declaracoes';
 
 /**
  * Interpretador do VisuAlg, baseado no interpretador de Delégua.
@@ -212,7 +212,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
         return comum.visitarDeclaracaoClasse(this, declaracao);
     }
 
-    override async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<void> {
+    override async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<any> {
         return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);   
     }
 
@@ -269,7 +269,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
         return comum.visitarExpressaoLogica(this, expressao);
     }
 
-    override async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
+    async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
         return comum.visitarDeclaracaoAleatorio(this, declaracao);
     }
 

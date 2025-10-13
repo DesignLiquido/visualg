@@ -16,7 +16,6 @@ import {
     Vetor,
 } from '@designliquido/delegua/construtos';
 import {
-    Aleatorio,
     CabecalhoPrograma,
     Classe,
     Declaracao,
@@ -37,7 +36,9 @@ import {
     FuncaoPadrao,
     ObjetoDeleguaClasse,
 } from '@designliquido/delegua/interpretador/estruturas';
+import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
+import { Aleatorio } from '../declaracoes';
 import { inferirTipoVariavel } from './inferenciador';
 import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { VisuAlgFuncao } from './estruturas';
@@ -46,7 +47,6 @@ import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 import * as bibliotecaCaracteres from '../bibliotecas/caracteres';
 import * as bibliotecaNumerica from '../bibliotecas/numerica';
-import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 export function carregarBibliotecaGlobalCaracter(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
     pilhaEscoposExecucao.definirVariavel('asc', new FuncaoPadrao(1, bibliotecaCaracteres.asc));

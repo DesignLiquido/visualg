@@ -18,7 +18,6 @@ import {
     Fazer,
     Para,
     Bloco,
-    Aleatorio,
     CabecalhoPrograma,
     Classe,
     Var,
@@ -33,6 +32,7 @@ import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } fr
 import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
+import { Aleatorio } from '../declaracoes';
 
 import * as comum from './comum';
 
@@ -304,7 +304,7 @@ export class InterpretadorVisuAlgComDepuracao
         return comum.visitarExpressaoLogica(this, expressao);
     }
 
-    override async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
+    async visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
         return comum.visitarDeclaracaoAleatorio(this, declaracao);
     }
 

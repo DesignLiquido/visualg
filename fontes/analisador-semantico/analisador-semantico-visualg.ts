@@ -9,7 +9,6 @@ import {
     Vetor,
 } from '@designliquido/delegua/construtos';
 import {
-    Aleatorio,
     Declaracao,
     EscrevaMesmaLinha,
     Expressao,
@@ -28,6 +27,7 @@ import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 import { PilhaVariaveis } from './pilha-variaveis';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
+import { Aleatorio } from 'fontes/declaracoes';
 
 export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
@@ -156,7 +156,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     }
 
     visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
-        //Isso acontece quando não é informado os número máximos e mínimos
+        // Valores padrão para mínimo e máximo.
         let menorNumero = 0;
         let maiorNumero = 100;
 

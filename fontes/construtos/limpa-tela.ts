@@ -10,7 +10,7 @@ export class LimpaTela implements Construto {
         this.hashArquivo = hashArquivo;
         this.linha = linha;
     }
-    
+
     async aceitar(visitante: VisitanteVisuAlgInterface): Promise<any> {
         return await visitante.visitarExpressaoLimpaTela(this);
     }

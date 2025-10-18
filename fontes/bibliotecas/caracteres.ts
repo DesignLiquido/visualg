@@ -25,7 +25,7 @@ export function copia(
     inicio: number,
     fim: number
 ): Promise<string> {
-    const resultadoCopia = valor.substring(inicio - 1, (inicio - 1) + fim);
+    const resultadoCopia = valor.substring(inicio - 1, inicio - 1 + fim);
     return Promise.resolve(resultadoCopia);
 }
 

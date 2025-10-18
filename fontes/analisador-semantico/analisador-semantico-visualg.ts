@@ -66,7 +66,10 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
         let variavel = this.variaveis[alvoVariavel.simbolo.lexema];
         if (!variavel) {
-            this.adicionarDiagnostico(alvoVariavel.simbolo, `Variável ${alvoVariavel.simbolo.lexema} ainda não foi declarada.`);
+            this.adicionarDiagnostico(
+                alvoVariavel.simbolo,
+                `Variável ${alvoVariavel.simbolo.lexema} ainda não foi declarada.`
+            );
             return Promise.resolve();
         }
 
@@ -91,13 +94,19 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 if (!['qualquer'].includes(variavel.tipo)) {
                     if (valorLiteral === 'string') {
                         if (variavel.tipo.toLowerCase() != 'caractere') {
-                            this.adicionarDiagnostico(alvoVariavel.simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
+                            this.adicionarDiagnostico(
+                                alvoVariavel.simbolo,
+                                `Esperado tipo '${variavel.tipo}' na atribuição.`
+                            );
                             return Promise.resolve();
                         }
                     }
                     if (valorLiteral === 'number') {
                         if (!['inteiro', 'real'].includes(variavel.tipo.toLowerCase())) {
-                            this.adicionarDiagnostico(alvoVariavel.simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
+                            this.adicionarDiagnostico(
+                                alvoVariavel.simbolo,
+                                `Esperado tipo '${variavel.tipo}' na atribuição.`
+                            );
                             return Promise.resolve();
                         }
                     }
@@ -206,10 +215,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
         for (let parametro of declaracao.funcao.parametros) {
             if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado) {
-                this.adicionarDiagnostico(
-                    declaracao.simbolo,
-                    `O tipo '${parametro.tipoDado}' não é valido`
-                );
+                this.adicionarDiagnostico(declaracao.simbolo, `O tipo '${parametro.tipoDado}' não é valido`);
             }
         }
 

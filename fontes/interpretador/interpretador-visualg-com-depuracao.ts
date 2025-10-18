@@ -10,7 +10,7 @@ import {
     FimPara,
     FormatacaoEscrita,
     Leia,
-    Logico
+    Logico,
 } from '@designliquido/delegua/construtos';
 import {
     EscrevaMesmaLinha,
@@ -97,7 +97,7 @@ export class InterpretadorVisuAlgComDepuracao
     }
 
     override async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<void> {
-        return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);   
+        return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);
     }
 
     async visitarExpressaoAcessoElementoMatriz(expressao: AcessoElementoMatriz): Promise<any> {

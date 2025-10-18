@@ -1068,11 +1068,13 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             this.hashArquivo,
             Number(simboloPara.linha),
             // Inicialização.
-            new Expressao(new Atribuir(
-                this.hashArquivo,
-                new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
-                literalOuVariavelInicio
-            )),
+            new Expressao(
+                new Atribuir(
+                    this.hashArquivo,
+                    new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
+                    literalOuVariavelInicio
+                )
+            ),
             // Condição.
             new Binario(
                 this.hashArquivo,

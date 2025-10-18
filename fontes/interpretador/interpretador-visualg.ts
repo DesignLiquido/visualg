@@ -8,7 +8,7 @@ import {
     FimPara,
     FormatacaoEscrita,
     Leia,
-    Logico
+    Logico,
 } from '@designliquido/delegua/construtos';
 import {
     CabecalhoPrograma,
@@ -21,7 +21,7 @@ import {
     Var,
 } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador';
-import { ContinuarQuebra, Quebra, RetornoQuebra, SustarQuebra } from '@designliquido/delegua/quebras';
+import { ContinuarQuebra, Quebra, SustarQuebra } from '@designliquido/delegua/quebras';
 import { TipoEscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 
 import { carregarBibliotecaGlobalCaracter, carregarBibliotecaGlobalNumerica } from './comum';
@@ -214,7 +214,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
     }
 
     override async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<any> {
-        return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);   
+        return comum.visitarDeclaracaoDefinicaoFuncao(this, declaracao);
     }
 
     override async visitarDeclaracaoPara(declaracao: Para): Promise<any> {
@@ -225,8 +225,10 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
 
         let retornoExecucao: any;
         let retornoIncremento: any;
-        while (!(retornoExecucao && retornoExecucao.valorRetornado instanceof Quebra) && !(retornoIncremento instanceof Quebra)) {
-            
+        while (
+            !(retornoExecucao && retornoExecucao.valorRetornado instanceof Quebra) &&
+            !(retornoIncremento instanceof Quebra)
+        ) {
             if (declaracao.condicao !== null) {
                 const condicaoResolvida = await this.avaliar(declaracao.condicao);
                 if (!this.eVerdadeiro(condicaoResolvida)) break;

@@ -667,7 +667,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += this.quebraLinha;
 
         // Se há variáveis, escrevemos elas agora.
-        const declaracoesVar = funcaoConstruto.corpo.filter(d => d.constructor.name === 'Var');
+        const declaracoesVar = funcaoConstruto.corpo.filter((d) => d.constructor.name === 'Var');
         if (declaracoesVar.length > 0) {
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}var${this.quebraLinha}`;
             this.indentacaoAtual += this.tamanhoIndentacao;
@@ -680,7 +680,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         }
 
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}inicio${this.quebraLinha}`;
-        const outrasDeclaracoes = funcaoConstruto.corpo.filter(d => d.constructor.name !== 'Var');
+        const outrasDeclaracoes = funcaoConstruto.corpo.filter((d) => d.constructor.name !== 'Var');
         this.formatarBlocoOuVetorDeclaracoes(outrasDeclaracoes);
     }
 

@@ -1,17 +1,19 @@
-import { DeleguaFuncao, ObjetoDeleguaClasse } from "@designliquido/delegua/interpretador/estruturas";
-import { ArgumentoInterface } from "@designliquido/delegua/interpretador/argumento-interface";
-import { RetornoQuebra } from "@designliquido/delegua/quebras";
-import { PilhaEscoposExecucaoInterface } from "@designliquido/delegua/interfaces/pilha-escopos-execucao-interface";
+import { DeleguaFuncao, ObjetoDeleguaClasse } from '@designliquido/delegua/interpretador/estruturas';
+import { ArgumentoInterface } from '@designliquido/delegua/interpretador/argumento-interface';
+import { RetornoQuebra } from '@designliquido/delegua/quebras';
+import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 
-import { InterpretadorVisuAlgInterface } from "../../interfaces";
+import { InterpretadorVisuAlgInterface } from '../../interfaces';
 
 /**
  * Diferentemente de `DeleguaFuncao`, a forma de VisuAlg de trabalhar com referências usa
  * como base o nome do parâmetro, e não o nome do argumento, como é em Delégua.
  */
 export class VisuAlgFuncao extends DeleguaFuncao {
-    
-    override async chamar(visitante: InterpretadorVisuAlgInterface, argumentos: Array<ArgumentoInterface>): Promise<any> {
+    override async chamar(
+        visitante: InterpretadorVisuAlgInterface,
+        argumentos: Array<ArgumentoInterface>
+    ): Promise<any> {
         const ambiente = this.resolverAmbiente(argumentos);
 
         if (this.instancia !== undefined) {
@@ -39,11 +41,10 @@ export class VisuAlgFuncao extends DeleguaFuncao {
 
         for (let referencia of referencias) {
             let argumentoReferencia = ambiente.valores[referencia.parametro.nome.lexema];
-            // TODO: Lógica implementada para o VisuAlg. 
+            // TODO: Lógica implementada para o VisuAlg.
             pilha.atribuirVariavel(
                 {
-                    
-                    lexema: argumentos[referencia.indice].nome
+                    lexema: argumentos[referencia.indice].nome,
                 } as any,
                 argumentoReferencia.valor
             );

@@ -24,10 +24,10 @@ import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/fun
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
 import { RetornoQuebra } from '@designliquido/delegua/quebras';
+import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 import { PilhaVariaveis } from './pilha-variaveis';
-import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
-import { Aleatorio } from 'fontes/declaracoes';
+import { Aleatorio } from '../declaracoes';
 
 export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;

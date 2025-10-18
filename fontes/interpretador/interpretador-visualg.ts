@@ -29,8 +29,9 @@ import { PilhaEscoposExecucaoVisuAlg } from './pilha-escopos-execucao-visualg';
 import { InterpretadorVisuAlgInterface } from '../interfaces';
 import { LimpaTela } from '../construtos';
 
+import { Aleatorio } from '../declaracoes';
+
 import * as comum from './comum';
-import { Aleatorio } from 'fontes/declaracoes';
 
 /**
  * Interpretador do VisuAlg, baseado no interpretador de Delégua.

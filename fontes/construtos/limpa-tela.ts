@@ -18,4 +18,8 @@ export class LimpaTela implements Construto {
     paraTexto(): string {
         return `<limpa-tela />`;
     }
+
+    paraTextoSaida(): string {
+        throw new Error('Método não implementado.');
+    }
 }

@@ -56,6 +56,7 @@ import {
     CabecalhoPrograma,
     TendoComo,
     Comentario,
+    TextoDocumentacao,
 } from '@designliquido/delegua/declaracoes';
 import { InicioAlgoritmo } from '@designliquido/delegua/declaracoes/inicio-algoritmo';
 import { ContinuarQuebra } from '@designliquido/delegua/quebras';
@@ -91,6 +92,10 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.devePularLinha = false;
         this.deveIndentar = true;
         this.retornoFuncaoAtual = undefined;
+    }
+
+    visitarDeclaracaoTextoDocumentacao(declaracao: TextoDocumentacao): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     visitarExpressaoComentario(expressao: ComentarioComoConstruto): Promise<any> | void {

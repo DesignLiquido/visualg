@@ -1,6 +1,8 @@
 import {
     Atribuir,
+    Binario,
     Chamada,
+    Construto,
     FormatacaoEscrita,
     FuncaoConstruto,
     Leia,
@@ -18,11 +20,11 @@ import {
 } from '@designliquido/delegua/declaracoes';
 
 import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
+import { EscopoVariavel } from '@designliquido/delegua/analisador-semantico/escopo-variavel';
+import { GerenciadorEscopos } from '@designliquido/delegua/analisador-semantico/gerenciador-escopos';
 import { SimboloInterface } from '@designliquido/delegua/interfaces';
-import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
-import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
 import { RetornoQuebra } from '@designliquido/delegua/quebras';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
@@ -31,32 +33,15 @@ import { Aleatorio } from '../declaracoes';
 
 export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
-    variaveis: { [nomeVariavel: string]: VariavelHipoteticaInterface };
     funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface };
     atual: number;
-    diagnosticos: DiagnosticoAnalisadorSemantico[];
 
     constructor() {
         super();
+        this.gerenciadorEscopos = new GerenciadorEscopos();
         this.pilhaVariaveis = new PilhaVariaveis();
-        this.variaveis = {};
         this.funcoes = {};
         this.atual = 0;
-        this.diagnosticos = [];
-    }
-
-    adicionarDiagnostico(
-        simbolo: SimboloInterface,
-        mensagem: string,
-        severidade: DiagnosticoSeveridade = DiagnosticoSeveridade.ERRO
-    ): void {
-        this.diagnosticos.push({
-            simbolo: simbolo,
-            mensagem: mensagem,
-            hashArquivo: simbolo.hashArquivo,
-            linha: simbolo.linha,
-            severidade: severidade,
-        });
     }
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
@@ -64,25 +49,25 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         // Provavelmente o alvo é sempre `Variavel`
         const alvoVariavel: Variavel = alvo as Variavel;
 
-        let variavel = this.variaveis[alvoVariavel.simbolo.lexema];
+        const variavel = this.gerenciadorEscopos.buscar(alvoVariavel.simbolo.lexema);
         if (!variavel) {
-            this.adicionarDiagnostico(
+            this.erro(
                 alvoVariavel.simbolo,
-                `Variável ${alvoVariavel.simbolo.lexema} ainda não foi declarada.`
+                `Variável '${alvoVariavel.simbolo.lexema}' ainda não foi declarada.`
             );
             return Promise.resolve();
         }
 
         if (variavel.tipo) {
             if (valor instanceof Literal && variavel.tipo.includes('[]')) {
-                this.adicionarDiagnostico(
+                this.erro(
                     alvoVariavel.simbolo,
                     `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
                 );
                 return Promise.resolve();
             }
             if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
-                this.adicionarDiagnostico(
+                this.erro(
                     alvoVariavel.simbolo,
                     `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
                 );
@@ -93,8 +78,8 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 let valorLiteral = typeof (valor as Literal).valor;
                 if (!['qualquer'].includes(variavel.tipo)) {
                     if (valorLiteral === 'string') {
-                        if (variavel.tipo.toLowerCase() != 'caractere') {
-                            this.adicionarDiagnostico(
+                        if (variavel.tipo.toLowerCase() !== 'caractere') {
+                            this.erro(
                                 alvoVariavel.simbolo,
                                 `Esperado tipo '${variavel.tipo}' na atribuição.`
                             );
@@ -103,7 +88,16 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                     }
                     if (valorLiteral === 'number') {
                         if (!['inteiro', 'real'].includes(variavel.tipo.toLowerCase())) {
-                            this.adicionarDiagnostico(
+                            this.erro(
+                                alvoVariavel.simbolo,
+                                `Esperado tipo '${variavel.tipo}' na atribuição.`
+                            );
+                            return Promise.resolve();
+                        }
+                    }
+                    if (valorLiteral === 'boolean') {
+                        if (variavel.tipo.toLowerCase() !== 'logico') {
+                            this.erro(
                                 alvoVariavel.simbolo,
                                 `Esperado tipo '${variavel.tipo}' na atribuição.`
                             );
@@ -114,9 +108,9 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
             }
         }
 
-        if (variavel) {
-            this.variaveis[alvoVariavel.simbolo.lexema].valor = valor;
-        }
+        // Marcar variável como inicializada com o novo valor
+        this.gerenciadorEscopos.marcarComoInicializada(alvoVariavel.simbolo.lexema, valor);
+        return Promise.resolve();
     }
 
     private gerarNumeroAleatorio(min: number, max: number) {
@@ -139,17 +133,18 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     }
 
     private atualizarVariavelComValorAleatorio(variavel: Variavel, menorNumero: number, maiorNumero: number) {
-        if (this.variaveis[variavel.simbolo.lexema]) {
+        const escopoVariavel = this.gerenciadorEscopos.buscar(variavel.simbolo.lexema);
+        if (escopoVariavel) {
             let valor: number | string = 0;
             if (
-                this.variaveis[variavel.simbolo.lexema].tipo.toLowerCase() === 'inteiro' ||
-                this.variaveis[variavel.simbolo.lexema].tipo.toLowerCase() === 'real'
+                escopoVariavel.tipo.toLowerCase() === 'inteiro' ||
+                escopoVariavel.tipo.toLowerCase() === 'real'
             )
                 valor = this.gerarNumeroAleatorio(menorNumero, maiorNumero);
-            else if (this.variaveis[variavel.simbolo.lexema].tipo.toLowerCase() === 'caracter')
+            else if (escopoVariavel.tipo.toLowerCase() === 'caracter')
                 valor = this.palavraAleatoriaCom5Digitos();
 
-            this.variaveis[variavel.simbolo.lexema].valor = valor;
+            this.gerenciadorEscopos.marcarComoInicializada(variavel.simbolo.lexema, valor);
         }
     }
 
@@ -182,17 +177,27 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     }
 
     visitarDeclaracaoVar(declaracao: Var): Promise<any> {
-        this.variaveis[declaracao.simbolo.lexema] = {
-            imutavel: false,
+        const escopoVariavel: EscopoVariavel = {
+            nome: declaracao.simbolo.lexema,
             tipo: declaracao.tipo as TipoDadosElementar,
+            imutavel: false,
             valor:
                 declaracao.inicializador !== null
                     ? declaracao.inicializador.valor !== undefined
                         ? declaracao.inicializador.valor
                         : declaracao.inicializador
                     : undefined,
-            valorDefinido: true,
+            inicializada: declaracao.inicializador !== null,
+            usada: false,
+            hashArquivo: declaracao.simbolo.hashArquivo,
+            linha: declaracao.simbolo.linha,
         };
+
+        const declarada = this.gerenciadorEscopos.declarar(declaracao.simbolo.lexema, escopoVariavel);
+        if (!declarada) {
+            this.erro(declaracao.simbolo, `Variável '${declaracao.simbolo.lexema}' já foi declarada neste escopo.`);
+        }
+
         return Promise.resolve();
     }
 
@@ -204,8 +209,11 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
             case 'Chamada':
                 this.visitarExpressaoDeChamada(declaracao.expressao as Chamada);
                 break;
+            case 'Binario':
+                this.visitarExpressaoBinaria(declaracao.expressao);
+                break;
             default:
-                console.log(declaracao.expressao);
+                // Outros tipos de expressão tratados pela classe base ou não necessários para análise semântica
                 break;
         }
 
@@ -215,21 +223,55 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
         for (let parametro of declaracao.funcao.parametros) {
             if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado) {
-                this.adicionarDiagnostico(declaracao.simbolo, `O tipo '${parametro.tipoDado}' não é valido`);
+                this.erro(declaracao.simbolo, `O tipo '${parametro.tipoDado}' não é válido`);
             }
         }
 
         if (declaracao.funcao.parametros.length >= 255) {
-            this.adicionarDiagnostico(declaracao.simbolo, 'Não pode haver mais de 255 parâmetros');
+            this.erro(declaracao.simbolo, 'Não pode haver mais de 255 parâmetros');
         }
 
         this.funcoes[declaracao.simbolo.lexema] = {
             valor: declaracao.funcao,
         };
 
-        // TODO: Ao inspecionar corpo da função, verificar se todas as
-        // declarações `Retorna` retornam um tipo diferente do tipo da função
-        // (se for função).
+        // Empilhar um novo escopo para a função
+        this.gerenciadorEscopos.empilharEscopo();
+
+        // Declarar parâmetros como variáveis no escopo da função
+        for (let parametro of declaracao.funcao.parametros) {
+            const parametroVariavel: EscopoVariavel = {
+                nome: parametro.nome.lexema,
+                tipo: parametro.tipoDado || 'qualquer',
+                imutavel: parametro.tipoDado?.startsWith('const') || false,
+                inicializada: true, // Parâmetros são sempre inicializados
+                usada: false,
+                hashArquivo: parametro.nome.hashArquivo,
+                linha: parametro.nome.linha,
+            };
+            this.gerenciadorEscopos.declarar(parametro.nome.lexema, parametroVariavel);
+        }
+
+        // Visitar corpo da função
+        if (declaracao.funcao.corpo && Array.isArray(declaracao.funcao.corpo)) {
+            for (let declaracaoCorpo of declaracao.funcao.corpo) {
+                declaracaoCorpo.aceitar(this);
+            }
+        }
+
+        // Validar tipo de retorno para funções (não procedimentos)
+        if (declaracao.funcao.tipo && declaracao.funcao.tipo !== 'vazio') {
+            const todosRetornam = this.todosOsCaminhosRetornam(declaracao.funcao.corpo);
+            if (!todosRetornam) {
+                this.aviso(
+                    declaracao.simbolo,
+                    `Função '${declaracao.simbolo.lexema}' pode não retornar um valor em todos os caminhos.`
+                );
+            }
+        }
+
+        // Desempilhar o escopo da função
+        this.gerenciadorEscopos.desempilharEscopo();
 
         return Promise.resolve();
     }
@@ -237,19 +279,22 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha) {
         declaracao.argumentos.forEach((argumento: FormatacaoEscrita) => {
             if (argumento.expressao instanceof Variavel) {
-                if (!this.variaveis[argumento.expressao.simbolo.lexema]) {
-                    this.adicionarDiagnostico(
+                const variavel = this.gerenciadorEscopos.buscar(argumento.expressao.simbolo.lexema);
+                if (!variavel) {
+                    this.erro(
                         argumento.expressao.simbolo,
                         `Variável '${argumento.expressao.simbolo.lexema}' não existe.`
                     );
-                    return Promise.resolve();
+                    return;
                 }
 
-                if (this.variaveis[argumento.expressao.simbolo.lexema]?.valor === undefined) {
-                    this.adicionarDiagnostico(
+                // Marcar variável como usada
+                this.gerenciadorEscopos.marcarComoUsada(argumento.expressao.simbolo.lexema);
+
+                if (!variavel.inicializada) {
+                    this.aviso(
                         argumento.expressao.simbolo,
-                        `Variável '${argumento.expressao.simbolo.lexema}' não foi inicializada.`,
-                        DiagnosticoSeveridade.AVISO
+                        `Variável '${argumento.expressao.simbolo.lexema}' não foi inicializada.`
                     );
                 }
             }
@@ -261,15 +306,15 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarExpressaoDeChamada(expressao: Chamada) {
         if (expressao.entidadeChamada instanceof Variavel) {
             const variavel = expressao.entidadeChamada as Variavel;
-            const funcaoChamada = this.variaveis[variavel.simbolo.lexema] || this.funcoes[variavel.simbolo.lexema];
+            const funcaoChamada = this.funcoes[variavel.simbolo.lexema];
             if (!funcaoChamada) {
-                this.adicionarDiagnostico(variavel.simbolo, `Função '${variavel.simbolo.lexema}' não foi declarada.`);
+                this.erro(variavel.simbolo, `Função '${variavel.simbolo.lexema}' não foi declarada.`);
                 return Promise.resolve();
             }
 
             const funcao = funcaoChamada.valor as FuncaoConstruto;
-            if (funcao.parametros.length != expressao.argumentos.length) {
-                this.adicionarDiagnostico(
+            if (funcao.parametros.length !== expressao.argumentos.length) {
+                this.erro(
                     variavel.simbolo,
                     `Esperava ${funcao.parametros.length} ${
                         funcao.parametros.length > 1 ? 'argumentos' : 'argumento'
@@ -279,14 +324,29 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
             for (let [indice, argumento] of expressao.argumentos.entries()) {
                 const parametroCorrespondente = funcao.parametros[indice];
+                if (!parametroCorrespondente) continue;
+
                 const tipoDadoParametro = parametroCorrespondente.tipoDado.toLowerCase();
 
                 if (argumento instanceof Variavel) {
                     const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
-                    const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
+                    const variavelCorrespondente = this.gerenciadorEscopos.buscar(lexemaVariavelCorrespondente);
+
+                    if (!variavelCorrespondente) {
+                        this.erro(
+                            argumento.simbolo,
+                            `Variável '${lexemaVariavelCorrespondente}' não foi declarada.`
+                        );
+                        continue;
+                    }
+
+                    // Marcar variável como usada
+                    this.gerenciadorEscopos.marcarComoUsada(lexemaVariavelCorrespondente);
+
+                    const tipoVariavelCorrespondente = variavelCorrespondente.tipo.toLowerCase();
 
                     if (tipoVariavelCorrespondente !== tipoDadoParametro) {
-                        this.adicionarDiagnostico(
+                        this.erro(
                             variavel.simbolo,
                             `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (${tipoVariavelCorrespondente}) é diferente do esperado pela função (${tipoDadoParametro}).`
                         );
@@ -294,16 +354,34 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
                 }
 
                 if (argumento instanceof Literal) {
-                    switch (argumento.valor.constructor.name) {
-                        case 'Number':
+                    const valorLiteral = argumento.valor;
+                    const tipoLiteral = typeof valorLiteral;
+
+                    switch (tipoLiteral) {
+                        case 'number':
                             if (!['inteiro', 'real'].includes(tipoDadoParametro)) {
-                                this.adicionarDiagnostico(
+                                this.erro(
                                     variavel.simbolo,
-                                    `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (inteiro ou real) é diferente do esperado pela função (${tipoDadoParametro}).`
+                                    `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (número) é diferente do esperado pela função (${tipoDadoParametro}).`
                                 );
                             }
                             break;
-                        // TODO: Finalizar.
+                        case 'string':
+                            if (tipoDadoParametro !== 'caractere') {
+                                this.erro(
+                                    variavel.simbolo,
+                                    `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (caractere) é diferente do esperado pela função (${tipoDadoParametro}).`
+                                );
+                            }
+                            break;
+                        case 'boolean':
+                            if (tipoDadoParametro !== 'logico') {
+                                this.erro(
+                                    variavel.simbolo,
+                                    `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (lógico) é diferente do esperado pela função (${tipoDadoParametro}).`
+                                );
+                            }
+                            break;
                     }
                 }
             }
@@ -315,25 +393,154 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarExpressaoLeia(declaracao: Leia): Promise<any> {
         for (let argumento of declaracao.argumentos) {
             const argumentoComoVariavel = argumento as Variavel;
-            // TODO: Reabilitar na próxima versão do núcleo de Delégua.
-            // this.variaveis[argumentoComoVariavel.simbolo.lexema].valorDefinido = true;
+            const variavel = this.gerenciadorEscopos.buscar(argumentoComoVariavel.simbolo.lexema);
+
+            if (!variavel) {
+                this.erro(
+                    argumentoComoVariavel.simbolo,
+                    `Variável '${argumentoComoVariavel.simbolo.lexema}' não foi declarada.`
+                );
+                continue;
+            }
+
+            // Marcar como usada e inicializada (leia atribui um valor)
+            this.gerenciadorEscopos.marcarComoUsada(argumentoComoVariavel.simbolo.lexema);
+            this.gerenciadorEscopos.marcarComoInicializada(argumentoComoVariavel.simbolo.lexema);
         }
 
         return Promise.resolve();
     }
 
+    visitarExpressaoDeVariavel(expressao: Variavel): Promise<any> {
+        // Marcar variável como usada quando referenciada
+        this.gerenciadorEscopos.marcarComoUsada(expressao.simbolo.lexema);
+        return Promise.resolve();
+    }
+
+    visitarExpressaoBinaria(expressao: any): Promise<any> {
+        const { esquerda, direita, operador } = expressao;
+
+        // Verificar operandos recursivamente
+        if (esquerda) {
+            if (esquerda instanceof Variavel) {
+                this.visitarExpressaoDeVariavel(esquerda);
+            } else if (esquerda.hasOwnProperty('esquerda')) {
+                // É outra expressão binária
+                this.visitarExpressaoBinaria(esquerda);
+            }
+        }
+
+        if (direita) {
+            if (direita instanceof Variavel) {
+                this.visitarExpressaoDeVariavel(direita);
+            } else if (direita.hasOwnProperty('esquerda')) {
+                // É outra expressão binária
+                this.visitarExpressaoBinaria(direita);
+            }
+        }
+
+        // Verificar divisão por zero
+        if (operador && (operador.lexema === '/' || operador.lexema === 'mod')) {
+            const valorDireita = this.avaliarExpressaoConstante(direita);
+            if (valorDireita === 0) {
+                this.erro(
+                    operador,
+                    `Divisão por zero detectada.`
+                );
+            }
+        }
+
+        return Promise.resolve();
+    }
+
+    /**
+     * Tenta avaliar uma expressão em tempo de compilação para detectar valores constantes.
+     * Retorna o valor se puder ser determinado, ou null caso contrário.
+     */
+    private avaliarExpressaoConstante(expressao: any): number | null {
+        if (expressao instanceof Literal) {
+            const valor = expressao.valor;
+            return typeof valor === 'number' ? valor : null;
+        }
+
+        if (expressao.hasOwnProperty('esquerda') && expressao.hasOwnProperty('direita')) {
+            const esquerda = this.avaliarExpressaoConstante(expressao.esquerda);
+            const direita = this.avaliarExpressaoConstante(expressao.direita);
+
+            if (esquerda !== null && direita !== null && expressao.operador) {
+                return this.calcularOperacaoBinaria(esquerda, direita, expressao.operador.lexema);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Calcula o resultado de uma operação binária em tempo de compilação.
+     */
+    private calcularOperacaoBinaria(esquerda: number, direita: number, operador: string): number | null {
+        switch (operador) {
+            case '+':
+                return esquerda + direita;
+            case '-':
+                return esquerda - direita;
+            case '*':
+                return esquerda * direita;
+            case '/':
+                return direita !== 0 ? esquerda / direita : null;
+            case 'mod':
+                return direita !== 0 ? esquerda % direita : null;
+            case '^':
+                return Math.pow(esquerda, direita);
+            default:
+                return null;
+        }
+    }
+
     visitarExpressaoRetornar(declaracao: Retorna): Promise<RetornoQuebra> {
+        // Marcar variáveis usadas na expressão de retorno
+        if (declaracao.valor) {
+            this.marcarVariaveisUsadasEmExpressao(declaracao.valor);
+        }
         return Promise.resolve(null);
     }
 
+    /**
+     * Verifica se há variáveis declaradas mas não usadas e emite avisos.
+     */
+    private verificarVariaveisNaoUsadas(): void {
+        const variaveisNaoUsadas = this.gerenciadorEscopos.obterVariaveisNaoUsadas();
+        for (const variavel of variaveisNaoUsadas) {
+            this.aviso(
+                {
+                    lexema: variavel.nome,
+                    hashArquivo: variavel.hashArquivo,
+                    linha: variavel.linha
+                } as SimboloInterface,
+                `Variável '${variavel.nome}' foi declarada mas nunca usada.`
+            );
+        }
+    }
+
     analisar(declaracoes: Declaracao[]): RetornoAnalisadorSemantico {
-        this.variaveis = {};
+        this.funcoes = {};
         this.atual = 0;
         this.diagnosticos = [];
+
+        // Inicializar escopo global
+        this.gerenciadorEscopos.empilharEscopo();
+
+        // Analisar todas as declarações
         while (this.atual < declaracoes.length) {
             declaracoes[this.atual].aceitar(this);
             this.atual++;
         }
+
+        // Verificar variáveis não usadas
+        this.verificarVariaveisNaoUsadas();
+
+        // Limpar escopo global
+        this.gerenciadorEscopos.desempilharEscopo();
 
         return {
             diagnosticos: this.diagnosticos,

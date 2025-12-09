@@ -57,7 +57,8 @@ describe('Analisador semântico', () => {
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
-                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+                // Espera 2 diagnósticos: 1 erro (incompatibilidade de tipo) + 1 aviso (variável não usada)
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(2);
             });
 
             it('Atribuição inválida de variáveis', () => {
@@ -78,7 +79,8 @@ describe('Analisador semântico', () => {
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
-                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(4);
+                // Espera 8 diagnósticos: 4 erros (incompatibilidades de tipo) + 4 avisos (variáveis não usadas)
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(8);
             });
 
             it("Chamada de função inexistente", () => {
@@ -94,7 +96,8 @@ describe('Analisador semântico', () => {
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
-                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+                // Espera 2 diagnósticos: 1 erro (função não encontrada) + 1 aviso (variável não usada)
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(2);
             })
 
             it("Chamada de função com tipos de parâmetros diferentes", () => {
@@ -115,7 +118,8 @@ describe('Analisador semântico', () => {
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
-                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+                // Espera 3 diagnósticos: 1 erro (tipo de parâmetro incorreto) + 2 avisos (variável não usada + caminhos de retorno incompletos)
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(3);
             })
         })
     })

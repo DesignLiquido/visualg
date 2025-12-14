@@ -1,5 +1,6 @@
 import {
     AcessoIndiceVariavel,
+    AcessoIntervaloVariavel,
     AcessoMetodoOuPropriedade,
     AcessoPropriedade,
     Agrupamento,
@@ -94,30 +95,42 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.retornoFuncaoAtual = undefined;
     }
 
+    /* istanbul ignore next */
+    visitarExpressaoAcessoIntervaloVariavel(expressao: AcessoIntervaloVariavel): Promise<any> | void {
+        throw new Error('Método não implementado.');
+    }
+
+    /* istanbul ignore next */
     visitarDeclaracaoTextoDocumentacao(declaracao: TextoDocumentacao): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoComentario(expressao: ComentarioComoConstruto): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoSeparador(expressao: Separador): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoArgumentoReferenciaFuncao(expressao: ArgumentoReferenciaFuncao): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoReferenciaFuncao(expressao: ReferenciaFuncao): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoAcessoMetodoOuPropriedade(expressao: AcessoMetodoOuPropriedade): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoAcessoPropriedade(expressao: AcessoPropriedade): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
@@ -182,14 +195,17 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.formatarDeclaracaoOuConstruto(declaracao.corpo);
     }
 
+    /* istanbul ignore next */
     visitarDeclaracaoClasse(declaracao: Classe) {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarDeclaracaoConst(declaracao: Const): any {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarDeclaracaoConstMultiplo(declaracao: ConstMultiplo): any {
         throw new Error('Método não implementado.');
     }
@@ -371,6 +387,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}fimse${this.quebraLinha}`;
     }
 
+    /* istanbul ignore next */
     visitarDeclaracaoTente(declaracao: Tente) {
         throw new Error('Método não implementado.');
     }
@@ -389,10 +406,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         }
     }
 
+    /* istanbul ignore next */
     visitarDeclaracaoTendoComo(declaracao: TendoComo): void {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarDeclaracaoVarMultiplo(declaracao: VarMultiplo): any {
         throw new Error('Método não implementado.');
     }
@@ -404,10 +423,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += `]`;
     }
 
+    /* istanbul ignore next */
     visitarExpressaoAcessoElementoMatriz(expressao: any) {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoAcessoMetodo(expressao: any) {
         throw new Error('Método não implementado.');
     }
@@ -418,10 +439,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += ')';
     }
 
+    /* istanbul ignore next */
     visitarExpressaoAtribuicaoPorIndice(expressao: any): any {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoAtribuicaoPorIndicesMatriz(expressao: any): any {
         throw new Error('Método não implementado.');
     }
@@ -485,6 +508,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.formatarBlocoOuVetorDeclaracoes(declaracao.declaracoes);
     }
 
+    /* istanbul ignore next */
     visitarExpressaoContinua(declaracao?: Continua): ContinuarQuebra {
         throw new Error('Método não implementado.');
     }
@@ -504,10 +528,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += ')';
     }
 
+    /* istanbul ignore next */
     visitarExpressaoDefinirValor(expressao: any) {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoDeleguaFuncao(expressao: any) {
         throw new Error('Método não implementado.');
     }
@@ -516,18 +542,22 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += expressao.simbolo.lexema;
     }
 
+    /* istanbul ignore next */
     visitarExpressaoDicionario(expressao: any) {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoExpressaoRegular(expressao: ExpressaoRegular): Promise<RegExp> {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoFalhar(expressao: any): any {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoFimPara(declaracao: FimPara) {
         throw new Error('Método não implementado.');
     }
@@ -536,6 +566,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.formatarDeclaracaoOuConstruto(declaracao.expressao);
     }
 
+    /* istanbul ignore next */
     visitarExpressaoIsto(expressao: any) {
         throw new Error('Método não implementado.');
     }
@@ -605,6 +636,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += `${this.quebraLinha}`;
     }
 
+    /* istanbul ignore next */
     visitarExpressaoSuper(expressao: Super) {
         throw new Error('Método não implementado.');
     }
@@ -613,10 +645,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}interrompa${this.quebraLinha}`;
     }
 
+    /* istanbul ignore next */
     visitarExpressaoTipoDe(expressao: TipoDe): any {
         throw new Error('Método não implementado.');
     }
 
+    /* istanbul ignore next */
     visitarExpressaoTupla(expressao: Tupla): Promise<any> {
         throw new Error('Method not implemented.');
     }
@@ -843,7 +877,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     }
 
     /**
-     * A formatação de fato.
+     * Ponto de entrada para a formatação de fato.
      * @param declaracoes Um vetor de declarações.
      * @returns O código formatado.
      */

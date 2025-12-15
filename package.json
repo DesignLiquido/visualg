@@ -31,7 +31,7 @@
         "@types/estree": "^1.0.7",
         "@types/jest": "^30.0.0",
         "@types/lodash": "^4.17.17",
-        "@types/node": "^24.0.4",
+        "@types/node": "^25.0.2",
         "copyfiles": "^2.4.1",
         "jest": "^30.1.2",
         "jest-coverage-badges": "^1.1.2",

@@ -1,4 +1,5 @@
 import { VariavelInterface } from '@designliquido/delegua/interfaces';
+
 import { PilhaVariaveis } from '../fontes/analisador-semantico/pilha-variaveis';
 
 describe('PilhaVariaveis', () => {

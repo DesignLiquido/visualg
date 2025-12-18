@@ -26,6 +26,7 @@ import {
     Super,
     TipoDe,
     Tupla,
+    TuplaN,
     Unario,
     Variavel,
     Vetor,
@@ -93,6 +94,11 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.devePularLinha = false;
         this.deveIndentar = true;
         this.retornoFuncaoAtual = undefined;
+    }
+
+    /* istanbul ignore next */
+    visitarExpressaoTuplaN(expressao: TuplaN): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     /* istanbul ignore next */

@@ -122,5 +122,36 @@ describe('Analisador semântico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(3);
             })
         })
+
+        describe('Cenários de sucesso - Variáveis usadas em loops', () => {
+            it('Variáveis usadas em loops repita...ate e para...faca não devem ser marcadas como não usadas', () => {
+                const retornoLexador = lexador.mapear([
+                    'algoritmo "Teste 7"',
+                    'var',
+                    '    aleatorioMaximo, aleatorioMinimo, i: inteiro',
+                    'inicio',
+                    '',
+                    'repita',
+                    '    aleatorioMaximo <- int(rand * 100)',
+                    '    aleatorioMinimo <- int(rand * 100)',
+                    'ate aleatorioMaximo >= aleatorioMinimo',
+                    '',
+                    'escreval ("Máximo", aleatorioMaximo)',
+                    'escreval ("Mínimo", aleatorioMinimo)',
+                    '',
+                    'para i de aleatorioMinimo ate aleatorioMaximo faca',
+                    '    escreval(i)',
+                    'fimpara',
+                    '',
+                    'fimalgoritmo'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                // Não deve haver avisos de variáveis não usadas - todas são usadas nos loops
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
+        })
     })
 })

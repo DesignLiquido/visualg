@@ -14,7 +14,9 @@ import {
     Declaracao,
     EscrevaMesmaLinha,
     Expressao,
+    Fazer,
     FuncaoDeclaracao,
+    Para,
     Retorna,
     Var,
 } from '@designliquido/delegua/declaracoes';
@@ -303,6 +305,43 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         return Promise.resolve();
     }
 
+    visitarDeclaracaoPara(declaracao: Para): Promise<any> {
+        // Marcar variáveis usadas na condição do loop
+        if (declaracao.condicao) {
+            this.marcarVariaveisUsadasEmExpressao(declaracao.condicao);
+        }
+
+        // Marcar variáveis usadas no incremento
+        if (declaracao.incrementar) {
+            this.marcarVariaveisUsadasEmExpressao(declaracao.incrementar);
+        }
+
+        // Visitar todas as declarações no corpo do loop
+        if (declaracao.corpo && declaracao.corpo.declaracoes) {
+            for (const declaracaoCorpo of declaracao.corpo.declaracoes) {
+                declaracaoCorpo.aceitar(this);
+            }
+        }
+
+        return Promise.resolve();
+    }
+
+    visitarDeclaracaoFazer(declaracao: Fazer): Promise<any> {
+        // Marcar variáveis usadas na condição
+        if (declaracao.condicaoEnquanto) {
+            this.marcarVariaveisUsadasEmExpressao(declaracao.condicaoEnquanto);
+        }
+
+        // Visitar todas as declarações no corpo do loop (caminhoFazer)
+        if (declaracao.caminhoFazer && declaracao.caminhoFazer.declaracoes) {
+            for (const declaracaoCorpo of declaracao.caminhoFazer.declaracoes) {
+                declaracaoCorpo.aceitar(this);
+            }
+        }
+
+        return Promise.resolve();
+    }
+
     visitarExpressaoDeChamada(expressao: Chamada) {
         if (expressao.entidadeChamada instanceof Variavel) {
             const variavel = expressao.entidadeChamada as Variavel;
@@ -451,6 +490,27 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         }
 
         return Promise.resolve();
+    }
+
+    /**
+     * Marca recursivamente todas as variáveis usadas em uma expressão.
+     */
+    protected marcarVariaveisUsadasEmExpressao(expressao: Construto): void {
+        if (expressao instanceof Variavel) {
+            this.gerenciadorEscopos.marcarComoUsada(expressao.simbolo.lexema);
+        } else if (expressao instanceof Binario) {
+            this.marcarVariaveisUsadasEmExpressao(expressao.esquerda);
+            this.marcarVariaveisUsadasEmExpressao(expressao.direita);
+        } else if (expressao instanceof Chamada) {
+            // Marcar variáveis nos argumentos da chamada
+            for (const argumento of expressao.argumentos) {
+                this.marcarVariaveisUsadasEmExpressao(argumento);
+            }
+        } else if ('esquerda' in expressao && 'direita' in expressao) {
+            // Outras expressões binárias
+            this.marcarVariaveisUsadasEmExpressao((expressao as any).esquerda);
+            this.marcarVariaveisUsadasEmExpressao((expressao as any).direita);
+        }
     }
 
     /**

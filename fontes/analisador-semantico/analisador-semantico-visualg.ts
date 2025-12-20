@@ -582,7 +582,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         }
     }
 
-    analisar(declaracoes: Declaracao[]): RetornoAnalisadorSemantico {
+    async analisar(declaracoes: Declaracao[]): Promise<RetornoAnalisadorSemantico> {
         this.funcoes = {};
         this.atual = 0;
         this.diagnosticos = [];
@@ -592,7 +592,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
         // Analisar todas as declarações
         while (this.atual < declaracoes.length) {
-            declaracoes[this.atual].aceitar(this);
+            await declaracoes[this.atual].aceitar(this);
             this.atual++;
         }
 

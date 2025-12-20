@@ -15,7 +15,7 @@ describe('Analisador semântico', () => {
         });
 
         describe('Cenários de falha', () => {
-            it('Variável indefinida, não declarada (escreva)', () => {
+            it('Variável indefinida, não declarada (escreva)', async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Declaração de variável"',
                     'var',
@@ -24,12 +24,12 @@ describe('Analisador semântico', () => {
                     'fimalgoritmo'
                 ], -1);
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
             });
 
-            it('Variável indefinida, não declarada (atribuição)', () => {
+            it('Variável indefinida, não declarada (atribuição)', async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Atribuição de valor"',
                     'var',
@@ -39,12 +39,12 @@ describe('Analisador semântico', () => {
                 ], -1);
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
             });
 
-            it('Atribuição inválida', () => {
+            it('Atribuição inválida', async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Atribuição de valor"',
                     'var',
@@ -55,13 +55,13 @@ describe('Analisador semântico', () => {
                 ], -1);
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 // Espera 2 diagnósticos: 1 erro (incompatibilidade de tipo) + 1 aviso (variável não usada)
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(2);
             });
 
-            it('Atribuição inválida de variáveis', () => {
+            it('Atribuição inválida de variáveis', async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Atribuição inválida de variáveis"',
                     'var x: real',
@@ -77,13 +77,13 @@ describe('Analisador semântico', () => {
                 ], -1);
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 // Espera 8 diagnósticos: 4 erros (incompatibilidades de tipo) + 4 avisos (variáveis não usadas)
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(8);
             });
 
-            it("Chamada de função inexistente", () => {
+            it("Chamada de função inexistente", async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "definindo função"',
                     'var',
@@ -94,13 +94,13 @@ describe('Analisador semântico', () => {
                 ], -1)
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 // Espera 2 diagnósticos: 1 erro (função não encontrada) + 1 aviso (variável não usada)
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(2);
             })
 
-            it("Chamada de função com tipos de parâmetros diferentes", () => {
+            it("Chamada de função com tipos de parâmetros diferentes", async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "definindo função"',
                     'var',
@@ -116,7 +116,7 @@ describe('Analisador semântico', () => {
                 ], -1)
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 // Espera 3 diagnósticos: 1 erro (tipo de parâmetro incorreto) + 2 avisos (variável não usada + caminhos de retorno incompletos)
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(3);
@@ -124,7 +124,7 @@ describe('Analisador semântico', () => {
         })
 
         describe('Cenários de sucesso - Variáveis usadas em loops', () => {
-            it('Variáveis usadas em loops repita...ate e para...faca não devem ser marcadas como não usadas', () => {
+            it('Variáveis usadas em loops repita...ate e para...faca não devem ser marcadas como não usadas', async () => {
                 const retornoLexador = lexador.mapear([
                     'algoritmo "Teste 7"',
                     'var',
@@ -147,7 +147,7 @@ describe('Analisador semântico', () => {
                 ], -1);
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 // Não deve haver avisos de variáveis não usadas - todas são usadas nos loops
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);

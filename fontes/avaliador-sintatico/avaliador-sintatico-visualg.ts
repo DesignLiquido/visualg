@@ -454,10 +454,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             const setaAtribuicao = this.simbolos[this.atual - 1];
             const valor = this.atribuir();
 
-            switch (expressao.constructor.name) {
-                case 'Variavel':
+            switch (expressao.constructor) {
+                case Variavel:
                     return new Atribuir(this.hashArquivo, expressao, valor);
-                case 'AcessoIndiceVariavel':
+                case AcessoIndiceVariavel:
                     const expressaoAcessoIndiceVariavel = expressao as AcessoIndiceVariavel;
                     return new AtribuicaoPorIndice(
                         this.hashArquivo,
@@ -466,7 +466,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                         expressaoAcessoIndiceVariavel.indice,
                         valor
                     );
-                case 'AcessoElementoMatriz':
+                case AcessoElementoMatriz:
                     const expressaoAcessoElementoMatriz = expressao as AcessoElementoMatriz;
                     return new AtribuicaoPorIndicesMatriz(
                         this.hashArquivo,
@@ -476,7 +476,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                         expressaoAcessoElementoMatriz.indiceSecundario,
                         valor
                     );
-                case 'AcessoMetodoOuPropriedade':
+                case AcessoMetodoOuPropriedade:
                     const expressaAcessoMetodoOuPropriedade = expressao as AcessoMetodoOuPropriedade;
                     return new DefinirValor(
                         expressaAcessoMetodoOuPropriedade.hashArquivo,

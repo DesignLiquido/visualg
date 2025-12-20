@@ -734,146 +734,146 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     }
 
     formatarDeclaracaoOuConstruto(declaracaoOuConstruto: Declaracao | Construto): void {
-        switch (declaracaoOuConstruto.constructor.name) {
-            case 'AcessoIndiceVariavel':
+        switch (declaracaoOuConstruto.constructor) {
+            case AcessoIndiceVariavel:
                 this.visitarExpressaoAcessoIndiceVariavel(declaracaoOuConstruto as AcessoIndiceVariavel);
                 break;
-            case 'AcessoMetodoOuPropriedade':
+            case AcessoMetodoOuPropriedade:
                 this.visitarExpressaoAcessoMetodo(declaracaoOuConstruto as AcessoMetodoOuPropriedade);
                 break;
-            case 'Aleatorio':
+            case Aleatorio:
                 this.visitarDeclaracaoAleatorio(declaracaoOuConstruto as Aleatorio);
                 break;
-            case 'Agrupamento':
+            case Agrupamento:
                 this.visitarExpressaoAgrupamento(declaracaoOuConstruto as Agrupamento);
                 break;
-            case 'AtribuicaoPorIndice':
+            case AtribuicaoPorIndice:
                 this.visitarExpressaoAtribuicaoPorIndice(declaracaoOuConstruto as AtribuicaoPorIndice);
                 break;
-            case 'Atribuir':
+            case Atribuir:
                 this.visitarExpressaoDeAtribuicao(declaracaoOuConstruto as Atribuir);
                 break;
-            case 'Binario':
+            case Binario:
                 this.visitarExpressaoBinaria(declaracaoOuConstruto as Binario);
                 break;
-            case 'Bloco':
+            case Bloco:
                 this.visitarExpressaoBloco(declaracaoOuConstruto as Bloco);
                 break;
-            case 'CabecalhoPrograma':
+            case CabecalhoPrograma:
                 this.visitarDeclaracaoCabecalhoPrograma(declaracaoOuConstruto as CabecalhoPrograma);
                 break;
-            case 'Chamada':
+            case Chamada:
                 this.visitarExpressaoDeChamada(declaracaoOuConstruto as Chamada);
                 break;
-            case 'Classe':
+            case Classe:
                 this.visitarDeclaracaoClasse(declaracaoOuConstruto as Classe);
                 break;
-            case 'Comentario':
+            case Comentario:
                 this.visitarDeclaracaoComentario(declaracaoOuConstruto as Comentario);
                 break;
-            case 'Continua':
-                this.visitarExpressaoContinua(declaracaoOuConstruto as Continua);
-                break;
-            case 'DefinirValor':
-                this.visitarExpressaoDefinirValor(declaracaoOuConstruto as DefinirValor);
-                break;
-            case 'Dicionario':
-                this.visitarExpressaoDicionario(declaracaoOuConstruto as Dicionario);
-                break;
-            case 'Escolha':
-                this.visitarDeclaracaoEscolha(declaracaoOuConstruto as Escolha);
-                break;
-            case 'Enquanto':
-                this.visitarDeclaracaoEnquanto(declaracaoOuConstruto as Enquanto);
-                break;
-            case 'Escreva':
-                this.visitarDeclaracaoEscreva(declaracaoOuConstruto as Escreva);
-                break;
-            case 'EscrevaMesmaLinha':
-                this.visitarDeclaracaoEscrevaMesmaLinha(declaracaoOuConstruto as Escreva);
-                break;
-            case 'Expressao':
-                this.visitarDeclaracaoDeExpressao(declaracaoOuConstruto as Expressao);
-                break;
-            case 'ExpressaoRegular':
-                this.visitarExpressaoExpressaoRegular(declaracaoOuConstruto as ExpressaoRegular);
-                break;
-            case 'Falhar':
-                this.visitarExpressaoFalhar(declaracaoOuConstruto as Falhar);
-                break;
-            case 'Fazer':
-                this.visitarDeclaracaoFazer(declaracaoOuConstruto as Fazer);
-                break;
-            case 'FimPara':
-                // FimPara só existe com um Para, então não é necessário formatá-lo.
-                break;
-            case 'FormatacaoEscrita':
-                this.visitarExpressaoFormatacaoEscrita(declaracaoOuConstruto as FormatacaoEscrita);
-                break;
-            case 'FuncaoConstruto':
-                this.visitarExpressaoFuncaoConstruto(declaracaoOuConstruto as FuncaoConstruto);
-                break;
-            case 'FuncaoDeclaracao':
-                this.visitarDeclaracaoDefinicaoFuncao(declaracaoOuConstruto as FuncaoDeclaracao);
-                break;
-            case 'Importar':
-                this.visitarDeclaracaoImportar(declaracaoOuConstruto as Importar);
-                break;
-            case 'InicioAlgoritmo':
-                this.visitarDeclaracaoInicioAlgoritmo(declaracaoOuConstruto as InicioAlgoritmo);
-                break;
-            case 'Isto':
-                this.visitarExpressaoIsto(declaracaoOuConstruto as Isto);
-                break;
-            case 'Leia':
-                this.visitarExpressaoLeia(declaracaoOuConstruto as Leia);
-                break;
-            case 'Literal':
-                this.visitarExpressaoLiteral(declaracaoOuConstruto as Literal);
-                break;
-            case 'Logico':
-                this.visitarExpressaoLogica(declaracaoOuConstruto as Logico);
-                break;
-            case 'Para':
-                this.visitarDeclaracaoPara(declaracaoOuConstruto as Para);
-                break;
-            case 'ParaCada':
-                this.visitarDeclaracaoParaCada(declaracaoOuConstruto as ParaCada);
-                break;
-            case 'ProcedimentoDeclaracao':
-                this.visitarDeclaracaoProcedimento(declaracaoOuConstruto as ProcedimentoDeclaracao);
-                break;
-            case 'Retorna':
-                this.visitarExpressaoRetornar(declaracaoOuConstruto as Retorna);
-                break;
-            case 'Se':
-                this.visitarDeclaracaoSe(declaracaoOuConstruto as Se);
-                break;
-            case 'Super':
-                this.visitarExpressaoSuper(declaracaoOuConstruto as Super);
-                break;
-            case 'Sustar':
-                this.visitarExpressaoSustar(declaracaoOuConstruto as Sustar);
-                break;
-            case 'Tente':
-                this.visitarDeclaracaoTente(declaracaoOuConstruto as Tente);
-                break;
-            case 'TipoDe':
-                this.visitarExpressaoTipoDe(declaracaoOuConstruto as TipoDe);
-                break;
-            case 'Unario':
-                this.visitarExpressaoUnaria(declaracaoOuConstruto as Unario);
-                break;
-            case 'Const':
+            case Const:
                 this.visitarDeclaracaoConst(declaracaoOuConstruto as Const);
                 break;
-            case 'Var':
+            case Continua:
+                this.visitarExpressaoContinua(declaracaoOuConstruto as Continua);
+                break;
+            case DefinirValor:
+                this.visitarExpressaoDefinirValor(declaracaoOuConstruto as DefinirValor);
+                break;
+            case Dicionario:
+                this.visitarExpressaoDicionario(declaracaoOuConstruto as Dicionario);
+                break;
+            case Escolha:
+                this.visitarDeclaracaoEscolha(declaracaoOuConstruto as Escolha);
+                break;
+            case Enquanto:
+                this.visitarDeclaracaoEnquanto(declaracaoOuConstruto as Enquanto);
+                break;
+            case Escreva:
+                this.visitarDeclaracaoEscreva(declaracaoOuConstruto as Escreva);
+                break;
+            case EscrevaMesmaLinha:
+                this.visitarDeclaracaoEscrevaMesmaLinha(declaracaoOuConstruto as Escreva);
+                break;
+            case Expressao:
+                this.visitarDeclaracaoDeExpressao(declaracaoOuConstruto as Expressao);
+                break;
+            case ExpressaoRegular:
+                this.visitarExpressaoExpressaoRegular(declaracaoOuConstruto as ExpressaoRegular);
+                break;
+            case Falhar:
+                this.visitarExpressaoFalhar(declaracaoOuConstruto as Falhar);
+                break;
+            case Fazer:
+                this.visitarDeclaracaoFazer(declaracaoOuConstruto as Fazer);
+                break;
+            case FimPara:
+                // FimPara só existe com um Para, então não é necessário formatá-lo.
+                break;
+            case FormatacaoEscrita:
+                this.visitarExpressaoFormatacaoEscrita(declaracaoOuConstruto as FormatacaoEscrita);
+                break;
+            case FuncaoConstruto:
+                this.visitarExpressaoFuncaoConstruto(declaracaoOuConstruto as FuncaoConstruto);
+                break;
+            case FuncaoDeclaracao:
+                this.visitarDeclaracaoDefinicaoFuncao(declaracaoOuConstruto as FuncaoDeclaracao);
+                break;
+            case Importar:
+                this.visitarDeclaracaoImportar(declaracaoOuConstruto as Importar);
+                break;
+            case InicioAlgoritmo:
+                this.visitarDeclaracaoInicioAlgoritmo(declaracaoOuConstruto as InicioAlgoritmo);
+                break;
+            case Isto:
+                this.visitarExpressaoIsto(declaracaoOuConstruto as Isto);
+                break;
+            case Leia:
+                this.visitarExpressaoLeia(declaracaoOuConstruto as Leia);
+                break;
+            case Literal:
+                this.visitarExpressaoLiteral(declaracaoOuConstruto as Literal);
+                break;
+            case Logico:
+                this.visitarExpressaoLogica(declaracaoOuConstruto as Logico);
+                break;
+            case Para:
+                this.visitarDeclaracaoPara(declaracaoOuConstruto as Para);
+                break;
+            case ParaCada:
+                this.visitarDeclaracaoParaCada(declaracaoOuConstruto as ParaCada);
+                break;
+            case ProcedimentoDeclaracao:
+                this.visitarDeclaracaoProcedimento(declaracaoOuConstruto as ProcedimentoDeclaracao);
+                break;
+            case Retorna:
+                this.visitarExpressaoRetornar(declaracaoOuConstruto as Retorna);
+                break;
+            case Se:
+                this.visitarDeclaracaoSe(declaracaoOuConstruto as Se);
+                break;
+            case Super:
+                this.visitarExpressaoSuper(declaracaoOuConstruto as Super);
+                break;
+            case Sustar:
+                this.visitarExpressaoSustar(declaracaoOuConstruto as Sustar);
+                break;
+            case Tente:
+                this.visitarDeclaracaoTente(declaracaoOuConstruto as Tente);
+                break;
+            case TipoDe:
+                this.visitarExpressaoTipoDe(declaracaoOuConstruto as TipoDe);
+                break;
+            case Unario:
+                this.visitarExpressaoUnaria(declaracaoOuConstruto as Unario);
+                break;
+            case Var:
                 this.visitarDeclaracaoVar(declaracaoOuConstruto as Var);
                 break;
-            case 'Variavel':
+            case Variavel:
                 this.visitarExpressaoDeVariavel(declaracaoOuConstruto as Variavel);
                 break;
-            case 'Vetor':
+            case Vetor:
                 this.visitarExpressaoVetor(declaracaoOuConstruto as Vetor);
                 break;
             default:

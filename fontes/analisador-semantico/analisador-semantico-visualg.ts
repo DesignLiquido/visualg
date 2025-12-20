@@ -1,4 +1,6 @@
 import {
+    AcessoElementoMatriz,
+    AcessoIndiceVariavel,
     Atribuir,
     Binario,
     Chamada,
@@ -48,70 +50,82 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
         const { alvo, valor } = expressao;
-        // Provavelmente o alvo é sempre `Variavel`
-        const alvoVariavel: Variavel = alvo as Variavel;
 
-        const variavel = this.gerenciadorEscopos.buscar(alvoVariavel.simbolo.lexema);
-        if (!variavel) {
-            this.erro(
-                alvoVariavel.simbolo,
-                `Variável '${alvoVariavel.simbolo.lexema}' ainda não foi declarada.`
-            );
-            return Promise.resolve();
-        }
+        // O alvo pode ser uma variável simples ou acesso a vetor/matriz
+        if (alvo instanceof Variavel) {
+            // Atribuição a variável simples
+            const alvoVariavel: Variavel = alvo as Variavel;
 
-        if (variavel.tipo) {
-            if (valor instanceof Literal && variavel.tipo.includes('[]')) {
+            const variavel = this.gerenciadorEscopos.buscar(alvoVariavel.simbolo.lexema);
+            if (!variavel) {
                 this.erro(
                     alvoVariavel.simbolo,
-                    `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
-                );
-                return Promise.resolve();
-            }
-            if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
-                this.erro(
-                    alvoVariavel.simbolo,
-                    `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
+                    `Variável '${alvoVariavel.simbolo.lexema}' ainda não foi declarada.`
                 );
                 return Promise.resolve();
             }
 
-            if (valor instanceof Literal) {
-                let valorLiteral = typeof (valor as Literal).valor;
-                if (!['qualquer'].includes(variavel.tipo)) {
-                    if (valorLiteral === 'string') {
-                        if (variavel.tipo.toLowerCase() !== 'caractere') {
-                            this.erro(
-                                alvoVariavel.simbolo,
-                                `Esperado tipo '${variavel.tipo}' na atribuição.`
-                            );
-                            return Promise.resolve();
+            if (variavel.tipo) {
+                if (valor instanceof Literal && variavel.tipo.includes('[]')) {
+                    this.erro(
+                        alvoVariavel.simbolo,
+                        `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
+                    );
+                    return Promise.resolve();
+                }
+                if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
+                    this.erro(
+                        alvoVariavel.simbolo,
+                        `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
+                    );
+                    return Promise.resolve();
+                }
+
+                if (valor instanceof Literal) {
+                    let valorLiteral = typeof (valor as Literal).valor;
+                    if (!['qualquer'].includes(variavel.tipo)) {
+                        if (valorLiteral === 'string') {
+                            if (variavel.tipo.toLowerCase() !== 'caractere') {
+                                this.erro(
+                                    alvoVariavel.simbolo,
+                                    `Esperado tipo '${variavel.tipo}' na atribuição.`
+                                );
+                                return Promise.resolve();
+                            }
                         }
-                    }
-                    if (valorLiteral === 'number') {
-                        if (!['inteiro', 'real'].includes(variavel.tipo.toLowerCase())) {
-                            this.erro(
-                                alvoVariavel.simbolo,
-                                `Esperado tipo '${variavel.tipo}' na atribuição.`
-                            );
-                            return Promise.resolve();
+                        if (valorLiteral === 'number') {
+                            if (!['inteiro', 'real'].includes(variavel.tipo.toLowerCase())) {
+                                this.erro(
+                                    alvoVariavel.simbolo,
+                                    `Esperado tipo '${variavel.tipo}' na atribuição.`
+                                );
+                                return Promise.resolve();
+                            }
                         }
-                    }
-                    if (valorLiteral === 'boolean') {
-                        if (variavel.tipo.toLowerCase() !== 'logico') {
-                            this.erro(
-                                alvoVariavel.simbolo,
-                                `Esperado tipo '${variavel.tipo}' na atribuição.`
-                            );
-                            return Promise.resolve();
+                        if (valorLiteral === 'boolean') {
+                            if (variavel.tipo.toLowerCase() !== 'logico') {
+                                this.erro(
+                                    alvoVariavel.simbolo,
+                                    `Esperado tipo '${variavel.tipo}' na atribuição.`
+                                );
+                                return Promise.resolve();
+                            }
                         }
                     }
                 }
             }
+
+            // Marcar variável como inicializada com o novo valor
+            this.gerenciadorEscopos.marcarComoInicializada(alvoVariavel.simbolo.lexema, valor);
+        } else {
+            // Atribuição a elemento de vetor/matriz (ex: v[i] <- 10)
+            // Marcar todas as variáveis envolvidas no acesso como usadas
+            this.marcarVariaveisUsadasEmExpressao(alvo);
         }
 
-        // Marcar variável como inicializada com o novo valor
-        this.gerenciadorEscopos.marcarComoInicializada(alvoVariavel.simbolo.lexema, valor);
+        // Marcar variáveis usadas no valor sendo atribuído
+        this.marcarVariaveisUsadasEmExpressao(valor);
+
         return Promise.resolve();
     }
 
@@ -431,20 +445,25 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
     visitarExpressaoLeia(declaracao: Leia): Promise<any> {
         for (let argumento of declaracao.argumentos) {
-            const argumentoComoVariavel = argumento as Variavel;
-            const variavel = this.gerenciadorEscopos.buscar(argumentoComoVariavel.simbolo.lexema);
+            // O argumento de leia pode ser uma variável simples ou acesso a vetor/matriz
+            if (argumento instanceof Variavel) {
+                const variavel = this.gerenciadorEscopos.buscar(argumento.simbolo.lexema);
 
-            if (!variavel) {
-                this.erro(
-                    argumentoComoVariavel.simbolo,
-                    `Variável '${argumentoComoVariavel.simbolo.lexema}' não foi declarada.`
-                );
-                continue;
+                if (!variavel) {
+                    this.erro(
+                        argumento.simbolo,
+                        `Variável '${argumento.simbolo.lexema}' não foi declarada.`
+                    );
+                    continue;
+                }
+
+                // Marcar como usada e inicializada (leia atribui um valor)
+                this.gerenciadorEscopos.marcarComoUsada(argumento.simbolo.lexema);
+                this.gerenciadorEscopos.marcarComoInicializada(argumento.simbolo.lexema);
+            } else {
+                // Para acesso a vetor/matriz (ex: leia(vet[i])), marcar todas as variáveis envolvidas como usadas
+                this.marcarVariaveisUsadasEmExpressao(argumento);
             }
-
-            // Marcar como usada e inicializada (leia atribui um valor)
-            this.gerenciadorEscopos.marcarComoUsada(argumentoComoVariavel.simbolo.lexema);
-            this.gerenciadorEscopos.marcarComoInicializada(argumentoComoVariavel.simbolo.lexema);
         }
 
         return Promise.resolve();
@@ -506,6 +525,15 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
             for (const argumento of expressao.argumentos) {
                 this.marcarVariaveisUsadasEmExpressao(argumento);
             }
+        } else if (expressao instanceof AcessoIndiceVariavel) {
+            // Marcar o vetor e o índice como usados
+            this.marcarVariaveisUsadasEmExpressao(expressao.entidadeChamada);
+            this.marcarVariaveisUsadasEmExpressao(expressao.indice);
+        } else if (expressao instanceof AcessoElementoMatriz) {
+            // Marcar a matriz e os índices como usados
+            this.marcarVariaveisUsadasEmExpressao(expressao.entidadeChamada);
+            this.marcarVariaveisUsadasEmExpressao(expressao.indicePrimario);
+            this.marcarVariaveisUsadasEmExpressao(expressao.indiceSecundario);
         } else if ('esquerda' in expressao && 'direita' in expressao) {
             // Outras expressões binárias
             this.marcarVariaveisUsadasEmExpressao((expressao as any).esquerda);

@@ -153,5 +153,59 @@ describe('Analisador semântico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
         })
+
+        describe('Cenários de sucesso - Acesso a vetores e matrizes', () => {
+            it('Variáveis de vetores acessadas com índice devem ser marcadas como usadas', async () => {
+                const retornoLexador = lexador.mapear([
+                    'algoritmo "negativos"',
+                    'var',
+                    '  n, i: inteiro',
+                    '  vet: vetor [0..9] de inteiro',
+                    'inicio',
+                    '  escreval("Quantos numeros voce vai digitar? ")',
+                    '  leia(n)',
+                    '  para i de 0 ate n-1 faca',
+                    '    escreval("Digite um numero: ")',
+                    '    leia(vet[i])',
+                    '  fimpara',
+                    '  escreval(" ")',
+                    '  escreval("NUMEROS NEGATIVOS")',
+                    '  para i de 0 ate n-1 faca',
+                    '    se (vet[i] < 0) entao',
+                    '      escreval(vet[i])',
+                    '    fimse',
+                    '  fimpara',
+                    'fimalgoritmo'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                // Não deve haver avisos de variáveis não usadas - todas são usadas (n, i, vet)
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
+
+            it('Acesso a vetor em atribuição deve marcar o vetor como usado', async () => {
+                const retornoLexador = lexador.mapear([
+                    'algoritmo "teste vetor"',
+                    'var',
+                    '  v: vetor[1..5] de inteiro',
+                    '  x, i: inteiro',
+                    'inicio',
+                    '  para i de 1 ate 5 faca',
+                    '    v[i] <- i * 10',
+                    '  fimpara',
+                    '  x <- v[1]',
+                    '  escreval(x)',
+                    'fimalgoritmo'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                // Não deve haver avisos de variáveis não usadas - todas são usadas (v, x, i)
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
+        })
     })
 })

@@ -87,7 +87,8 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
     }
 
     definirConstante(nomeConstante: string, valor: any, tipo?: string): void {
-        const constante = this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeConstante];
+        const nomeNormalizado = nomeConstante.toLowerCase();
+        const constante = this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeNormalizado];
 
         let tipoConstante;
         if (constante && constante.hasOwnProperty('tipo')) {
@@ -105,11 +106,12 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
             imutavel: true,
         };
 
-        this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeConstante] = elementoAlvo;
+        this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeNormalizado] = elementoAlvo;
     }
 
     definirVariavel(nomeVariavel: string, valor: any, tipo?: string) {
-        const variavel = this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeVariavel];
+        const nomeNormalizado = nomeVariavel.toLowerCase();
+        const variavel = this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeNormalizado];
 
         let tipoVariavel;
         if (variavel && variavel.hasOwnProperty('tipo')) {
@@ -127,15 +129,16 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
             imutavel: false,
         };
 
-        this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeVariavel] = elementoAlvo;
+        this.pilha[this.pilha.length - 1].espacoMemoria.valores[nomeNormalizado] = elementoAlvo;
     }
 
     atribuirVariavelEm(distancia: number, simbolo: any, valor: any): void {
+        const nomeNormalizado = simbolo.lexema.toLowerCase();
         const espacoMemoriaAncestral = this.pilha[this.pilha.length - distancia].espacoMemoria;
-        if (espacoMemoriaAncestral.valores[simbolo.lexema].imutavel) {
+        if (espacoMemoriaAncestral.valores[nomeNormalizado].imutavel) {
             throw new ErroEmTempoDeExecucao(simbolo, `Constante '${simbolo.lexema}' não pode receber novos valores.`);
         }
-        espacoMemoriaAncestral.valores[simbolo.lexema] = {
+        espacoMemoriaAncestral.valores[nomeNormalizado] = {
             valor,
             tipo: inferirTipoVariavel(valor),
             imutavel: false,
@@ -143,10 +146,11 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
     }
 
     atribuirVariavel(simbolo: SimboloInterface, valor: any) {
+        const nomeNormalizado = simbolo.lexema.toLowerCase();
         for (let i = 1; i <= this.pilha.length; i++) {
             const espacoMemoria = this.pilha[this.pilha.length - i].espacoMemoria;
-            if (espacoMemoria.valores[simbolo.lexema] !== undefined) {
-                const variavel = espacoMemoria.valores[simbolo.lexema];
+            if (espacoMemoria.valores[nomeNormalizado] !== undefined) {
+                const variavel = espacoMemoria.valores[nomeNormalizado];
                 if (variavel.imutavel) {
                     throw new ErroEmTempoDeExecucao(
                         simbolo,
@@ -158,7 +162,7 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
                 ).toLowerCase() as TipoInferencia;
 
                 const valorResolvido = this.converterValor(tipo, valor);
-                espacoMemoria.valores[simbolo.lexema] = {
+                espacoMemoria.valores[nomeNormalizado] = {
                     valor: valorResolvido,
                     tipo,
                     imutavel: false,
@@ -182,15 +186,17 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
     }
 
     obterVariavelEm(distancia: number, nome: string): VariavelInterface {
+        const nomeNormalizado = nome.toLowerCase();
         const espacoMemoriaAncestral = this.pilha[this.pilha.length - distancia].espacoMemoria;
-        return espacoMemoriaAncestral.valores[nome];
+        return espacoMemoriaAncestral.valores[nomeNormalizado];
     }
 
     obterValorVariavel(simbolo: SimboloInterface): VariavelInterface {
+        const nomeNormalizado = simbolo.lexema.toLowerCase();
         for (let i = 1; i <= this.pilha.length; i++) {
             const espacoMemoria = this.pilha[this.pilha.length - i].espacoMemoria;
-            if (espacoMemoria.valores[simbolo.lexema] !== undefined) {
-                return espacoMemoria.valores[simbolo.lexema];
+            if (espacoMemoria.valores[nomeNormalizado] !== undefined) {
+                return espacoMemoria.valores[nomeNormalizado];
             }
         }
 
@@ -198,10 +204,11 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
     }
 
     obterVariavelPorNome(nome: string): VariavelInterface {
+        const nomeNormalizado = nome.toLowerCase();
         for (let i = 1; i <= this.pilha.length; i++) {
             const espacoMemoria = this.pilha[this.pilha.length - i].espacoMemoria;
-            if (espacoMemoria.valores[nome] !== undefined) {
-                return espacoMemoria.valores[nome];
+            if (espacoMemoria.valores[nomeNormalizado] !== undefined) {
+                return espacoMemoria.valores[nomeNormalizado];
             }
         }
 

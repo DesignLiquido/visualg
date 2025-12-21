@@ -326,6 +326,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.formatarDeclaracaoOuConstruto(declaracao.caminhoFazer);
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}ate `;
         this.formatarDeclaracaoOuConstruto(declaracao.condicaoEnquanto);
+        this.codigoFormatado += this.quebraLinha;
     }
 
     visitarDeclaracaoImportar(declaracao: Importar) {
@@ -347,8 +348,12 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
             }
         }
 
-        if (declaracao.condicao instanceof Binario) this.codigoFormatado += ` ate ${declaracao.condicao.direita.valor}`;
-        else this.formatarDeclaracaoOuConstruto(declaracao.condicao);
+        if (declaracao.condicao instanceof Binario) {
+            this.codigoFormatado += ` ate `;
+            this.formatarDeclaracaoOuConstruto(declaracao.condicao.direita);
+        } else {
+            this.formatarDeclaracaoOuConstruto(declaracao.condicao);
+        }
 
         this.codigoFormatado += ` faca${this.quebraLinha}`;
         this.formatarDeclaracaoOuConstruto(declaracao.incrementar);
@@ -898,7 +903,31 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.deveIndentar = true;
         this.deveEscreverVar = true;
 
+        // Separate declarations into different groups
+        const declaracoesVar: Var[] = [];
+        const outrasDec: Declaracao[] = [];
+
         for (let declaracao of declaracoes) {
+            if (declaracao instanceof Var) {
+                declaracoesVar.push(declaracao);
+            } else {
+                outrasDec.push(declaracao);
+            }
+        }
+
+        // Format non-var declarations (CabecalhoPrograma, etc.)
+        for (let declaracao of outrasDec) {
+            // If this is InicioAlgoritmo and we have var declarations, format them first
+            if (declaracao instanceof InicioAlgoritmo && declaracoesVar.length > 0) {
+                this.codigoFormatado += `var${this.quebraLinha}`;
+                this.deveEscreverVar = false; // We already wrote "var"
+                for (let varDecl of declaracoesVar) {
+                    this.codigoFormatado += `${' '.repeat(this.tamanhoIndentacao)}${varDecl.simbolo.lexema}`;
+                    this.codigoFormatado += `: ${varDecl.tipo.toLowerCase()}`;
+                    this.codigoFormatado += this.quebraLinha;
+                }
+            }
+
             this.formatarDeclaracaoOuConstruto(declaracao);
             escopoInicialFormatacao.declaracaoAtual++;
         }

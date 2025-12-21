@@ -217,7 +217,7 @@ describe('Formatador', () => {
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
-        expect(linhasResultado).toHaveLength(13);
+        expect(linhasResultado).toHaveLength(14);
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
     });
@@ -322,7 +322,7 @@ describe('Formatador', () => {
 
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
-        expect(linhasResultado).toHaveLength(10);
+        expect(linhasResultado).toHaveLength(11);
     });
 
     it('XOU', () => {
@@ -727,7 +727,7 @@ describe('Formatador', () => {
         const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
-        expect(resultado).toContain('funcao retornacinco');
+        expect(resultado).toContain('funcao retornaCinco');
         expect(resultado).toContain('retorne');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
@@ -816,5 +816,49 @@ describe('Formatador', () => {
 
         expect(resultado).toContain('var');
         expect(retornoAvaliadorSintatico).toBeTruthy();
+    });
+
+    it('Repita com Para e variáveis - Teste 7', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'algoritmo "Teste 7"',
+                'var',
+                '    aleatorioMaximo, aleatorioMinimo, i: inteiro',
+                'inicio',
+                '',
+                'repita',
+                '    aleatorioMaximo <- int(rand * 100)',
+                '    aleatorioMinimo <- int(rand * 100)',
+                'ate aleatorioMaximo >= aleatorioMinimo',
+                '',
+                'escreval ("Máximo", aleatorioMaximo)',
+                'escreval ("Mínimo", aleatorioMinimo)',
+                '',
+                'para i de aleatorioMinimo ate aleatorioMaximo faca',
+                '    escreval(i)',
+                'fimpara',
+                '',
+                'fimalgoritmo'
+            ],
+            -1
+        );
+
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
+
+        // Verifica que há uma seção var antes de inicio
+        expect(resultado).toContain('var');
+        expect(resultado).toMatch(/var[\s\S]*inicio/);
+
+        // Verifica que há uma quebra de linha após ate
+        expect(resultado).toMatch(/ate[\s\S]*escreval/);
+
+        // Verifica que o para loop não tem "undefined"
+        expect(resultado).not.toContain('undefined');
+        expect(resultado).toContain('para');
+
+        expect(retornoAvaliadorSintatico).toBeTruthy();
+        expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
 });

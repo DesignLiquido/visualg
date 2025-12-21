@@ -63,17 +63,19 @@ export class LexadorVisuAlg extends LexadorBaseLinhaUnica {
      * Identificação de palavra-chave.
      * Palavras-chaves em VisuAlg não são sensíveis a tamanho de caixa
      * (caracteres maiúsculos e minúsculos são equivalentes).
+     * Identificadores (nomes de variáveis) preservam a capitalização original.
      */
     identificarPalavraChave(): void {
         while (this.eAlfabetoOuDigito(this.simboloAtual())) {
             this.avancar();
         }
 
-        const codigo = this.codigo.substring(this.inicioSimbolo, this.atual).toLowerCase();
-        if (codigo in palavrasReservadas) {
-            this.adicionarSimbolo(palavrasReservadas[codigo], codigo);
+        const textoOriginal = this.codigo.substring(this.inicioSimbolo, this.atual);
+        const codigoMinusculo = textoOriginal.toLowerCase();
+        if (codigoMinusculo in palavrasReservadas) {
+            this.adicionarSimbolo(palavrasReservadas[codigoMinusculo], codigoMinusculo);
         } else {
-            this.adicionarSimbolo(tiposDeSimbolos.IDENTIFICADOR, codigo);
+            this.adicionarSimbolo(tiposDeSimbolos.IDENTIFICADOR, textoOriginal);
         }
     }
 

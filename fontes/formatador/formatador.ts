@@ -218,7 +218,17 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
         this.formatarDeclaracaoOuConstruto(expressao.alvo);
-        this.codigoFormatado += ` <- `;
+        // Preserve the original assignment operator if available
+        let operador = '<-'; // default
+        if (expressao.simboloOperador) {
+            // The lexema might be incomplete, so we need to reconstruct the full operator
+            if (expressao.simboloOperador.lexema === ':' || expressao.simboloOperador.lexema.startsWith(':')) {
+                operador = ':=';
+            } else {
+                operador = '<-';
+            }
+        }
+        this.codigoFormatado += ` ${operador} `;
         this.formatarDeclaracaoOuConstruto(expressao.valor);
 
         if (this.devePularLinha) {
@@ -526,7 +536,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
 
     visitarExpressaoDeChamada(expressao: Chamada) {
         this.formatarDeclaracaoOuConstruto(expressao.entidadeChamada);
-        this.codigoFormatado += '(';
+        this.codigoFormatado += ' (';
         for (let argumento of expressao.argumentos) {
             this.formatarDeclaracaoOuConstruto(argumento);
             this.codigoFormatado += ', ';

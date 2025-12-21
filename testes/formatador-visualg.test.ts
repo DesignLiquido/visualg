@@ -861,4 +861,45 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
+
+    it('Atribuição - Preserva var section e variáveis', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'algoritmo "Atribuição"',
+                'var',
+                '    a: inteiro',
+                '    b: caractere',
+                'inicio',
+                '    a <- 1',
+                '    b := "b"',
+                '    escreva (a)',
+                '    escreva (b)',
+                'fimalgoritmo'
+            ],
+            -1
+        );
+
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        // Verifica que a seção var está presente
+        expect(resultado).toContain('var');
+        expect(resultado).toMatch(/var[\s\S]*a: inteiro/);
+        expect(resultado).toMatch(/var[\s\S]*b: caractere/);
+
+        // Verifica que as variáveis mantêm o caso original
+        expect(resultado).toContain('a: inteiro');
+        expect(resultado).toContain('b: caractere');
+
+        // Verifica que os operadores de atribuição são preservados
+        expect(resultado).toContain('a <- 1');
+        expect(resultado).toContain('b := "b"');
+
+        // Verifica que os espaços em chamadas de função são preservados
+        expect(resultado).toContain('escreva(a)');
+        expect(resultado).toContain('escreva(b)');
+
+        expect(retornoAvaliadorSintatico).toBeTruthy();
+        expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
+    });
 });

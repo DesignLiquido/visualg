@@ -456,7 +456,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
             switch (expressao.constructor) {
                 case Variavel:
-                    return new Atribuir(this.hashArquivo, expressao, valor);
+                    return new Atribuir(this.hashArquivo, expressao, valor, undefined, setaAtribuicao);
                 case AcessoIndiceVariavel:
                     const expressaoAcessoIndiceVariavel = expressao as AcessoIndiceVariavel;
                     return new AtribuicaoPorIndice(

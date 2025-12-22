@@ -35,6 +35,11 @@ import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar'
 import { PilhaVariaveis } from './pilha-variaveis';
 import { Aleatorio } from '../declaracoes';
 
+function ehTipoVetor(tipo: string): boolean {
+    if (!tipo) return false;
+    return tipo.includes('[]') || /vetor\s*\[.*?\]\s*de\s+\w+/i.test(tipo);
+}
+
 export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
     funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface };
@@ -66,14 +71,14 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
             }
 
             if (variavel.tipo) {
-                if (valor instanceof Literal && variavel.tipo.includes('[]')) {
+                if (valor instanceof Literal && ehTipoVetor(variavel.tipo)) {
                     this.erro(
                         alvoVariavel.simbolo,
                         `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`
                     );
                     return Promise.resolve();
                 }
-                if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
+                if (valor instanceof Vetor && !ehTipoVetor(variavel.tipo)) {
                     this.erro(
                         alvoVariavel.simbolo,
                         `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`

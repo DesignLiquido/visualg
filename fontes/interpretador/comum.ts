@@ -48,6 +48,27 @@ import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 import * as bibliotecaCaracteres from '../bibliotecas/caracteres';
 import * as bibliotecaNumerica from '../bibliotecas/numerica';
 
+/**
+ * Extracts the base type from a type string.
+ * Examples:
+ * - "inteiro[]" → "inteiro"
+ * - "vetor [0..9] de inteiro" → "inteiro"
+ * - "vetor [1..3] de deposito" → "deposito"
+ * - "inteiro" → "inteiro"
+ */
+function extrairTipoBase(tipo: string): string {
+    if (!tipo) return tipo;
+
+    // Handle new format: "vetor [X..Y] de TIPO"
+    const matchVetor = tipo.match(/vetor\s*\[.*?\]\s*de\s+(\w+)/i);
+    if (matchVetor) {
+        return matchVetor[1];
+    }
+
+    // Handle old format: "TIPO[]"
+    return tipo.replace('[]', '');
+}
+
 export function carregarBibliotecaGlobalCaracter(pilhaEscoposExecucao: PilhaEscoposExecucaoInterface) {
     pilhaEscoposExecucao.definirVariavel('asc', new FuncaoPadrao(1, bibliotecaCaracteres.asc));
     pilhaEscoposExecucao.definirVariavel('carac', new FuncaoPadrao(1, bibliotecaCaracteres.carac));
@@ -230,7 +251,7 @@ export async function atribuirVariavel(
 
         if (entidadeChamada instanceof Vetor) {
             const primeiraDimensao = entidadeChamada.valores[indicePrimario] as any; // TODO: O que exatamente tem aqui?
-            const tipoElementar = primeiraDimensao.tipo.replace('[]', '');
+            const tipoElementar = extrairTipoBase(primeiraDimensao.tipo);
             primeiraDimensao.valores[indiceSecundario] = converterValor(valor, tipoElementar);
             return Promise.resolve();
         }
@@ -259,7 +280,7 @@ export async function atribuirVariavel(
             valorIndice = indice;
         }
 
-        const subtipo = String(alvo.tipo).replace('[]', '');
+        const subtipo = extrairTipoBase(String(alvo.tipo));
         const valorResolvido: any = converterValor(valor, subtipo);
 
         if (valorAlvo instanceof Vetor) {
@@ -279,7 +300,7 @@ export async function atribuirVariavel(
         let tipoBaseVariavel: string;
         if (expressao.objeto instanceof AcessoIndiceVariavel) {
             referenciaVariavel = await interpretador.avaliar(expressao.objeto.entidadeChamada);
-            tipoBaseVariavel = referenciaVariavel.tipo.replace('[]', '');
+            tipoBaseVariavel = extrairTipoBase(referenciaVariavel.tipo);
         } else {
             referenciaVariavel = await interpretador.avaliar(expressao.objeto);
             tipoBaseVariavel = referenciaVariavel.tipo;
@@ -842,7 +863,7 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
 
     if (objeto instanceof Vetor) {
         const primeiraDimensao = objeto.valores[indicePrimario] as any; // TODO: O que exatamente tem aqui?
-        const tipoElementar = primeiraDimensao.tipo.replace('[]', '');
+        const tipoElementar = extrairTipoBase(primeiraDimensao.tipo);
         primeiraDimensao.valores[indiceSecundario] = converterValor(valor, tipoElementar);
         return Promise.resolve();
     }

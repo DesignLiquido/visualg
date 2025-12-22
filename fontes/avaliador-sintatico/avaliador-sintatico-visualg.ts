@@ -103,8 +103,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return construtoInicializacao;
     }
 
-    private validarDimensoesVetor(): number[] {
-        let dimensoes = [];
+    private validarDimensoesVetor(): { tamanhos: number[], inicios: number[], fins: number[] } {
+        let tamanhos = [];
+        let inicios = [];
+        let fins = [];
         do {
             const numeroInicial = this.consumir(
                 tiposDeSimbolos.NUMERO,
@@ -122,10 +124,14 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 tiposDeSimbolos.NUMERO,
                 'Esperado índice final para inicialização de dimensão de vetor.'
             );
-            dimensoes.push(Number(numeroFinal.literal) - Number(numeroInicial.literal));
+            const inicio = Number(numeroInicial.literal);
+            const fim = Number(numeroFinal.literal);
+            tamanhos.push(fim - inicio);
+            inicios.push(inicio);
+            fins.push(fim);
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
-        return dimensoes;
+        return { tamanhos, inicios, fins };
     }
 
     private logicaComumParametroVisuAlg(): ParametroVisuAlg {
@@ -245,15 +251,23 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                             );
                         }
 
+                        // Construct the proper VisuAlg type string: vetor [inicio..fim] de tipo
+                        let tipoVetor = 'vetor';
+                        for (let i = 0; i < dimensoes.inicios.length; i++) {
+                            if (i === 0) tipoVetor += ' ';
+                            tipoVetor += `[${dimensoes.inicios[i]}..${dimensoes.fins[i]}]`;
+                            if (i < dimensoes.inicios.length - 1) tipoVetor += ', ';
+                        }
+                        tipoVetor += ` de ${simboloTipo.lexema.toLowerCase()}`;
+
                         for (let identificador of dadosVariaveis.identificadores) {
                             if (this.tiposConhecidos.includes(simboloTipo.lexema)) {
-                                const tipoInferido = `${simboloTipo.lexema}[]`;
                                 inicializacoes.push(
                                     new Var(
                                         identificador,
                                         this.criarVetorNDimensional(
                                             simboloAtual.linha,
-                                            dimensoes,
+                                            dimensoes.tamanhos,
                                             new Chamada(
                                                 this.hashArquivo,
                                                 new Constante(
@@ -269,20 +283,19 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                                 []
                                             )
                                         ),
-                                        tipoInferido as any
+                                        tipoVetor as any
                                     )
                                 );
                             } else {
-                                const tipoInferido = `${simboloTipo.lexema}[]`;
                                 inicializacoes.push(
                                     new Var(
                                         identificador,
                                         new Literal(
                                             this.hashArquivo,
                                             Number(dadosVariaveis.simbolo.linha),
-                                            this.criarVetorNDimensional(simboloAtual.linha, dimensoes)
+                                            this.criarVetorNDimensional(simboloAtual.linha, dimensoes.tamanhos)
                                         ),
-                                        tipoInferido as TipoDadosElementar
+                                        tipoVetor as TipoDadosElementar
                                     )
                                 );
                             }

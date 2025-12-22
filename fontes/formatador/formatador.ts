@@ -354,7 +354,11 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
                 }
                 this.deveIndentar = true;
             } else {
-                this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
+                if (declaracao.inicializador instanceof Expressao) {
+                    this.formatarDeclaracaoOuConstruto((declaracao.inicializador as Expressao).expressao);
+                } else {
+                    this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
+                }
             }
         }
 
@@ -727,7 +731,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         this.codigoFormatado += this.quebraLinha;
 
         // Se há variáveis, escrevemos elas agora.
-        const declaracoesVar = funcaoConstruto.corpo.filter((d) => d.constructor.name === 'Var');
+        const declaracoesVar = funcaoConstruto.corpo.filter((d) => d.constructor === Var);
         if (declaracoesVar.length > 0) {
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}var${this.quebraLinha}`;
             this.indentacaoAtual += this.tamanhoIndentacao;
@@ -740,7 +744,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         }
 
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}inicio${this.quebraLinha}`;
-        const outrasDeclaracoes = funcaoConstruto.corpo.filter((d) => d.constructor.name !== 'Var');
+        const outrasDeclaracoes = funcaoConstruto.corpo.filter((d) => d.constructor !== Var);
         this.formatarBlocoOuVetorDeclaracoes(outrasDeclaracoes);
     }
 

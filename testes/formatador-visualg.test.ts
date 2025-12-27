@@ -9,7 +9,7 @@ describe('Formatador', () => {
     const avaliadorSintatico = new AvaliadorSintaticoVisuAlg();
     const lexador = new LexadorVisuAlg();
 
-    it('Olá mundo', () => {
+    it('Olá mundo', async () => {
         const retornoLexador = lexador.mapear([
             'algoritmo "olá mundo"',
             'inicio',
@@ -17,7 +17,7 @@ describe('Formatador', () => {
             'fimalgoritmo'
         ], -1);
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
@@ -25,7 +25,7 @@ describe('Formatador', () => {
         expect(linhasResultado).toHaveLength(5);
     });
 
-    it('Variáveis', () => {
+    it('Variáveis', async () => {
         const retornoLexador = lexador.mapear([
             'algoritmo "teste"',
             'var',
@@ -35,7 +35,7 @@ describe('Formatador', () => {
             'fimalgoritmo'
         ], -1);
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
@@ -43,7 +43,7 @@ describe('Formatador', () => {
         expect(linhasResultado).toHaveLength(7);
     });
 
-    it('Aleatorio - Números', () => {
+    it('Aleatorio - Números', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Exemplo Xou"',
@@ -57,7 +57,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
@@ -67,7 +67,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
     });
 
-    it('Lendo variaveis', () => {
+    it('Lendo variaveis', async () => {
         const retornoLexador = lexador.mapear([
             'algoritmo "Soma dos números"',
             'var',
@@ -82,7 +82,7 @@ describe('Formatador', () => {
             'fimalgoritmo'
         ], -1);
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
@@ -90,7 +90,7 @@ describe('Formatador', () => {
         expect(linhasResultado).toHaveLength(12);
     })
 
-    it('Atribuição', () => {
+    it('Atribuição', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Atribuição"',
@@ -106,14 +106,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
         expect(linhasResultado).toHaveLength(11);
     })
 
-    it('Enquanto', () => {
+    it('Enquanto', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Números de 1 a 10 (com enquanto...faca)"',
@@ -129,14 +129,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
         expect(linhasResultado).toHaveLength(11);
     })
 
-    it('Escolha', () => {
+    it('Escolha', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Times"',
@@ -156,14 +156,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
         expect(linhasResultado).toHaveLength(16);
     });
 
-    it('Função', () => {
+    it('Função', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'Algoritmo "exemplo-funcoes"',
@@ -187,7 +187,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -195,7 +195,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
 
-    it('Interrompa', () => {
+    it('Interrompa', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Números de 1 a 10 (com interrompa)"',
@@ -213,7 +213,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
@@ -222,7 +222,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(5);
     });
 
-    it('Leia', () => {
+    it('Leia', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'Algoritmo "Soma 5"',
@@ -236,7 +236,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
@@ -246,7 +246,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
 
-    it('Para', () => {
+    it('Para', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Numeros de 1 a 10"',
@@ -259,7 +259,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes)
         const linhasResultado = resultado.split(sistemaOperacional.EOL)
 
@@ -268,7 +268,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
     });
 
-    it('Procedimento', () => {
+    it('Procedimento', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "semnome"',
@@ -291,7 +291,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -301,7 +301,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
 
-    it('Repita', () => {
+    it('Repita', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Números de 1 a 10 (com repita)"',
@@ -316,7 +316,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -325,7 +325,7 @@ describe('Formatador', () => {
         expect(linhasResultado).toHaveLength(11);
     });
 
-    it('XOU', () => {
+    it('XOU', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Exemplo Xou"',
@@ -351,7 +351,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -360,7 +360,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(24);
     });
 
-    it('LimpaTela', () => {
+    it('LimpaTela', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste limpatela"',
@@ -372,14 +372,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('limpatela');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Comentários', () => {
+    it('Comentários', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste comentários"',
@@ -394,14 +394,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('// ');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Agrupamento com parênteses', () => {
+    it('Agrupamento com parênteses', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste agrupamento"',
@@ -414,7 +414,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('(');
@@ -422,7 +422,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Chamada de função', () => {
+    it('Chamada de função', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste chamada"',
@@ -439,7 +439,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('dobro');
@@ -447,7 +447,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Acesso a índice de vetor', () => {
+    it('Acesso a índice de vetor', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste vetor"',
@@ -461,7 +461,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('[');
@@ -469,7 +469,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Literais - Boolean false e números', () => {
+    it('Literais - Boolean false e números', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste literais"',
@@ -486,7 +486,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('falso');
@@ -495,7 +495,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Operadores binários - Módulo', () => {
+    it('Operadores binários - Módulo', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste modulo"',
@@ -508,14 +508,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('%');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Operadores binários - Divisão inteira', () => {
+    it('Operadores binários - Divisão inteira', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste divisão inteira"',
@@ -528,13 +528,13 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Operador menor', () => {
+    it('Operador menor', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste menor"',
@@ -549,14 +549,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('<');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Expressão unária - Negação antes', () => {
+    it('Expressão unária - Negação antes', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste unário"',
@@ -571,7 +571,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('-');
@@ -579,7 +579,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Expressão unária - Subtração com variável', () => {
+    it('Expressão unária - Subtração com variável', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste unário"',
@@ -593,14 +593,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('-');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Se com senao', () => {
+    it('Se com senao', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste se senao"',
@@ -617,7 +617,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('senao');
@@ -625,7 +625,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Escolha com caso vazio', () => {
+    it('Escolha com caso vazio', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste escolha caso vazio"',
@@ -644,7 +644,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('escolha');
@@ -653,7 +653,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('EscrevaMesmaLinha - escreva sem quebra de linha', () => {
+    it('EscrevaMesmaLinha - escreva sem quebra de linha', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste escreva"',
@@ -664,14 +664,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('escreva(');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Escreva vazio', () => {
+    it('Escreva vazio', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste escreval vazio"',
@@ -682,14 +682,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('escreval');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Aleatorio ON', () => {
+    it('Aleatorio ON', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste aleatorio on"',
@@ -702,14 +702,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('aleatorio ON');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Função sem parâmetros', () => {
+    it('Função sem parâmetros', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste funcao sem parametros"',
@@ -724,7 +724,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('funcao retornaCinco');
@@ -732,7 +732,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Procedimento sem parâmetros', () => {
+    it('Procedimento sem parâmetros', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste procedimento sem parametros"',
@@ -747,7 +747,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('procedimento saudacao');
@@ -755,7 +755,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Retorno sem valor', () => {
+    it('Retorno sem valor', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste retorno sem valor"',
@@ -771,14 +771,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('retorne');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Operadores lógicos - E', () => {
+    it('Operadores lógicos - E', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste e logico"',
@@ -791,14 +791,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain(' e ');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Múltiplas variáveis em Var sem inicialização', () => {
+    it('Múltiplas variáveis em Var sem inicialização', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "teste var"',
@@ -811,14 +811,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('var');
         expect(retornoAvaliadorSintatico).toBeTruthy();
     });
 
-    it('Repita com Para e variáveis - Teste 7', () => {
+    it('Repita com Para e variáveis - Teste 7', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Teste 7"',
@@ -843,7 +843,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -862,7 +862,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
 
-    it('Atribuição - Preserva var section e variáveis', () => {
+    it('Atribuição - Preserva var section e variáveis', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'algoritmo "Atribuição"',
@@ -879,7 +879,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatadorVisuAlg.formatar(retornoAvaliadorSintatico.declaracoes);
 
         // Verifica que a seção var está presente

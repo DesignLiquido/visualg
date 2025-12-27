@@ -41,7 +41,7 @@ describe('Interpretador com suporte a depuração', () => {
                     execucaoFinalizada = true;
                 }
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.prepararParaDepuracao(retornoAvaliadorSintatico.declaracoes);
                 await interpretador.instrucaoContinuarInterpretacao();

@@ -879,7 +879,7 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
 
 async function encontrarLeiaNoAleatorio(
     interpretador: InterpretadorVisuAlgInterface,
-    declaracao: Declaracao,
+    declaracao: Declaracao | Construto,
     menorNumero: number,
     maiorNumero: number
 ) {
@@ -887,8 +887,10 @@ async function encontrarLeiaNoAleatorio(
         // Se a declaração tiver um campo 'declaracoes', ela é um Bloco
         const declaracoes = declaracao.declaracoes as Declaracao[];
         for (const subDeclaracao of declaracoes) {
-            encontrarLeiaNoAleatorio(interpretador, subDeclaracao, menorNumero, maiorNumero);
+            await encontrarLeiaNoAleatorio(interpretador, subDeclaracao, menorNumero, maiorNumero);
         }
+    } else if (declaracao instanceof Expressao) {
+        await encontrarLeiaNoAleatorio(interpretador, declaracao.expressao, menorNumero, maiorNumero);
     } else if (declaracao instanceof Leia) {
         // Se encontrarmos um Leia, podemos efetuar as operações imediatamente
         for (const argumento of declaracao.argumentos) {
@@ -896,8 +898,10 @@ async function encontrarLeiaNoAleatorio(
             const tipoDe = arg1.tipo || inferirTipoVariavel(arg1);
             const valor =
                 tipoDe === 'texto' ? palavraAleatoriaCom5Digitos() : gerarNumeroAleatorio(menorNumero, maiorNumero);
-            atribuirVariavel(interpretador, argumento, valor);
+            await atribuirVariavel(interpretador, argumento, valor);
         }
+        // Marca o Leia para não interromper a execução, pois o valor já foi atribuído
+        declaracao.eParaInterromper = true;
     }
 }
 
@@ -930,7 +934,7 @@ export async function visitarDeclaracaoAleatorio(
             maiorNumero = Math.max(expressao.argumentos.min, expressao.argumentos.max);
         }
         for (let corpoDeclaracao of expressao.corpo.declaracoes) {
-            encontrarLeiaNoAleatorio(interpretador, corpoDeclaracao, menorNumero, maiorNumero);
+            await encontrarLeiaNoAleatorio(interpretador, corpoDeclaracao, menorNumero, maiorNumero);
             retornoExecucao = await interpretador.executar(corpoDeclaracao, false);
         }
     } catch (error) {

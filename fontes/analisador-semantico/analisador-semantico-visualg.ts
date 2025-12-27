@@ -223,15 +223,18 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     }
 
     visitarDeclaracaoDeExpressao(declaracao: Expressao) {
-        switch (declaracao.expressao.constructor.name) {
-            case 'Atribuir':
+        switch (declaracao.expressao.constructor) {
+            case Atribuir:
                 this.visitarExpressaoDeAtribuicao(declaracao.expressao as Atribuir);
                 break;
-            case 'Chamada':
+            case Binario:
+                this.visitarExpressaoBinaria(declaracao.expressao);
+                break;
+            case Chamada:
                 this.visitarExpressaoDeChamada(declaracao.expressao as Chamada);
                 break;
-            case 'Binario':
-                this.visitarExpressaoBinaria(declaracao.expressao);
+            case Leia:
+                this.visitarExpressaoLeia(declaracao.expressao as Leia);
                 break;
             default:
                 // Outros tipos de expressão tratados pela classe base ou não necessários para análise semântica

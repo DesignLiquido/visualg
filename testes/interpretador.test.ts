@@ -28,7 +28,7 @@ describe('Interpretador', () => {
                     'inicio',
                     'fimalgoritmo'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -54,7 +54,7 @@ describe('Interpretador', () => {
                     ],
                     -1
                 );
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetornoMesmaLinha = (saida: any) => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -98,7 +98,7 @@ describe('Interpretador', () => {
                     'fimalgoritmo'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetorno = (saida: any) => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -135,7 +135,7 @@ describe('Interpretador', () => {
                     'fimalgoritmo'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetornoMesmaLinha = (saida: any) => {
                     saidas.push(saida);
@@ -171,7 +171,7 @@ describe('Interpretador', () => {
                     'Fimalgoritmo'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetorno = (saida: any) => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -202,7 +202,7 @@ describe('Interpretador', () => {
                     'Fimalgoritmo'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetornoMesmaLinha = (saida: any) => {
                     expect(saida).toEqual("15")
@@ -255,7 +255,7 @@ describe('Interpretador', () => {
                     'fimalgoritmo',
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -295,7 +295,7 @@ describe('Interpretador', () => {
                         'fimalgoritmo'
                     ], -1);
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     interpretador.funcaoDeRetorno = (saida: any) => {
                         expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -327,7 +327,7 @@ describe('Interpretador', () => {
                         _saidas += saida;
                     }
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
@@ -369,7 +369,7 @@ describe('Interpretador', () => {
                     'Fimalgoritmo'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetornoMesmaLinha = (saida: any) => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -389,7 +389,7 @@ describe('Interpretador', () => {
                     'fimalgoritmo'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -447,7 +447,7 @@ describe('Interpretador', () => {
                         _saidas += saida;
                     }
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -477,7 +477,7 @@ describe('Interpretador', () => {
                         'Fimalgoritmo'
                     ], -1);
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -512,7 +512,7 @@ describe('Interpretador', () => {
                         '',
                         'fimalgoritmo'
                     ], -1);
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     interpretador.funcaoDeRetorno = (saida: any) => {
                         expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -568,7 +568,7 @@ describe('Interpretador', () => {
                         '    fimPara',
                         'fimAlgoritmo'
                     ], -1);
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     interpretador.funcaoDeRetorno = (saida: any) => {
                         expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -600,7 +600,7 @@ describe('Interpretador', () => {
                         _saidas += saida;
                     }
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -623,7 +623,7 @@ describe('Interpretador', () => {
                         _saidas += saida + ', ';
                     }
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -685,7 +685,7 @@ describe('Interpretador', () => {
                         'fimalgoritmo'
                     ], -1);
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     interpretador.funcaoDeRetorno = (saida: any) => {
                         expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -716,7 +716,7 @@ describe('Interpretador', () => {
                         '    Topo',
                         'fimalgoritmo'
                     ], -1);
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     let chamadasLimpaTela = 0;
                     interpretador.funcaoLimpaTela = () => {
@@ -770,7 +770,7 @@ describe('Interpretador', () => {
                         '',
                         'fimalgoritmo'
                     ], -1);
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     interpretador.funcaoDeRetorno = (saida: any) => {
                         expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -798,7 +798,7 @@ describe('Interpretador', () => {
                         'fimalgoritmo'
                     ], -1);
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
     
                     let _saidas = "";
                     interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
@@ -836,7 +836,7 @@ describe('Interpretador', () => {
                     'escreval("C ", resultC)',
                     'fimalgoritmo'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetorno = (saida: string) => {
                     expect(saidasMensagens.includes(saida)).toBeTruthy()
@@ -858,7 +858,7 @@ describe('Interpretador', () => {
                     'fimalgoritmo'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
@@ -885,7 +885,7 @@ describe('Interpretador', () => {
                         _saidas += saida;
                     }
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -928,7 +928,7 @@ describe('Interpretador', () => {
                         _saidas += saida;
                     }
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -976,7 +976,7 @@ describe('Interpretador', () => {
                     _saidas += saida;
                 }
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
@@ -1028,7 +1028,7 @@ describe('Interpretador', () => {
                     _saidas += saida;
                 }
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
@@ -1103,7 +1103,7 @@ describe('Interpretador', () => {
                     _saidas += saida;
                 }
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);

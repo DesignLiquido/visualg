@@ -11,21 +11,21 @@ describe('Lexador', () => {
         });
 
         describe('Cenários de sucesso', () => {
-            it('Sucesso - Código vazio', () => {
+            it('Sucesso - Código vazio', async () => {
                 const resultado = lexador.mapear([''], -1);
 
                 expect(resultado).toBeTruthy();
                 expect(resultado.simbolos).toHaveLength(0);
             });
 
-            it('Sucesso - Ponto-e-vírgula, opcional', () => {
+            it('Sucesso - Ponto-e-vírgula, opcional', async () => {
                 const resultado = lexador.mapear([';;;;;;;;;;;;;;;;;;;;;'], -1);
 
                 expect(resultado).toBeTruthy();
                 expect(resultado.simbolos).toHaveLength(0);
             });
 
-            it('Sucesso - estrutura mínima', () => {
+            it('Sucesso - estrutura mínima', async () => {
                 const resultado = lexador.mapear([
                     "algoritmo \"vazio\"",
                     "var",
@@ -49,7 +49,7 @@ describe('Lexador', () => {
                 );
             });
 
-            it('Sucesso - Olá mundo', () => {
+            it('Sucesso - Olá mundo', async () => {
                 const resultado = lexador.mapear(
                     [
                         "algoritmo \"ola-mundo\"",
@@ -76,7 +76,7 @@ describe('Lexador', () => {
                 );
             });
 
-            it('Sucesso - Registro', () => {
+            it('Sucesso - Registro', async () => {
                 const resultado = lexador.mapear(
                     [
                         `algoritmo "EXEMPLO_METALNOVO"`,

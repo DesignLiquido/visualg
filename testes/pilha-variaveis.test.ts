@@ -10,14 +10,14 @@ describe('PilhaVariaveis', () => {
     });
 
     describe('constructor', () => {
-        it('Deve inicializar uma pilha vazia', () => {
+        it('Deve inicializar uma pilha vazia', async () => {
             expect(pilha.pilha).toEqual([]);
             expect(pilha.eVazio()).toBe(true);
         });
     });
 
     describe('empilhar()', () => {
-        it('Deve adicionar um item à pilha', () => {
+        it('Deve adicionar um item à pilha', async () => {
             const variaveis = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -29,7 +29,7 @@ describe('PilhaVariaveis', () => {
             expect(pilha.eVazio()).toBe(false);
         });
 
-        it('Deve adicionar múltiplos itens à pilha', () => {
+        it('Deve adicionar múltiplos itens à pilha', async () => {
             const variaveis1 = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -50,7 +50,7 @@ describe('PilhaVariaveis', () => {
             expect(pilha.pilha[2]).toEqual(variaveis3);
         });
 
-        it('Deve aceitar um objeto vazio', () => {
+        it('Deve aceitar um objeto vazio', async () => {
             const variaveisVazio = {};
 
             pilha.empilhar(variaveisVazio);
@@ -59,7 +59,7 @@ describe('PilhaVariaveis', () => {
             expect(pilha.pilha[0]).toEqual({});
         });
 
-        it('Deve aceitar múltiplas variáveis em um único objeto', () => {
+        it('Deve aceitar múltiplas variáveis em um único objeto', async () => {
             const variaveis = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface,
                 y: { valor: 3.14, tipo: 'real', imutavel: false } as VariavelInterface,
@@ -75,11 +75,11 @@ describe('PilhaVariaveis', () => {
     });
 
     describe('eVazio()', () => {
-        it('Deve retornar true quando a pilha está vazia', () => {
+        it('Deve retornar true quando a pilha está vazia', async () => {
             expect(pilha.eVazio()).toBe(true);
         });
 
-        it('Deve retornar false quando a pilha contém itens', () => {
+        it('Deve retornar false quando a pilha contém itens', async () => {
             const variaveis = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -89,7 +89,7 @@ describe('PilhaVariaveis', () => {
             expect(pilha.eVazio()).toBe(false);
         });
 
-        it('Deve retornar true após remover todos os itens', () => {
+        it('Deve retornar true após remover todos os itens', async () => {
             const variaveis = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -102,7 +102,7 @@ describe('PilhaVariaveis', () => {
     });
 
     describe('topoDaPilha()', () => {
-        it('Deve retornar o elemento do topo sem removê-lo', () => {
+        it('Deve retornar o elemento do topo sem removê-lo', async () => {
             const variaveis1 = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -119,11 +119,11 @@ describe('PilhaVariaveis', () => {
             expect(pilha.pilha).toHaveLength(2);
         });
 
-        it('Deve lançar erro quando a pilha está vazia', () => {
+        it('Deve lançar erro quando a pilha está vazia', async () => {
             expect(() => pilha.topoDaPilha()).toThrow('Pilha vazia.');
         });
 
-        it('Deve retornar sempre o último elemento adicionado', () => {
+        it('Deve retornar sempre o último elemento adicionado', async () => {
             const variaveis1 = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -148,7 +148,7 @@ describe('PilhaVariaveis', () => {
     });
 
     describe('removerUltimo()', () => {
-        it('Deve remover e retornar o elemento do topo', () => {
+        it('Deve remover e retornar o elemento do topo', async () => {
             const variaveis1 = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -166,11 +166,11 @@ describe('PilhaVariaveis', () => {
             expect(pilha.topoDaPilha()).toEqual(variaveis1);
         });
 
-        it('Deve lançar erro quando a pilha está vazia', () => {
+        it('Deve lançar erro quando a pilha está vazia', async () => {
             expect(() => pilha.removerUltimo()).toThrow('Pilha vazia.');
         });
 
-        it('Deve remover elementos na ordem LIFO (Last In, First Out)', () => {
+        it('Deve remover elementos na ordem LIFO (Last In, First Out)', async () => {
             const variaveis1 = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -191,7 +191,7 @@ describe('PilhaVariaveis', () => {
             expect(pilha.eVazio()).toBe(true);
         });
 
-        it('Deve permitir remover até esvaziar completamente a pilha', () => {
+        it('Deve permitir remover até esvaziar completamente a pilha', async () => {
             const variaveis = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -205,7 +205,7 @@ describe('PilhaVariaveis', () => {
     });
 
     describe('Cenários integrados', () => {
-        it('Deve suportar múltiplas operações de empilhar e remover', () => {
+        it('Deve suportar múltiplas operações de empilhar e remover', async () => {
             const variaveis1 = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -231,7 +231,7 @@ describe('PilhaVariaveis', () => {
             expect(pilha.topoDaPilha()).toEqual(variaveis1);
         });
 
-        it('Deve lançar erro após remover todos os elementos e tentar acessar o topo', () => {
+        it('Deve lançar erro após remover todos os elementos e tentar acessar o topo', async () => {
             const variaveis = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface
             };
@@ -243,7 +243,7 @@ describe('PilhaVariaveis', () => {
             expect(() => pilha.removerUltimo()).toThrow('Pilha vazia.');
         });
 
-        it('Deve simular escopos de variáveis aninhados', () => {
+        it('Deve simular escopos de variáveis aninhados', async () => {
             const escopoGlobal = {
                 x: { valor: 10, tipo: 'inteiro', imutavel: false } as VariavelInterface,
                 y: { valor: 20, tipo: 'inteiro', imutavel: false } as VariavelInterface

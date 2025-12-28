@@ -94,7 +94,7 @@ export class TradutorReversoVisuAlg {
 
     traduzirConstrutoLiteral(literal: Literal): string {
         if (typeof literal.valor === 'string') return `'${literal.valor}'`;
-        return literal.valor;
+        return String(literal.valor);
     }
 
     traduzirConstrutoVariavel(variavel: Variavel): string {

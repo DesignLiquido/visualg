@@ -427,7 +427,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARENTESE_ESQUERDO)) {
             const expressao = await this.expressao();
-            this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após a expressão.");
+            this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após a expressão para agrupamento por parênteses.");
 
             return new Agrupamento(this.hashArquivo, Number(simboloAtual.linha), expressao);
         }

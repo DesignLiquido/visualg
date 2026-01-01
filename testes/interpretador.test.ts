@@ -846,7 +846,6 @@ describe('Interpretador', () => {
                     expect(_saidas[2]).toBe("Valor de A + B = 15");
                     expect(_saidas[3]).toBe("valor de X = 4");
                     expect(_saidas[4]).toBe("valor de Y = 8");
-                    // 
                 });
             });
 

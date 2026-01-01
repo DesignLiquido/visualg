@@ -8,7 +8,8 @@ import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memor
 
 /**
  * Diferentemente de `DeleguaFuncao`, a forma de VisuAlg de trabalhar com referências usa
- * como base o nome do parâmetro, e não o nome do argumento, como é em Delégua.
+ * como base o nome do parâmetro, e não o nome do argumento, como é em Delégua. Ademais, 
+ * o mecanismo de resolução de ambiente é muito mais simples que o de Delégua.
  */
 export class VisuAlgFuncao extends DeleguaFuncao {
     protected override resolverAmbiente(argumentos: Array<ArgumentoInterface>): EspacoMemoria {

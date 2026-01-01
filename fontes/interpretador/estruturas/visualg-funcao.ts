@@ -4,12 +4,30 @@ import { RetornoQuebra } from '@designliquido/delegua/quebras';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 
 import { InterpretadorVisuAlgInterface } from '../../interfaces';
+import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
 
 /**
  * Diferentemente de `DeleguaFuncao`, a forma de VisuAlg de trabalhar com referências usa
  * como base o nome do parâmetro, e não o nome do argumento, como é em Delégua.
  */
 export class VisuAlgFuncao extends DeleguaFuncao {
+    protected override resolverAmbiente(argumentos: Array<ArgumentoInterface>): EspacoMemoria {
+        const ambiente = new EspacoMemoria();
+        const parametros = this.declaracao.parametros || [];
+
+        for (let i = 0; i < parametros.length; i++) {
+            const parametro = parametros[i];
+
+            const nome = parametro['nome'].lexema;
+            let argumento = argumentos[i];
+
+            ambiente.valores[nome.toLowerCase()] =
+                argumento && argumento.hasOwnProperty('valor') ? argumento.valor : argumento;
+        }
+
+        return ambiente;
+    }
+
     override async chamar(
         visitante: InterpretadorVisuAlgInterface,
         argumentos: Array<ArgumentoInterface>

@@ -810,6 +810,44 @@ describe('Interpretador', () => {
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas).toBe("-5");
                 });
+
+                it('Issue 89', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'Algoritmo "ex04_procSomaReferencia_1.0"',
+                        'var',
+                        '    X, Y: inteiro',
+                        '//==================',
+                        'Procedimento Soma (A, B: inteiro)',
+                        '    inicio',
+                        '        A <- A + 1',
+                        '        B <- B + 2',
+                        '        escreval ("Valor de A = ", A)',
+                        '        escreval ("Valor de A = ", B)',
+                        '        escreval ("Valor de A + B = ", A + B)',
+                        '    fimProcedimento',
+                        '//==================',
+                        'inicio',
+                        '    X <- 4',
+                        '    Y <- 8',
+                        '    Soma (X, Y)',
+                        '    escreval ("valor de X = ", X)',
+                        '    escreval ("valor de Y = ", Y)',
+                        'fimAlgoritmo'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toHaveLength(5);
+                    expect(_saidas[0]).toBe("Valor de A = 5");
+                    expect(_saidas[1]).toBe("Valor de A = 10");
+                    expect(_saidas[2]).toBe("Valor de A + B = 15");
+                    expect(_saidas[3]).toBe("valor de X = 4");
+                    expect(_saidas[4]).toBe("valor de Y = 8");
+                    // 
+                });
             });
 
             it('Operadores Lógicos', async () => {

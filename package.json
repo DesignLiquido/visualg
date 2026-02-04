@@ -24,10 +24,13 @@
         "deixar-codigo-bonito": "yarn prettier --config .prettierrc --write fontes/**/*.ts"
     },
     "dependencies": {
-        "@designliquido/delegua": "^1.4.2",
         "lodash": "^4.17.21"
     },
+    "peerDependencies": {
+        "@designliquido/delegua": "^1.4.2"
+    },
     "devDependencies": {
+        "@designliquido/delegua": "^1.4.2",
         "@types/estree": "^1.0.7",
         "@types/jest": "^30.0.0",
         "@types/lodash": "^4.17.17",

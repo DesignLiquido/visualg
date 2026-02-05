@@ -18,7 +18,7 @@ export class TradutorReversoVisuAlg {
                 return '&';
             case tiposDeSimbolosDelegua.BIT_OR:
                 return '|';
-            case tiposDeSimbolosDelegua.BIT_XOR:
+            case tiposDeSimbolosDelegua.CIRCUMFLEXO:
                 return '^';
             case tiposDeSimbolosDelegua.BIT_NOT:
                 return '~';

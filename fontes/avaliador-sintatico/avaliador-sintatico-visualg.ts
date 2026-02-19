@@ -48,13 +48,13 @@ import {
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico';
-import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 import { ParametroVisuAlg } from './parametro-visualg';
 import { LimpaTela } from '../construtos/limpa-tela';
 import { Aleatorio, ProcedimentoDeclaracao } from '../declaracoes';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
+import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
 export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     blocoPrincipalIniciado: boolean;
@@ -298,7 +298,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                                             Number(dadosVariaveis.simbolo.linha),
                                             this.criarVetorNDimensional(simboloAtual.linha, dimensoes.tamanhos)
                                         ),
-                                        tipoVetor as TipoDadosElementar
+                                        tipoVetor as TipoInferencia
                                     )
                                 );
                             }
@@ -306,7 +306,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                         this.atual++;
                     } else {
                         for (let identificador of dadosVariaveis.identificadores) {
-                            const tipo = dadosVariaveis.tipo as TipoDadosElementar;
+                            const tipo = dadosVariaveis.tipo as TipoInferencia;
                             switch (dadosVariaveis.tipo) {
                                 case tiposDeSimbolos.CARACTER:
                                 case tiposDeSimbolos.CARACTERE:
@@ -598,7 +598,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return expressao;
     }
 
-    verificarDefinicaoTipoAtual(): TipoDadosElementar {
+    verificarDefinicaoTipoAtual(): TipoInferencia {
         const tipos = ['inteiro', 'qualquer', 'real', 'texto', 'vazio', 'vetor', 'caracter'];
 
         // TODO: Remover isso. O máximo que o avaliador sintático
@@ -620,10 +620,10 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
 
             this.avancarEDevolverAnterior();
 
-            return contemTipoVetor as TipoDadosElementar;
+            return contemTipoVetor as TipoInferencia;
         }
 
-        return contemTipo as TipoDadosElementar;
+        return contemTipo as TipoInferencia;
     }
 
     async corpoDaFuncao(tipo: any): Promise<FuncaoConstruto> {
@@ -1139,7 +1139,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                         abrangencia: 'padrao',
                         nome: parametro,
                         referencia: dadosParametros.referencia,
-                        tipoDado: dadosParametros.tipo as TipoDadosElementar,
+                        tipoDado: dadosParametros.tipo as TipoInferencia,
                     });
                 }
             }

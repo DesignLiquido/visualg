@@ -5,8 +5,9 @@ import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { DescritorTipoClasse } from '@designliquido/delegua/interpretador/estruturas';
 import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
+import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
-import { TipoInferencia, inferirTipoVariavel } from './inferenciador';
+import { inferirTipoVariavel } from './inferenciador';
 import { VisuAlgFuncao } from './estruturas';
 
 export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterface {

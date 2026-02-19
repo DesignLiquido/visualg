@@ -1,15 +1,4 @@
-export type TipoInferencia =
-    | 'texto'
-    | 'número'
-    | 'longo'
-    | 'vetor'
-    | 'dicionário'
-    | 'nulo'
-    | 'lógico'
-    | 'função'
-    | 'símbolo'
-    | 'objeto'
-    | 'módulo';
+import { TipoInferencia } from "@designliquido/delegua/inferenciador";
 
 export function inferirTipoVariavel(
     variavel: string | number | Array<any> | boolean | null | undefined

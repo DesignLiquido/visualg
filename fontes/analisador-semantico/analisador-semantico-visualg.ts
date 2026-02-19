@@ -30,10 +30,10 @@ import { SimboloInterface } from '@designliquido/delegua/interfaces';
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { RetornoQuebra } from '@designliquido/delegua/quebras';
-import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 import { PilhaVariaveis } from './pilha-variaveis';
 import { Aleatorio } from '../declaracoes';
+import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
 function ehTipoVetor(tipo: string): boolean {
     if (!tipo) return false;
@@ -200,7 +200,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     visitarDeclaracaoVar(declaracao: Var): Promise<any> {
         const escopoVariavel: EscopoVariavel = {
             nome: declaracao.simbolo.lexema,
-            tipo: declaracao.tipo as TipoDadosElementar,
+            tipo: declaracao.tipo as TipoInferencia,
             imutavel: false,
             valor:
                 declaracao.inicializador !== null

@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
         "paths": {
-            "@designliquido/delegua": ["node_modules/@designliquido/delegua/fontes"],
-            "@designliquido/delegua/*": ["node_modules/@designliquido/delegua/fontes/*"]
+            "@designliquido/delegua": ["./node_modules/@designliquido/delegua/fontes"],
+            "@designliquido/delegua/*": ["./node_modules/@designliquido/delegua/fontes/*"]
         }
     }
 }

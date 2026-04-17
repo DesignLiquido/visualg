@@ -1449,63 +1449,86 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
     }
 
     async resolverDeclaracaoForaDeBloco(): Promise<Declaracao | Declaracao[]> {
-        const simboloAtual = this.simbolos[this.atual];
+        try {
+            const simboloAtual = this.simbolos[this.atual];
 
-        switch (simboloAtual.tipo) {
-            case tiposDeSimbolos.ALEATORIO:
-                return this.declaracaoAleatorio();
-            case tiposDeSimbolos.COMENTARIO:
-                return this.declaracaoComentario();
-            case tiposDeSimbolos.ENQUANTO:
-                return this.declaracaoEnquanto();
-            case tiposDeSimbolos.ESCOLHA:
-                return this.declaracaoEscolha();
-            case tiposDeSimbolos.ESCREVA:
-                return this.declaracaoEscrevaMesmaLinha();
-            case tiposDeSimbolos.ESCREVA_LINHA:
-                return this.declaracaoEscreva();
-            case tiposDeSimbolos.FIM_ALGORITMO:
-                this.fimAlgoritmoEncontrado = true;
-                this.avancarEDevolverAnterior();
-                return null;
-            case tiposDeSimbolos.FUNCAO:
-                return this.funcao('funcao');
-            case tiposDeSimbolos.INICIO:
-                const simboloInicio = this.validarSegmentoInicio('algoritmo');
-                return new InicioAlgoritmo(simboloInicio.linha, simboloInicio.hashArquivo);
-            case tiposDeSimbolos.INTERROMPA:
-                return this.declaracaoInterrompa();
-            case tiposDeSimbolos.LEIA:
-                return new Expressao(await this.expressaoLeia());
-            case tiposDeSimbolos.LIMPA_TELA:
-                return new Expressao(this.expressaoLimpaTela());
-            case tiposDeSimbolos.PARA:
-                return this.declaracaoPara();
-            case tiposDeSimbolos.PARENTESE_DIREITO:
-                throw new Error('Não deveria estar caindo aqui.');
-            case tiposDeSimbolos.PROCEDIMENTO:
-                return this.declaracaoProcedimento();
-            case tiposDeSimbolos.QUEBRA_LINHA:
-                this.avancarEDevolverAnterior();
-                return null;
-            case tiposDeSimbolos.REPITA:
-                return this.declaracaoFazer();
-            case tiposDeSimbolos.RETORNE:
-                return this.declaracaoRetorna();
-            case tiposDeSimbolos.SE:
-                return this.declaracaoSe();
-            case tiposDeSimbolos.TIPO:
-                return this.declaracaoTipo();
-            case tiposDeSimbolos.VAR:
-                if (this.blocoPrincipalIniciado) {
-                    throw this.erro(
-                        this.simbolos[this.atual],
-                        'Sintaxe incorreta: início do bloco principal já foi declarado.'
-                    );
-                }
-                return await this.validarSegmentoVar() as Declaracao[];
-            default:
-                return new Expressao(await this.expressao());
+            switch (simboloAtual.tipo) {
+                case tiposDeSimbolos.ALEATORIO:
+                    return this.declaracaoAleatorio();
+                case tiposDeSimbolos.COMENTARIO:
+                    return this.declaracaoComentario();
+                case tiposDeSimbolos.ENQUANTO:
+                    return this.declaracaoEnquanto();
+                case tiposDeSimbolos.ESCOLHA:
+                    return this.declaracaoEscolha();
+                case tiposDeSimbolos.ESCREVA:
+                    return this.declaracaoEscrevaMesmaLinha();
+                case tiposDeSimbolos.ESCREVA_LINHA:
+                    return this.declaracaoEscreva();
+                case tiposDeSimbolos.FIM_ALGORITMO:
+                    this.fimAlgoritmoEncontrado = true;
+                    this.avancarEDevolverAnterior();
+                    return null;
+                case tiposDeSimbolos.FUNCAO:
+                    return this.funcao('funcao');
+                case tiposDeSimbolos.INICIO:
+                    const simboloInicio = this.validarSegmentoInicio('algoritmo');
+                    return new InicioAlgoritmo(simboloInicio.linha, simboloInicio.hashArquivo);
+                case tiposDeSimbolos.INTERROMPA:
+                    return this.declaracaoInterrompa();
+                case tiposDeSimbolos.LEIA:
+                    return new Expressao(await this.expressaoLeia());
+                case tiposDeSimbolos.LIMPA_TELA:
+                    return new Expressao(this.expressaoLimpaTela());
+                case tiposDeSimbolos.PARA:
+                    return this.declaracaoPara();
+                case tiposDeSimbolos.PARENTESE_DIREITO:
+                    throw new Error('Não deveria estar caindo aqui.');
+                case tiposDeSimbolos.PROCEDIMENTO:
+                    return this.declaracaoProcedimento();
+                case tiposDeSimbolos.QUEBRA_LINHA:
+                    this.avancarEDevolverAnterior();
+                    return null;
+                case tiposDeSimbolos.REPITA:
+                    return this.declaracaoFazer();
+                case tiposDeSimbolos.RETORNE:
+                    return this.declaracaoRetorna();
+                case tiposDeSimbolos.SE:
+                    return this.declaracaoSe();
+                case tiposDeSimbolos.TIPO:
+                    return this.declaracaoTipo();
+                case tiposDeSimbolos.VAR:
+                    if (this.blocoPrincipalIniciado) {
+                        throw this.erro(
+                            this.simbolos[this.atual],
+                            'Sintaxe incorreta: início do bloco principal já foi declarado.'
+                        );
+                    }
+                    return await this.validarSegmentoVar() as Declaracao[];
+                default:
+                    return new Expressao(await this.expressao());
+            }
+        } catch (erro: any) {
+            this.sincronizar();
+            this.erros.push(erro);
+            return undefined;
+        }
+    }
+
+    /**
+     * Usado quando há erros na avaliação sintática.
+     * Garante que a avaliação sintática não entre em _loop_ infinito.
+     * @returns Sempre retorna `void`.
+     */
+    protected sincronizar(): void {
+        this.avancarEDevolverAnterior(); // avança além do token com erro
+
+        while (!this.estaNoFinal()) {
+            if (this.simbolos[this.atual].tipo === tiposDeSimbolos.QUEBRA_LINHA) {
+                return;
+            }
+            
+            this.avancarEDevolverAnterior();
         }
     }
 
@@ -1566,8 +1589,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         if (ultimoSimbolo.tipo !== tiposDeSimbolos.FIM_ALGORITMO && !this.fimAlgoritmoEncontrado) {
             throw new ErroAvaliadorSintatico(
                 ultimoSimbolo,
-                `Programa não termina com 'fimalgoritmo'. Último símbolo: '${
-                    ultimoSimbolo.lexema || ultimoSimbolo.literal || ultimoSimbolo.tipo
+                `Programa não termina com 'fimalgoritmo'. Último símbolo: '${ultimoSimbolo.lexema || ultimoSimbolo.literal || ultimoSimbolo.tipo
                 }'.`
             );
         }

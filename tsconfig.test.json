@@ -3,6 +3,7 @@
         "paths": {
             "@designliquido/delegua": ["./node_modules/@designliquido/delegua/fontes"],
             "@designliquido/delegua/*": ["./node_modules/@designliquido/delegua/fontes/*"]
-        }
-    }
+        },
+        "types": ["node", "jest"]
+    },
 }

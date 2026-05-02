@@ -1,6 +1,6 @@
 import { DeleguaFuncao } from '@designliquido/delegua/interpretador/estruturas';
 import { InterpretadorInterface, SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
-import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
+import { EscopoExecucaoInterface } from '@designliquido/delegua/interfaces/escopo-execucao';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 
 import { InterpretadorVisuAlg } from '../fontes/interpretador';
@@ -33,11 +33,11 @@ const mockPilha: PilhaEscoposExecucaoInterface | any = {
         throw new Error('Função não implementada.');
     },
 
-    naPosicao: function (posicao: number): EscopoExecucao {
+    naPosicao: function (posicao: number): EscopoExecucaoInterface {
         throw new Error('Função não implementada.');
     },
 
-    obterEscopoPorTipo: function (idChamada: string): EscopoExecucao | undefined {
+    obterEscopoPorTipo: function (idChamada: string): EscopoExecucaoInterface | undefined {
         throw new Error('Função não implementada.');
     },
 
@@ -67,7 +67,7 @@ const mockPilha: PilhaEscoposExecucaoInterface | any = {
 
     pilha: [],
 
-    empilhar: function (item: EscopoExecucao): void {
+    empilhar: function (item: EscopoExecucaoInterface): void {
         throw new Error('Função não implementada.');
     },
 
@@ -75,11 +75,11 @@ const mockPilha: PilhaEscoposExecucaoInterface | any = {
         throw new Error('Função não implementada.');
     },
 
-    topoDaPilha: function (): EscopoExecucao {
+    topoDaPilha: function (): EscopoExecucaoInterface {
         throw new Error('Função não implementada.');
     },
 
-    removerUltimo: function (): EscopoExecucao {
+    removerUltimo: function (): EscopoExecucaoInterface {
         throw new Error('Função não implementada.');
     },
 };

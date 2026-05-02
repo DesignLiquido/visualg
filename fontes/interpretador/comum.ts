@@ -5,7 +5,6 @@ import {
     AtribuicaoPorIndice,
     AtribuicaoPorIndicesMatriz,
     Binario,
-    Construto,
     FimPara,
     FormatacaoEscrita,
     Leia,
@@ -26,7 +25,7 @@ import {
     Var,
 } from '@designliquido/delegua/declaracoes';
 import { Simbolo } from '@designliquido/delegua/lexador';
-import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
+import { ConstrutoInterface, SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
@@ -206,7 +205,7 @@ function converterValor(valor: any, tipo: string) {
 
 export async function atribuirVariavel(
     interpretador: InterpretadorVisuAlgInterface,
-    expressao: Construto,
+    expressao: ConstrutoInterface,
     valor: any
 ): Promise<any> {
     if (expressao instanceof Variavel) {
@@ -332,7 +331,7 @@ export async function atribuirVariavel(
     }
 }
 
-async function avaliar(interpretador: InterpretadorVisuAlgInterface, expressao: Construto): Promise<any> {
+async function avaliar(interpretador: InterpretadorVisuAlgInterface, expressao: ConstrutoInterface): Promise<any> {
     return await expressao.aceitar(interpretador);
 }
 
@@ -879,7 +878,7 @@ export async function visitarExpressaoAtribuicaoPorIndicesMatriz(
 
 async function encontrarLeiaNoAleatorio(
     interpretador: InterpretadorVisuAlgInterface,
-    declaracao: Declaracao | Construto,
+    declaracao: Declaracao | ConstrutoInterface,
     menorNumero: number,
     maiorNumero: number
 ) {

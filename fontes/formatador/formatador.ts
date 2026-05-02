@@ -10,7 +10,6 @@ import {
     Binario,
     Chamada,
     ComentarioComoConstruto,
-    Construto,
     DefinirValor,
     Dicionario,
     ExpressaoRegular,
@@ -69,6 +68,7 @@ import { LimpaTela } from '../construtos';
 import { Aleatorio, ProcedimentoDeclaracao } from '../declaracoes';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
+import { ConstrutoInterface } from '@designliquido/delegua';
 
 export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
     pilhaEscoposFormatacao: PilhaEscoposFormatacao;
@@ -752,7 +752,7 @@ export class FormatadorVisuAlg implements VisitanteVisuAlgInterface {
         throw new Error('Método não implementado.');
     }
 
-    formatarDeclaracaoOuConstruto(declaracaoOuConstruto: Declaracao | Construto): void {
+    formatarDeclaracaoOuConstruto(declaracaoOuConstruto: Declaracao | ConstrutoInterface): void {
         switch (declaracaoOuConstruto.constructor) {
             case AcessoIndiceVariavel:
                 this.visitarExpressaoAcessoIndiceVariavel(declaracaoOuConstruto as AcessoIndiceVariavel);

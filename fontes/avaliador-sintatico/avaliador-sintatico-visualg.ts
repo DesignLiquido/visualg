@@ -1,4 +1,4 @@
-import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
+import { RetornoLexadorInterface, RetornoAvaliadorSintaticoInterface } from '@designliquido/delegua/interfaces/retornos';
 import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
 import {
     Bloco,
@@ -30,7 +30,6 @@ import {
     Atribuir,
     Binario,
     Chamada,
-    Construto,
     FimPara,
     FormatacaoEscrita,
     FuncaoConstruto,
@@ -45,7 +44,7 @@ import {
     Vetor,
     Leia,
 } from '@designliquido/delegua/construtos';
-import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
+import { ConstrutoInterface, ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico';
 
@@ -393,7 +392,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return this.atual === this.simbolos.length;
     }
 
-    async primario(): Promise<Construto> {
+    async primario(): Promise<ConstrutoInterface> {
         const simboloAtual = this.simbolos[this.atual];
 
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.FALSO))
@@ -435,7 +434,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         throw this.erro(this.simbolos[this.atual], 'Esperado expressão.');
     }
 
-    async comparacaoIgualdade(): Promise<Construto> {
+    async comparacaoIgualdade(): Promise<ConstrutoInterface> {
         let expressao = await this.comparar();
 
         while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.DIFERENTE, tiposDeSimbolos.IGUAL)) {
@@ -447,7 +446,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return expressao;
     }
 
-    async ou(): Promise<Construto> {
+    async ou(): Promise<ConstrutoInterface> {
         let expressao = await this.e();
 
         while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.OU, tiposDeSimbolos.XOU)) {
@@ -463,7 +462,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
      * Método que resolve atribuições.
      * @returns Um construto do tipo `Atribuir`, `Conjunto` ou `AtribuicaoPorIndice`.
      */
-    async atribuir(): Promise<Construto> {
+    async atribuir(): Promise<ConstrutoInterface> {
         const expressao = await this.ou();
 
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.SETA_ATRIBUICAO)) {
@@ -509,7 +508,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return expressao;
     }
 
-    async expressao(): Promise<Construto> {
+    async expressao(): Promise<ConstrutoInterface> {
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.LEIA)) return this.expressaoLeia();
         return await this.atribuir();
     }
@@ -539,8 +538,8 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
      * @param entidadeChamada Um construto. Normalmente uma `Chamada`.
      * @returns Ou a entidade chamada enriquecida, ou uma nova `Chamada`.
      */
-    override async finalizarChamada(entidadeChamada: Construto): Promise<Chamada> {
-        const argumentos: Array<Construto> = [];
+    override async finalizarChamada(entidadeChamada: ConstrutoInterface): Promise<Chamada> {
+        const argumentos: Array<ConstrutoInterface> = [];
 
         while (!this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARENTESE_DIREITO)) {
             if (argumentos.length >= 255) {
@@ -559,7 +558,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return new Chamada(this.hashArquivo, entidadeChamada, argumentos);
     }
 
-    async chamar(): Promise<Construto> {
+    async chamar(): Promise<ConstrutoInterface> {
         let expressao = await this.primario();
 
         while (true) {
@@ -991,7 +990,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         // em tempo de execução.
         // Quando um dos operandos é uma variável, tanto a condição do laço quanto o
         // passo são considerados indefinidos aqui.
-        let passo: Construto;
+        let passo: ConstrutoInterface;
         let resolverIncrementoEmExecucao = false;
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PASSO)) {
             passo = await this.unario();
@@ -1548,9 +1547,9 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
      * @param hashArquivo Obrigatório por interface mas não usado aqui.
      */
     async analisar(
-        retornoLexador: RetornoLexador<SimboloInterface>,
+        retornoLexador: RetornoLexadorInterface<SimboloInterface>,
         hashArquivo: number
-    ): Promise<RetornoAvaliadorSintatico<Declaracao>> {
+    ): Promise<RetornoAvaliadorSintaticoInterface<Declaracao>> {
         this.erros = [];
         this.atual = 0;
         this.blocos = 0;
@@ -1597,6 +1596,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         return {
             declaracoes: declaracoes.filter((d) => d),
             erros: this.erros,
-        } as RetornoAvaliadorSintatico<Declaracao>;
+        } as RetornoAvaliadorSintaticoInterface<Declaracao>;
     }
 }

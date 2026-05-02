@@ -6,7 +6,6 @@ import {
     AtribuicaoPorIndice,
     AtribuicaoPorIndicesMatriz,
     Binario,
-    Construto,
     FimPara,
     FormatacaoEscrita,
     Leia,
@@ -35,6 +34,7 @@ import { LimpaTela } from '../construtos';
 import { Aleatorio } from '../declaracoes';
 
 import * as comum from './comum';
+import { ConstrutoInterface } from '@designliquido/delegua/interfaces';
 
 /**
  * Interpretador com depuração para o dialeto VisuAlg.
@@ -108,7 +108,7 @@ export class InterpretadorVisuAlgComDepuracao
         return await comum.visitarExpressaoAtribuicaoPorIndicesMatriz(this, expressao);
     }
 
-    private async avaliarArgumentosEscrevaVisuAlg(argumentos: Construto[]): Promise<string> {
+    private async avaliarArgumentosEscrevaVisuAlg(argumentos: ConstrutoInterface[]): Promise<string> {
         let formatoTexto: string = '';
 
         for (const argumento of argumentos) {

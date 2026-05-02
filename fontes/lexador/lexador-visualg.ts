@@ -1,4 +1,4 @@
-import { RetornoLexador } from '@designliquido/delegua/interfaces/retornos';
+import { RetornoLexadorInterface } from '@designliquido/delegua/interfaces/retornos';
 import { LexadorBaseLinhaUnica } from '@designliquido/delegua/lexador/lexador-base-linha-unica';
 import { ErroLexador } from '@designliquido/delegua/lexador/erro-lexador';
 import { SimboloInterface } from '@designliquido/delegua/interfaces';
@@ -222,7 +222,7 @@ export class LexadorVisuAlg extends LexadorBaseLinhaUnica {
         }
     }
 
-    mapear(codigo: string[], hashArquivo: number): RetornoLexador<SimboloInterface> {
+    mapear(codigo: string[], hashArquivo: number): RetornoLexadorInterface<SimboloInterface> {
         this.erros = [];
         this.simbolos = [];
         this.inicioSimbolo = 0;
@@ -242,6 +242,6 @@ export class LexadorVisuAlg extends LexadorBaseLinhaUnica {
         return {
             simbolos: this.simbolos,
             erros: this.erros,
-        } as RetornoLexador<SimboloInterface>;
+        } as RetornoLexadorInterface<SimboloInterface>;
     }
 }

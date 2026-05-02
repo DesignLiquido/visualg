@@ -1,4 +1,4 @@
-import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
+import { EscopoExecucaoInterface } from '@designliquido/delegua/interfaces/escopo-execucao';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
 import { Simbolo } from '@designliquido/delegua/lexador';
@@ -11,11 +11,11 @@ import { inferirTipoVariavel } from './inferenciador';
 import { VisuAlgFuncao } from './estruturas';
 
 export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterface {
-    pilha: EscopoExecucao[];
+    pilha: EscopoExecucaoInterface[];
 
     constructor() {
         this.pilha = [];
-        const escopoExecucao: EscopoExecucao = {
+        const escopoExecucao: EscopoExecucaoInterface = {
             declaracoes: [],
             declaracaoAtual: 0,
             espacoMemoria: new EspacoMemoria(),
@@ -46,7 +46,7 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
         throw new Error('Método não implementado.');
     }
 
-    empilhar(item: EscopoExecucao): void {
+    empilhar(item: EscopoExecucaoInterface): void {
         this.pilha.push(item);
     }
 
@@ -58,16 +58,16 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
         return this.pilha.length;
     }
 
-    naPosicao(posicao: number): EscopoExecucao {
+    naPosicao(posicao: number): EscopoExecucaoInterface {
         return this.pilha[posicao];
     }
 
-    topoDaPilha(): EscopoExecucao {
+    topoDaPilha(): EscopoExecucaoInterface {
         if (this.eVazio()) throw new Error('Pilha vazia.');
         return this.pilha[this.pilha.length - 1];
     }
 
-    removerUltimo(): EscopoExecucao {
+    removerUltimo(): EscopoExecucaoInterface {
         if (this.eVazio()) throw new Error('Pilha vazia.');
         return this.pilha.pop();
     }
@@ -175,7 +175,7 @@ export class PilhaEscoposExecucaoVisuAlg implements PilhaEscoposExecucaoInterfac
         throw new ErroEmTempoDeExecucao(simbolo, "Variável não definida '" + simbolo.lexema + "'.");
     }
 
-    obterEscopoPorTipo(tipo: string): EscopoExecucao | undefined {
+    obterEscopoPorTipo(tipo: string): EscopoExecucaoInterface | undefined {
         for (let i = 1; i <= this.pilha.length; i++) {
             const escopoAtual = this.pilha[this.pilha.length - i];
             if (escopoAtual.tipo === tipo) {

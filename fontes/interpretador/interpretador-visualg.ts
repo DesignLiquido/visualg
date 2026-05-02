@@ -4,7 +4,6 @@ import {
     AtribuicaoPorIndice,
     AtribuicaoPorIndicesMatriz,
     Binario,
-    Construto,
     FimPara,
     FormatacaoEscrita,
     Leia,
@@ -32,6 +31,7 @@ import { LimpaTela } from '../construtos';
 import { Aleatorio } from '../declaracoes';
 
 import * as comum from './comum';
+import { ConstrutoInterface } from '@designliquido/delegua';
 
 /**
  * Interpretador do VisuAlg, baseado no interpretador de Delégua.
@@ -109,7 +109,7 @@ export class InterpretadorVisuAlg extends InterpretadorBase implements Interpret
      * Para N argumentos, Delégua inclui um espaço entre cada argumento.
      * Já VisuAlg imprime todos os argumentos concatenados.
      */
-    private async avaliarArgumentosEscrevaVisuAlg(argumentos: Construto[]): Promise<string> {
+    private async avaliarArgumentosEscrevaVisuAlg(argumentos: ConstrutoInterface[]): Promise<string> {
         let formatoTexto: string = '';
 
         for (const argumento of argumentos) {

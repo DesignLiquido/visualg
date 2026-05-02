@@ -4,7 +4,6 @@ import {
     Atribuir,
     Binario,
     Chamada,
-    Construto,
     FormatacaoEscrita,
     FuncaoConstruto,
     Leia,
@@ -26,9 +25,8 @@ import {
 import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
 import { EscopoVariavel } from '@designliquido/delegua/analisador-semantico/escopo-variavel';
 import { GerenciadorEscopos } from '@designliquido/delegua/analisador-semantico/gerenciador-escopos';
-import { SimboloInterface } from '@designliquido/delegua/interfaces';
+import { ConstrutoInterface, SimboloInterface, RetornoAnalisadorSemanticoInterface } from '@designliquido/delegua/interfaces';
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
-import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { RetornoQuebra } from '@designliquido/delegua/quebras';
 
 import { PilhaVariaveis } from './pilha-variaveis';
@@ -522,7 +520,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
     /**
      * Marca recursivamente todas as variáveis usadas em uma expressão.
      */
-    protected marcarVariaveisUsadasEmExpressao(expressao: Construto): void {
+    protected marcarVariaveisUsadasEmExpressao(expressao: ConstrutoInterface): void {
         if (expressao instanceof Variavel) {
             this.gerenciadorEscopos.marcarComoUsada(expressao.simbolo.lexema);
         } else if (expressao instanceof Binario) {
@@ -551,15 +549,15 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
     /**
      * Tenta avaliar uma expressão em tempo de compilação para detectar valores constantes.
-     * Retorna o valor se puder ser determinado, ou null caso contrário.
+     * Retorna o valor se puder ser determinado, ou `null` caso contrário.
      */
-    private avaliarExpressaoConstante(expressao: any): number | null {
+    private avaliarExpressaoConstante(expressao: ConstrutoInterface): number | null {
         if (expressao instanceof Literal) {
             const valor = expressao.valor;
             return typeof valor === 'number' ? valor : null;
         }
 
-        if (expressao.hasOwnProperty('esquerda') && expressao.hasOwnProperty('direita')) {
+        if (expressao instanceof Binario) {
             const esquerda = this.avaliarExpressaoConstante(expressao.esquerda);
             const direita = this.avaliarExpressaoConstante(expressao.direita);
 
@@ -618,7 +616,7 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
         }
     }
 
-    async analisar(declaracoes: Declaracao[]): Promise<RetornoAnalisadorSemantico> {
+    async analisar(declaracoes: Declaracao[]): Promise<RetornoAnalisadorSemanticoInterface> {
         this.funcoes = {};
         this.atual = 0;
         this.diagnosticos = [];
@@ -640,6 +638,6 @@ export class AnalisadorSemanticoVisuAlg extends AnalisadorSemanticoBase {
 
         return {
             diagnosticos: this.diagnosticos,
-        } as RetornoAnalisadorSemantico;
+        } as RetornoAnalisadorSemanticoInterface;
     }
 }

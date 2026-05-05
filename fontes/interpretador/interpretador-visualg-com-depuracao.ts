@@ -269,12 +269,12 @@ export class InterpretadorVisuAlgComDepuracao
 
                     try {
                         retornoExecucao = await this.executar(corpoExecucao);
-                        if (retornoExecucao instanceof SustarQuebra) {
+                        if (retornoExecucao instanceof SustarQuebra || retornoExecucao?.valorRetornado instanceof SustarQuebra) {
                             declaracao.inicializada = false;
                             return null;
                         }
 
-                        if (retornoExecucao instanceof ContinuarQuebra) {
+                        if (retornoExecucao instanceof ContinuarQuebra || retornoExecucao?.valorRetornado instanceof ContinuarQuebra) {
                             declaracao.inicializada = false;
                             retornoExecucao = null;
                         }

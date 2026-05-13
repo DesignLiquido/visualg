@@ -27,10 +27,10 @@
         "lodash": "^4.17.21"
     },
     "peerDependencies": {
-        "@designliquido/delegua": "^1.22.2"
+        "@designliquido/delegua": "^1.23.1"
     },
     "devDependencies": {
-        "@designliquido/delegua": "^1.22.2",
+        "@designliquido/delegua": "^1.23.1",
         "@types/estree": "^1.0.7",
         "@types/jest": "^30.0.0",
         "@types/lodash": "^4.17.17",

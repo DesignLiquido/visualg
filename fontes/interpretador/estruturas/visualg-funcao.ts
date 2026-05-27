@@ -2,6 +2,7 @@ import { DeleguaFuncao, ObjetoDeleguaClasse } from '@designliquido/delegua/inter
 import { ArgumentoInterface } from '@designliquido/delegua/interpretador/argumento-interface';
 import { RetornoQuebra } from '@designliquido/delegua/quebras';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 
 import { InterpretadorVisuAlgInterface } from '../../interfaces';
 import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
@@ -12,7 +13,7 @@ import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memor
  * o mecanismo de resolução de ambiente é muito mais simples que o de Delégua.
  */
 export class VisuAlgFuncao extends DeleguaFuncao {
-    protected override resolverAmbiente(argumentos: Array<ArgumentoInterface>): EspacoMemoria {
+    protected override async resolverAmbiente(_visitante: InterpretadorInterface, argumentos: Array<ArgumentoInterface>): Promise<EspacoMemoria> {
         const ambiente = new EspacoMemoria();
         const parametros = this.declaracao.parametros || [];
 
@@ -33,7 +34,7 @@ export class VisuAlgFuncao extends DeleguaFuncao {
         visitante: InterpretadorVisuAlgInterface,
         argumentos: Array<ArgumentoInterface>
     ): Promise<any> {
-        const ambiente = this.resolverAmbiente(argumentos);
+        const ambiente = await this.resolverAmbiente(visitante, argumentos);
 
         if (this.instancia !== undefined) {
             ambiente.valores['isto'] = {

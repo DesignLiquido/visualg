@@ -1094,7 +1094,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             new Binario(
                 this.hashArquivo,
                 new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
-                operadorCondicao,
+                operadorCondicao ?? new Simbolo(tiposDeSimbolos.MENOR_IGUAL, '<=', null, Number(simboloPara.linha), this.hashArquivo),
                 literalOuVariavelFim
             ),
             // Incremento, feito em construto especial `FimPara`.
@@ -1104,7 +1104,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
                 new Binario(
                     this.hashArquivo,
                     new Variavel(this.hashArquivo, variavelIteracao, 'inteiro'),
-                    operadorCondicaoIncremento,
+                    operadorCondicaoIncremento ?? new Simbolo(tiposDeSimbolos.MENOR, '<', null, Number(simboloPara.linha), this.hashArquivo),
                     literalOuVariavelFim
                 ),
                 new Expressao(

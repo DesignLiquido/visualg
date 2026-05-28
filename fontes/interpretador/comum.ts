@@ -389,7 +389,8 @@ export async function visitarDeclaracaoVar(
     let valorFinal: any = await interpretador.avaliacaoDeclaracaoVarOuConst(declaracao);
     const tipoInferido: string = declaracao.tipo;
 
-    if (String(declaracao.tipo).includes('[]')) {
+    const tipoStr = String(declaracao.tipo);
+    if (tipoStr.includes('[]') || tipoStr.startsWith('vetor')) {
         switch (declaracao.tipo as any) {
             case 'caracter[]':
             case 'caractere[]': // TODO: Reduzir para 'caracter' na análise sintática.
@@ -399,6 +400,16 @@ export async function visitarDeclaracaoVar(
             case 'inteiro[]':
             case 'real[]':
                 inicializacaoVetorOuMatriz(valorFinal, 0, tipoInferido);
+                break;
+            default:
+                if (tipoStr.includes('inteiro') || tipoStr.includes('real') || tipoStr.includes('numero') || tipoStr.includes('número')) {
+                    inicializacaoVetorOuMatriz(valorFinal, 0, tipoInferido);
+                } else if (tipoStr.includes('texto') || tipoStr.includes('caracter') || tipoStr.includes('caractere')) {
+                    inicializacaoVetorOuMatriz(valorFinal, '', tipoInferido);
+                } else if (tipoStr.includes('logico') || tipoStr.includes('lógico')) {
+                    inicializacaoVetorOuMatriz(valorFinal, false, tipoInferido);
+                }
+                // Vetores de tipos definidos pelo usuário (registros) não são inicializados com primitivo
                 break;
         }
     }

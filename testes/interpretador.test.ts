@@ -396,6 +396,35 @@ describe('Interpretador', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
+            it("Leia em vetor com índice começando em 0 dentro de laço para", async () => {
+                // Regressão: vetor[0..N] não inicializava elementos, causando travamento
+                // ao usar leia(vet[i]) dentro de para.
+                const respostas = ['3', '-5', '7', '-2'];
+                interpretador.interfaceEntradaSaida = {
+                    question: (mensagem: string, callback: Function) => {
+                        callback(respostas.shift());
+                    }
+                };
+
+                const retornoLexador = lexador.mapear([
+                    'algoritmo "negativos"',
+                    'var',
+                    'n, i: inteiro',
+                    'vet: vetor [0..9] de inteiro',
+                    'inicio',
+                    'leia(n)',
+                    'para i de 0 ate n-1 faca',
+                    '    leia(vet[i])',
+                    'fimpara',
+                    'fimalgoritmo'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+            });
+
             describe('Matrizes', () => {
                 it("Matriz - Simples", async () => {
                     let _saidas = '';

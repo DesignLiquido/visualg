@@ -633,7 +633,6 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         this.consumir(tiposDeSimbolos.DOIS_PONTOS, 'Esperado dois-pontos após nome de função.');
 
         // Tipo retornado pela função.
-        let tipoRetorno = null;
         if (
             !this.verificarSeSimboloAtualEIgualA(
                 tiposDeSimbolos.INTEIRO,
@@ -647,7 +646,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
         }
 
         this.consumir(tiposDeSimbolos.QUEBRA_LINHA, "Esperado quebra de linha após tipo retornado por 'funcao'.");
-        tipoRetorno = this.verificarDefinicaoTipoAtual();
+        const tipoRetorno = this.verificarDefinicaoTipoAtual();
         const inicializacoes = await this.validarSegmentoVar();
         this.validarSegmentoInicio('função');
 
@@ -1526,7 +1525,7 @@ export class AvaliadorSintaticoVisuAlg extends AvaliadorSintaticoBase {
             if (this.simbolos[this.atual].tipo === tiposDeSimbolos.QUEBRA_LINHA) {
                 return;
             }
-            
+
             this.avancarEDevolverAnterior();
         }
     }

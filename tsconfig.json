@@ -22,12 +22,12 @@
         "experimentalDecorators": true
     },
     "exclude": [
-        "babel.config.js", 
         "coverage",
         "docs",
         "dist/**/*",
         "jest.config.ts",
         "node_modules",
-        "testes"
+        "testes",
+        "eslint.config.mjs"
     ]
 }

@@ -968,13 +968,12 @@ export async function visitarExpressaoFormatacaoEscrita(
     interpretador: InterpretadorBase,
     declaracao: FormatacaoEscrita
 ): Promise<string> {
-    let resultado = '';
     const conteudo: VariavelInterface | any = await interpretador.avaliar(declaracao.expressao);
 
     const valorConteudo: any = conteudo?.hasOwnProperty('valor') ? conteudo.valor : conteudo;
     const tipoConteudo: string = conteudo?.hasOwnProperty('tipo') ? conteudo.tipo : typeof conteudo;
 
-    resultado = valorConteudo;
+    let resultado = valorConteudo;
     if (['real', 'inteiro'].includes(tipoConteudo) && declaracao.casasDecimais > 0) {
         resultado = valorConteudo.toLocaleString('pt', {
             minimumFractionDigits: declaracao.casasDecimais,
